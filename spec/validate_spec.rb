@@ -110,33 +110,11 @@ describe JsonTableSchema::Schema do
     expect(schema.valid?).to eq(false)
   end
 
-
-  #
-  # def test_primary_key_is_not_a_valid_type(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_invalid_pk_is_wrong_type.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #       errors = [i for i in jsontableschema.validator.iter_errors(schema)]
-  #   self.assertEquals(2, len(errors))
-  #
-  #
-  #
-  # class TestValidator(base.BaseTestCase):
-  # def test_schema_multiple_errors(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_invalid_multiple_errors.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #       errors = [i for i in jsontableschema.validator.iter_errors(schema)]
-  #   self.assertEquals(5, len(errors))
-  #
-  # def test_schema_no_fields(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_invalid_pk_no_fields.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #       errors = [i for i in jsontableschema.validator.iter_errors(schema)]
-  #   self.assertEquals(3, len(errors))
+  it 'should return false when the schema has no fields' do
+    schema = load_schema('schema_invalid_pk_no_fields.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+    expect(schema.messages.count).to eq(3)
+  end
 
 end
