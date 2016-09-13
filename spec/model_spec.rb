@@ -82,17 +82,17 @@ describe JsonTableSchema::Model do
 
   end
 
+  it "gets fields by type" do
+    s = JsonTableSchema::Schema.new(schema)
+
+    expect(s.get_fields_by_type('string').count).to eq(3)
+    expect(s.get_fields_by_type('number').count).to eq(1)
+    expect(s.get_fields_by_type('integer').count).to eq(1)
+  end
+
 end
 
-#
-# def test_has_field_true(self):
-#     m = model.SchemaModel(self.schema)
-#     self.assertTrue(m.has_field('name'))
-#
-# def test_has_field_false(self):
-#     m = model.SchemaModel(self.schema)
-#     self.assertFalse(m.has_field('religion'))
-#
+
 # def test_get_fields_by_type(self):
 #
 #     m = model.SchemaModel(self.schema)

@@ -22,6 +22,10 @@ module JsonTableSchema
       fields.find { |f| f['name'] == key }
     end
 
+    def get_fields_by_type(type)
+      fields.select { |f| f['type'] == type }
+    end
+
     private
 
       def fields
