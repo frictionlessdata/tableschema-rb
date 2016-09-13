@@ -32,15 +32,13 @@ describe JsonTableSchema::Schema do
     expect(schema.valid?).to eq(false)
   end
 
-  #
-  # def test_schema_invalid_empty(self):
-  #   filepath = os.path.join(self.data_dir, 'schema_invalid_empty.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
-  #
+  it 'should return false for a wrong type' do
+    schema = load_schema('schema_invalid_wrong_type.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
+
+
   # def test_schema_invalid_wrong_type(self):
   #   filepath = os.path.join(self.data_dir,
   #                           'schema_invalid_wrong_type.json')
