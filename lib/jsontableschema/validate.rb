@@ -21,28 +21,40 @@ module JsonTableSchema
       end
     end
 
-    def check_primary_keys
-      return if @schema['primaryKey'].nil?
-      [@schema['primaryKey']].flatten.each do |pk|
-        if field_names.select { |f| pk == f }.count == 0
-          @messages << "The JSON Table Schema primaryKey value `#{pk}` is not found in any of the schema's field names"
-        end
-      end
-    end
+    private
 
-    def check_foreign_keys
-      return if @schema['foreignKeys'].nil?
-      @schema['foreignKeys'].each do |keys|
-        [keys['fields']].flatten.each do |fk|
-          if field_names.select { |f| fk == f }.count == 0
-            @messages << "The JSON Table Schema foreignKey.fields value `#{fk}` is not found in any of the schema's field names"
-          end
-        end
-        if keys['reference'] &&([keys['fields']].flatten.count != [keys['reference']['fields']].flatten.count)
-          @messages << "A JSON Table Schema foreignKey.fields must contain the same number entries as foreignKey.reference.fields."
+      def check_primary_keys
+        return if @schema['primaryKey'].nil?
+        primary_keys.each { |pk| check_field_value(pk, 'primaryKey') }
+      end
+
+      def check_foreign_keys
+        return if @schema['foreignKeys'].nil?
+        @schema['foreignKeys'].each do |keys|
+          foreign_keys(keys).each { |fk| check_field_value(fk, 'foreignKey.fields') }
+          add_error("A JSON Table Schema foreignKey.fields must contain the same number entries as foreignKey.reference.fields.") if field_count_mismatch?(keys)
         end
       end
-    end
+
+      def check_field_value(key, type)
+        add_error("The JSON Table Schema #{type} value `#{key}` is not found in any of the schema's field names") if field_names.select { |f| key == f }.count == 0
+      end
+
+      def primary_keys
+        [@schema['primaryKey']].flatten
+      end
+
+      def foreign_keys(keys)
+        [keys['fields']].flatten
+      end
+
+      def field_count_mismatch?(keys)
+        keys['reference'] &&([keys['fields']].flatten.count != [keys['reference']['fields']].flatten.count)
+      end
+
+      def add_error(error)
+        @messages << error
+      end
 
   end
 end
