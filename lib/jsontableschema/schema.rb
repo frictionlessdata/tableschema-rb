@@ -14,7 +14,17 @@ module JsonTableSchema
       if schema.class == Hash
         schema
       elsif schema.class == String
-        JSON.parse open(schema).read
+        begin
+          JSON.parse open(schema).read
+        rescue Errno::ENOENT
+          raise SchemaException.new("File not found at `#{schema}`")
+        rescue OpenURI::HTTPError => e
+          raise SchemaException.new("URL `#{schema}` returned #{e.message}")
+        rescue JSON::ParserError
+          raise SchemaException.new("File at `#{schema}` is not valid JSON")
+        end
+      else
+        raise SchemaException.new("A schema must be a hash, path or URL")
       end
     end
 

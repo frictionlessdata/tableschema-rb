@@ -2,6 +2,7 @@ require "json"
 require "json-schema"
 
 require "jsontableschema/version"
+require "jsontableschema/exceptions"
 require "jsontableschema/validate"
 require "jsontableschema/model"
 require "jsontableschema/schema"

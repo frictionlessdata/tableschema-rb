@@ -26,6 +26,33 @@ describe JsonTableSchema::Schema do
       expect(schema).to eq load_schema('schema_valid_full.json')
     end
 
+    context 'raises an exception' do
+
+      it 'when the schema is an incorrect type' do
+        schema = load_schema('schema_invalid_wrong_type.json')
+        expect { JsonTableSchema::Schema.new(schema) }.to raise_error(JsonTableSchema::SchemaException, 'A schema must be a hash, path or URL')
+      end
+
+      it 'when the path does not exist' do
+        expect { JsonTableSchema::Schema.new('/some/fake/path') }.to raise_error(JsonTableSchema::SchemaException, 'File not found at `/some/fake/path`')
+      end
+
+      it 'when the url 404s' do
+        url = 'http://www.example.com/schema.json'
+        stub_request(:get, url).to_return(status: 404)
+        expect { JsonTableSchema::Schema.new(url) }.to raise_error(JsonTableSchema::SchemaException, 'URL `http://www.example.com/schema.json` returned 404 ')
+      end
+
+      it 'when the url returns invalid JSON' do
+        url = 'http://www.example.com/schema.json'
+        stub_request(:get, url)
+                    .to_return(body: 'definitely,not,JSON')
+
+        expect { JsonTableSchema::Schema.new(url) }.to raise_error(JsonTableSchema::SchemaException, 'File at `http://www.example.com/schema.json` is not valid JSON')
+      end
+
+    end
+
   end
 
 end
