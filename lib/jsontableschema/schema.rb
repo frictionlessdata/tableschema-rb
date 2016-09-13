@@ -3,9 +3,10 @@ module JsonTableSchema
     include JsonTableSchema::Validate
     include JsonTableSchema::Model
 
-    def initialize(schema)
+    def initialize(schema, opts = {})
       @schema = schema
       @messages = []
+      @opts = opts
       load_validator!
     end
 

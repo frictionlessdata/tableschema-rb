@@ -90,16 +90,29 @@ describe JsonTableSchema::Model do
     expect(s.get_fields_by_type('integer').count).to eq(1)
   end
 
+  context 'case insensitive headers' do
+
+    let(:new_schema) {
+      new_schema = schema.dup
+      new_schema['fields'].map { |f| f['name'].capitalize! }
+      new_schema
+    }
+
+    it 'with headers' do
+      s = JsonTableSchema::Schema.new(new_schema, case_insensitive_headers: true)
+      expect(s.headers).to eq(['id', 'height', 'age', 'name', 'occupation'])
+    end
+
+    it 'with required' do
+      s = JsonTableSchema::Schema.new(new_schema, case_insensitive_headers: true)
+      expect(s.required_headers).to eq(['id', 'name'])
+    end
+
+  end
+
 end
 
 
-# def test_get_fields_by_type(self):
-#
-#     m = model.SchemaModel(self.schema)
-#
-#     self.assertEqual(len(m.get_fields_by_type('string')), 3)
-#     self.assertEqual(len(m.get_fields_by_type('number')), 1)
-#     self.assertEqual(len(m.get_fields_by_type('integer')), 1)
 #
 # def test_case_insensitive_headers(self):
 #     _schema = copy.deepcopy(self.schema)

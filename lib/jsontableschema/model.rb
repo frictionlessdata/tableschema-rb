@@ -2,14 +2,14 @@ module JsonTableSchema
   module Model
 
     def headers
-      fields.map { |f| f['name'] }
+      fields.map { |f| transform(f['name']) }
     rescue NoMethodError
       []
     end
 
     def required_headers
       fields.select { |f| f['constraints']['required'] == true }
-            .map { |f| f['name'] }
+            .map { |f| transform(f['name']) }
     rescue NoMethodError
       []
     end
@@ -30,6 +30,11 @@ module JsonTableSchema
 
       def fields
         @schema['fields']
+      end
+
+      def transform(name)
+        name.downcase! if @opts[:case_insensitive_headers]
+        name
       end
 
   end
