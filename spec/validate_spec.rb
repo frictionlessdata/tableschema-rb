@@ -14,20 +14,19 @@ describe JsonTableSchema::Schema do
     expect(schema.valid?).to eq(true)
   end
 
-  #
-  # def test_schema_valid_pk_string(self):
-  #   filepath = os.path.join(self.data_dir, 'schema_valid_pk_string.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   valid = jsontableschema.validate(schema)
-  #   self.assertTrue(valid)
-  #
-  # def test_schema_valid_pk_array(self):
-  #   filepath = os.path.join(self.data_dir, 'schema_valid_pk_array.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   valid = jsontableschema.validate(schema)
-  #   self.assertTrue(valid)
+  it 'should validate a schema with a primary key as a string' do
+    schema = load_schema('schema_valid_pk_string.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(true)
+  end
+
+  it 'should validate a schema with a primary key as an array' do
+    schema = load_schema('schema_valid_pk_array.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(true)
+  end
+
+
   #
   # def test_schema_invalid_empty(self):
   #   filepath = os.path.join(self.data_dir, 'schema_invalid_empty.json')
