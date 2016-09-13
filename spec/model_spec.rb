@@ -115,18 +115,20 @@ describe JsonTableSchema::Model do
     expect(s.get_fields_by_type('string').count).to eq(2)
   end
 
+  it 'does not set fields as required by default' do
+     hash = {
+       "fields" => [
+        {"name" => "id", "constraints" => {"required" => true}},
+        {"name" => "label"}
+       ]
+     }
+
+     s = JsonTableSchema::Schema.new(hash)
+     expect(s.required_headers.count).to eq(1)
+  end
+
 end
 
-#
-# def test_invalid_jts_raises(self):
-#     source = os.path.join(self.data_dir, 'schema_invalid_empty.json')
-#
-#     self.assertRaises(exceptions.InvalidSchemaError,
-#                       model.SchemaModel, source)
-#
-# def test_defaults_are_set(self):
-#     m = model.SchemaModel(self.schema_min)
-#     self.assertEqual(len(m.get_fields_by_type('string')), 2)
 #
 # def test_fields_arent_required_by_default(self):
 #     schema = {
@@ -285,3 +287,14 @@ end
 #                    ['string', '10.0', '1', 'string', 'string']],
 #                   fail_fast=True)
 #     )
+
+
+
+
+
+
+# def test_invalid_jts_raises(self):
+#     source = os.path.join(self.data_dir, 'schema_invalid_empty.json')
+#
+#     self.assertRaises(exceptions.InvalidSchemaError,
+#                       model.SchemaModel, source)
