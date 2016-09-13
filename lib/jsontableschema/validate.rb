@@ -15,7 +15,10 @@ module JsonTableSchema
 
     def validate
       @messages = JSON::Validator.fully_validate(@validator, @schema)
-      check_primary_keys if @schema.class == Hash
+      if @schema.class == Hash
+        check_primary_keys
+        check_foreign_keys
+      end
     end
 
     def check_primary_keys
@@ -23,6 +26,17 @@ module JsonTableSchema
       [@schema['primaryKey']].flatten.each do |pk|
         if @schema['fields'].select { |f| pk == f['name'] }.count == 0
           @messages << "The JSON Table Schema primaryKey value `#{pk}` is not found in any of the schema's field names"
+        end
+      end
+    end
+
+    def check_foreign_keys
+      return if @schema['foreignKeys'].nil?
+      @schema['foreignKeys'].each do |keys|
+        [keys['fields']].flatten.each do |fk|
+          if @schema['fields'].select { |f| fk == f['name'] }.count == 0
+            @messages << "The JSON Table Schema foreignKey.fields value `#{fk}` is not found in any of the schema's field names"
+          end
         end
       end
     end

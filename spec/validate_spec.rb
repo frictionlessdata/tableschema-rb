@@ -50,6 +50,29 @@ describe JsonTableSchema::Schema do
     expect(schema.valid?).to eq(false)
   end
 
+  it 'should return true with a valid foreign key string' do
+    schema = load_schema('schema_valid_fk_string.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(true)
+  end
+
+  it 'should return true with a valid foreign key self reference' do
+    schema = load_schema('schema_valid_fk_string_self_referencing.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(true)
+  end
+
+  it 'should return true with a valid foreign key array' do
+    schema = load_schema('schema_valid_fk_array.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(true)
+  end
+
+  it 'should return false with an invalid foreign key string' do
+    schema = load_schema('schema_invalid_fk_string.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
   #
   # def test_schema_valid_fk_string(self):
   #   filepath = os.path.join(self.data_dir, 'schema_valid_fk_string.json')
