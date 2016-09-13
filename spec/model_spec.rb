@@ -63,6 +63,11 @@ describe JsonTableSchema::Model do
     expect(s.headers.count).to eq(5)
   end
 
+  it "returns required headers" do
+    s = JsonTableSchema::Schema.new(schema)
+    expect(s.required_headers.count).to eq(2)
+  end
+
 end
 
 # def test_headers(self):
