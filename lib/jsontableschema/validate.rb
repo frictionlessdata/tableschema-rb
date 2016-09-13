@@ -38,6 +38,9 @@ module JsonTableSchema
             @messages << "The JSON Table Schema foreignKey.fields value `#{fk}` is not found in any of the schema's field names"
           end
         end
+        if keys['reference'] &&([keys['fields']].flatten.count != [keys['reference']['fields']].flatten.count)
+          @messages << "A JSON Table Schema foreignKey.fields must contain the same number entries as foreignKey.reference.fields."
+        end
       end
     end
 

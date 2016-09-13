@@ -73,85 +73,38 @@ describe JsonTableSchema::Schema do
     schema = JsonTableSchema::Schema.new(schema)
     expect(schema.valid?).to eq(false)
   end
-  #
-  # def test_schema_valid_fk_string(self):
-  #   filepath = os.path.join(self.data_dir, 'schema_valid_fk_string.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   valid = jsontableschema.validate(schema)
-  #   self.assertTrue(valid)
-  #
-  # def test_schema_valid_fk_string_self_ref(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_valid_fk_string_self_referencing.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   valid = jsontableschema.validate(schema)
-  #   self.assertTrue(valid)
-  #
-  # def test_schema_valid_fk_array(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_valid_fk_array.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   valid = jsontableschema.validate(schema)
-  #   self.assertTrue(valid)
-  #
-  # def test_schema_invalid_fk_string(self):
-  #   filepath = os.path.join(self.data_dir, 'schema_invalid_fk_string.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
-  #
-  # def test_schema_invalid_fk_no_reference(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_invalid_fk_no_reference.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
-  #
-  # def test_schema_invalid_fk_array(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_invalid_fk_array.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
-  #
-  # def test_schema_invalid_fk_ref_is_an_array_fields_is_a_string(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_invalid_fk_string_array_ref.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
-  #
-  # def test_schema_invalid_fk_reference_is_a_string_fields_is_an_array(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_invalid_fk_array_string_ref.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
-  #
-  # def test_schema_invalid_fk_reference_array_number_mismatch(self):
-  #   '''the number of foreignKey.fields is not the same as
-  #   'foreignKey.reference.fields'
-  #   '''
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_invalid_fk_array_wrong_number.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
+
+  it 'should return false with a foreign key with no reference' do
+    schema = load_schema('schema_invalid_fk_no_reference.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
+
+  it 'should return false with an invalid foreign key array' do
+    schema = load_schema('schema_invalid_fk_array.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
+
+  it 'should return false where foreign key reference is an array and fields are a string' do
+    schema = load_schema('schema_invalid_fk_string_array_ref.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
+
+  it 'should return false where foreign key reference is an string and fields are an array' do
+    schema = load_schema('schema_invalid_fk_string_array_ref.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
+
+  it 'should return false where there is a foreign key reference and field count mismatch' do
+    schema = load_schema('schema_invalid_fk_array_wrong_number.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
+
+
   #
   # def test_primary_key_is_not_a_valid_type(self):
   #   filepath = os.path.join(self.data_dir,
