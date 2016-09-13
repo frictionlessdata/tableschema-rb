@@ -5,6 +5,7 @@ module JsonTableSchema
     def initialize(schema)
       @schema = schema
       @messages = []
+      load_validator!
     end
 
   end
