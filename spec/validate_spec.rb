@@ -8,19 +8,12 @@ describe JsonTableSchema::Schema do
     expect(schema.valid?).to eq(true)
   end
 
-  # def test_schema_valid_simple(self):
-  #   filepath = os.path.join(self.data_dir, 'schema_valid_simple.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   valid = jsontableschema.validate(schema)
-  #   self.assertTrue(valid)
-  #
-  # def test_schema_valid_full(self):
-  #   filepath = os.path.join(self.data_dir, 'schema_valid_full.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   valid = jsontableschema.validate(schema)
-  #   self.assertTrue(valid)
+  it 'should validate a full schema' do
+    schema = load_schema('schema_valid_full.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(true)
+  end
+
   #
   # def test_schema_valid_pk_string(self):
   #   filepath = os.path.join(self.data_dir, 'schema_valid_pk_string.json')
