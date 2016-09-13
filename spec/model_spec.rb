@@ -68,15 +68,22 @@ describe JsonTableSchema::Model do
     expect(s.required_headers.count).to eq(2)
   end
 
+  context "check for field presence" do
+
+    it "returns true" do
+      s = JsonTableSchema::Schema.new(schema)
+      expect(s.has_field?('name')).to be true
+    end
+
+    it "returns false" do
+      s = JsonTableSchema::Schema.new(schema)
+      expect(s.has_field?('religion')).to be false
+    end
+
+  end
+
 end
 
-# def test_headers(self):
-#     m = model.SchemaModel(self.schema)
-#     self.assertEqual(len(m.headers), 5)
-#
-# def test_required_headers(self):
-#     m = model.SchemaModel(self.schema)
-#     self.assertEqual(len(m.required_headers), 2)
 #
 # def test_has_field_true(self):
 #     m = model.SchemaModel(self.schema)

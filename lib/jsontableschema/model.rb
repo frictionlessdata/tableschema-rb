@@ -14,6 +14,14 @@ module JsonTableSchema
       []
     end
 
+    def has_field?(key)
+      get_field(key) != nil
+    end
+
+    def get_field(key)
+      fields.find { |f| f['name'] == key }
+    end
+
     private
 
       def fields
