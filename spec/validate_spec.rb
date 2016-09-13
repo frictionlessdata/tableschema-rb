@@ -26,6 +26,11 @@ describe JsonTableSchema::Schema do
     expect(schema.valid?).to eq(true)
   end
 
+  it 'should return false for an empty schema' do
+    schema = load_schema('schema_invalid_empty.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
 
   #
   # def test_schema_invalid_empty(self):
