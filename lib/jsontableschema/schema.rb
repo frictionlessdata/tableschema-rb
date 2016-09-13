@@ -1,17 +1,12 @@
 module JsonTableSchema
   class Schema
     include JsonTableSchema::Validate
+    include JsonTableSchema::Model
 
     def initialize(schema)
       @schema = schema
       @messages = []
       load_validator!
-    end
-
-    def field_names
-      @schema['fields'].map { |f| f['name'] }
-    rescue NoMethodError
-      []
     end
 
   end

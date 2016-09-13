@@ -37,7 +37,7 @@ module JsonTableSchema
       end
 
       def check_field_value(key, type)
-        add_error("The JSON Table Schema #{type} value `#{key}` is not found in any of the schema's field names") if field_names.select { |f| key == f }.count == 0
+        add_error("The JSON Table Schema #{type} value `#{key}` is not found in any of the schema's field names") if headers.select { |f| key == f }.count == 0
       end
 
       def primary_keys
