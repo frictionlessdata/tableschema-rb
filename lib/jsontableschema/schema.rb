@@ -1,10 +1,10 @@
 module JsonTableSchema
-  class Schema
+  class Schema < Hash
     include JsonTableSchema::Validate
     include JsonTableSchema::Model
 
     def initialize(schema, opts = {})
-      @schema = schema
+      self.merge! schema
       @messages = []
       @opts = opts
       load_validator!

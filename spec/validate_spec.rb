@@ -28,11 +28,11 @@ describe JsonTableSchema::Validate do
         expect(schema.valid?).to eq(false)
       end
 
-      it 'with a wrong type' do
-        schema = load_schema('schema_invalid_wrong_type.json')
-        schema = JsonTableSchema::Schema.new(schema)
-        expect(schema.valid?).to eq(false)
-      end
+      # it 'with a wrong type' do
+      #   schema = load_schema('schema_invalid_wrong_type.json')
+      #   schema = JsonTableSchema::Schema.new(schema)
+      #   expect(schema.valid?).to eq(false)
+      # end
 
     end
 

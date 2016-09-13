@@ -112,17 +112,6 @@ describe JsonTableSchema::Model do
 
 end
 
-
-#
-# def test_case_insensitive_headers(self):
-#     _schema = copy.deepcopy(self.schema)
-#     for field in _schema['fields']:
-#         field['name'] = field['name'].title()
-#
-#     m = model.SchemaModel(_schema, case_insensitive_headers=True)
-#     expected = set(['id', 'height', 'name', 'age', 'occupation'])
-#
-#     self.assertEqual(set(m.headers), expected)
 #
 # def test_invalid_json_raises(self):
 #     source = os.path.join(self.data_dir, 'data_infer.csv')

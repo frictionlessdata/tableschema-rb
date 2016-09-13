@@ -29,7 +29,7 @@ module JsonTableSchema
     private
 
       def fields
-        @schema['fields']
+        self['fields']
       end
 
       def transform(name)
