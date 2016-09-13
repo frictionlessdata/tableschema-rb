@@ -13,7 +13,7 @@ module JsonTableSchema
     end
 
     def required_headers
-      fields.select { |f| f['constraints']['required'] == true }
+      fields.select { |f| f['constraints']!= nil && f['constraints']['required'] == true }
             .map { |f| transform(f['name']) }
     rescue NoMethodError
       []
