@@ -110,14 +110,13 @@ describe JsonTableSchema::Model do
 
   end
 
+  it 'sets defaults' do
+    s = JsonTableSchema::Schema.new(schema_min)
+    expect(s.get_fields_by_type('string').count).to eq(2)
+  end
+
 end
 
-#
-# def test_invalid_json_raises(self):
-#     source = os.path.join(self.data_dir, 'data_infer.csv')
-#
-#     self.assertRaises(exceptions.InvalidJSONError,
-#                       model.SchemaModel, source)
 #
 # def test_invalid_jts_raises(self):
 #     source = os.path.join(self.data_dir, 'schema_invalid_empty.json')

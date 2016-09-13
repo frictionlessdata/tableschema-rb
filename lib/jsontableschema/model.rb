@@ -1,6 +1,11 @@
 module JsonTableSchema
   module Model
 
+    DEFAULTS = {
+      'format' => 'default',
+      'type' => 'string'
+    }
+
     def headers
       fields.map { |f| transform(f['name']) }
     rescue NoMethodError
@@ -35,6 +40,13 @@ module JsonTableSchema
       def transform(name)
         name.downcase! if @opts[:case_insensitive_headers]
         name
+      end
+
+      def expand!
+        (self['fields'] || []).each do |f|
+          f['type'] = DEFAULTS['type'] if f['type'] == nil
+          f['format'] = DEFAULTS['format'] if f['format'] == nil
+        end
       end
 
   end

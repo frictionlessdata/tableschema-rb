@@ -8,6 +8,7 @@ module JsonTableSchema
       @messages = []
       @opts = opts
       load_validator!
+      expand!
     end
 
     def parse_schema(schema)
