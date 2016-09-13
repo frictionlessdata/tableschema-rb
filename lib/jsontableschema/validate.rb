@@ -24,7 +24,7 @@ module JsonTableSchema
     def check_primary_keys
       return if @schema['primaryKey'].nil?
       [@schema['primaryKey']].flatten.each do |pk|
-        if @schema['fields'].select { |f| pk == f['name'] }.count == 0
+        if field_names.select { |f| pk == f }.count == 0
           @messages << "The JSON Table Schema primaryKey value `#{pk}` is not found in any of the schema's field names"
         end
       end
@@ -34,7 +34,7 @@ module JsonTableSchema
       return if @schema['foreignKeys'].nil?
       @schema['foreignKeys'].each do |keys|
         [keys['fields']].flatten.each do |fk|
-          if @schema['fields'].select { |f| fk == f['name'] }.count == 0
+          if field_names.select { |f| fk == f }.count == 0
             @messages << "The JSON Table Schema foreignKey.fields value `#{fk}` is not found in any of the schema's field names"
           end
         end

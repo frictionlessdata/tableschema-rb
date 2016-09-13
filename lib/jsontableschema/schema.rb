@@ -8,5 +8,11 @@ module JsonTableSchema
       load_validator!
     end
 
+    def field_names
+      @schema['fields'].map { |f| f['name'] }
+    rescue NoMethodError
+      []
+    end
+
   end
 end
