@@ -104,6 +104,12 @@ describe JsonTableSchema::Schema do
     expect(schema.valid?).to eq(false)
   end
 
+  it 'should return false when the primary key is not a valid type' do
+    schema = load_schema('schema_invalid_pk_is_wrong_type.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
+
 
   #
   # def test_primary_key_is_not_a_valid_type(self):
