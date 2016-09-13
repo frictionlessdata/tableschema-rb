@@ -38,31 +38,18 @@ describe JsonTableSchema::Schema do
     expect(schema.valid?).to eq(false)
   end
 
+  it 'should return false when primary key string value is wrong' do
+    schema = load_schema('schema_invalid_pk_string.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
 
-  # def test_schema_invalid_wrong_type(self):
-  #   filepath = os.path.join(self.data_dir,
-  #                           'schema_invalid_wrong_type.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
-  #
-  # def test_schema_invalid_pk_string(self):
-  #   filepath = os.path.join(self.data_dir, 'schema_invalid_pk_string.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
-  #
-  # def test_schema_invalid_pk_array(self):
-  #   filepath = os.path.join(self.data_dir, 'schema_invalid_pk_array.json')
-  #   with io.open(filepath) as stream:
-  #       schema = json.load(stream)
-  #   self.assertRaises(jsontableschema.exceptions.SchemaValidationError,
-  #                     jsontableschema.validate,
-  #                     schema)
+  it 'should return false when primary key array value is wrong' do
+    schema = load_schema('schema_invalid_pk_array.json')
+    schema = JsonTableSchema::Schema.new(schema)
+    expect(schema.valid?).to eq(false)
+  end
+
   #
   # def test_schema_valid_fk_string(self):
   #   filepath = os.path.join(self.data_dir, 'schema_valid_fk_string.json')
