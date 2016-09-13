@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Schema do
+describe JsonTableSchema::Validate do
 
   context 'simple validation' do
 
