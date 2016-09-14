@@ -314,54 +314,54 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe JsonTableSchema::Types::Null do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'boolean',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::Null.new(field) }
+
+    it 'casts simple values' do
+      value = 'null'
+      expect(type.cast(value)).to be nil
+
+      value = 'null'
+      expect(type.cast(value)).to be nil
+
+      value = 'none'
+      expect(type.cast(value)).to be nil
+
+      value = 'nil'
+      expect(type.cast(value)).to be nil
+
+      value = 'nan'
+      expect(type.cast(value)).to be nil
+
+      value = '-'
+      expect(type.cast(value)).to be nil
+
+      value = ''
+      expect(type.cast(value)).to be nil
+    end
+
+    it 'raises for non null values' do
+      value = 'nothing'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+    end
+
+  end
+
 
 end
 
-#
-#
-# class TestNull(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestNull, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'null',
-#             'format': 'default',
-#             'constraints': {
-#                 # Can't init NullType if field is required
-#                 'required': False,
-#             }
-#         }
-#
-#     def test_null_type_simple_true(self):
-#         _type = types.NullType(self.field)
-#
-#         value = 'null'
-#         self.assertIs(None, _type.cast(value))
-#
-#         value = 'null'
-#         self.assertIs(None, _type.cast(value))
-#
-#         value = 'none'
-#         self.assertIs(None, _type.cast(value))
-#
-#         value = 'nil'
-#         self.assertIs(None, _type.cast(value))
-#
-#         value = 'nan'
-#         self.assertIs(None, _type.cast(value))
-#
-#         value = '-'
-#         self.assertIs(None, _type.cast(value))
-#
-#         # spec says '' is considered missing, but '' is a valid null type
-#         # value = ''
-#         # self.assertIs(None, _type.cast(value))
-#
-#     def test_null_type_simple_false(self):
-#         value = 'isnull'
-#         _type = types.NullType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidNoneType, _type.cast, value)
 #
 #
 # class TestObject(base.BaseTestCase):
