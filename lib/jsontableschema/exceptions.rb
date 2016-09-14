@@ -13,4 +13,5 @@ module JsonTableSchema
   class InvalidURI < Exception ; end
   class InvalidUUID < Exception ; end
   class InvalidObjectType < Exception ; end
+  class InvalidArrayType < Exception ; end
 end
