@@ -90,6 +90,20 @@ describe JsonTableSchema::Model do
     expect(s.get_fields_by_type('integer').count).to eq(1)
   end
 
+  context 'get type' do
+
+    it 'gets the type of a field' do
+      s = JsonTableSchema::Schema.new(schema)
+      expect(s.get_type('id')).to eq('string')
+    end
+
+    it 'gets a default type' do
+      s = JsonTableSchema::Schema.new(schema_min)
+      expect(s.get_type('id')).to eq('string')
+    end
+
+  end
+
   context 'case insensitive headers' do
 
     let(:new_schema) {

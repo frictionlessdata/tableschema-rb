@@ -130,7 +130,8 @@ schema.get_field('id')
 #=> {"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}
 schema.has_field?('foo')
 #=> false
-schema.get_type('id') # TODO
+schema.get_type('id')
+#=> 'string'
 schema.get_fields_by_type('string')
 #=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
 schema.get_constraints('id') # TODO

@@ -24,6 +24,10 @@ module JsonTableSchema
       self['foreignKeys'] || []
     end
 
+    def get_type(key)
+      get_field(key)['type']
+    end
+
     def required_headers
       fields.select { |f| f['constraints']!= nil && f['constraints']['required'] == true }
             .map { |f| transform(f['name']) }
