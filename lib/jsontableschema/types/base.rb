@@ -10,8 +10,12 @@ module JsonTableSchema
 
       def cast(value)
         send("cast_#{@format}", value)
-      rescue NoMethodError
-        raise(JsonTableSchema::InvalidFormat.new("The format `#{@format}` is not supported by the type `#{@type}`"))
+      rescue NoMethodError => e
+        if e.message.start_with?('undefined method `cast_')
+          raise(JsonTableSchema::InvalidFormat.new("The format `#{@format}` is not supported by the type `#{@type}`"))
+        else
+          raise e
+        end
       end
 
     end

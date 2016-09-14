@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe JsonTableSchema::Types do
 
-  describe String do
+  describe ::String do
 
     let(:field) {
       {
@@ -113,122 +113,131 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe JsonTableSchema::Types::Number do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'number',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::Number.new(field) }
+
+    it 'casts a simple number' do
+      value = '10.00'
+      expect(type.cast(value)).to eq(Float('10.00'))
+    end
+
+    it 'casts when the value is already cast' do
+      [1, 1.0, Float(1)].each do |value|
+        ['default', 'currency'].each do |format|
+          field['format'] = format
+          type = JsonTableSchema::Types::Number.new(field)
+          expect(type.cast(value)).to eq(Float(value))
+        end
+      end
+    end
+
+    it 'returns an error if the value is not a number' do
+      value = 'string'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+    end
+
+    it 'casts with localized settings' do
+      [
+        '10,000.00',
+        '10,000,000.23',
+        '10.23',
+        '1,000',
+        '100%',
+        '1000‰'
+      ].each do |value|
+        expect { type.cast(value) }.to_not raise_error
+      end
+
+      field['groupChar'] = '#'
+      type = JsonTableSchema::Types::Number.new(field)
+
+      [
+        '10#000.00',
+        '10#000#000.23',
+        '10.23',
+        '1#000'
+      ].each do |value|
+        expect { type.cast(value) }.to_not raise_error
+      end
+
+      field['decimalChar'] = '@'
+      type = JsonTableSchema::Types::Number.new(field)
+
+      [
+        '10#000@00',
+        '10#000#000@23',
+        '10@23',
+        '1#000'
+      ].each do |value|
+        expect { type.cast(value) }.to_not raise_error
+      end
+
+    end
+
+    context 'currencies' do
+
+      let(:currency_field) {
+        field['format'] = 'currency'
+        field
+      }
+
+      let(:currency_type) {
+        JsonTableSchema::Types::Number.new(currency_field)
+      }
+
+      it 'casts successfully' do
+        [
+          '10,000.00',
+          '10,000,000.00',
+          '$10000.00',
+          '  10,000.00 €',
+        ].each do |value|
+          expect { currency_type.cast(value) }.to_not raise_error
+        end
+
+        field['decimalChar'] = ','
+        field['groupChar'] = ' '
+        currency_type = JsonTableSchema::Types::Number.new(currency_field)
+
+        [
+          '10 000,00',
+          '10 000 000,00',
+          '10000,00 ₪',
+          '  10 000,00 £',
+        ].each do |value|
+          expect { currency_type.cast(value) }.to_not raise_error
+        end
+      end
+
+      it 'returns an error with a currency and a duff format' do
+        value1 = '10,000a.00'
+        value2 = '10+000.00'
+        value3 = '$10:000.00'
+
+        expect { currency_type.cast(value1) }.to raise_error(JsonTableSchema::InvalidCast)
+        expect { currency_type.cast(value2) }.to raise_error(JsonTableSchema::InvalidCast)
+        expect { currency_type.cast(value3) }.to raise_error(JsonTableSchema::InvalidCast)
+      end
+
+    end
+
+  end
+
 end
 
-#
-#     def test_uuid(self):
-#         self.field['format'] = 'uuid'
-#         _type = types.StringType(self.field)
-#
-#         value = '12345678123456781234567812345678'
-#         self.assertEqual(_type.cast(value), value)
-#         value = 'urn:uuid:12345678-1234-5678-1234-567812345678'
-#         self.assertEqual(_type.cast(value), value)
-#         value = '123e4567-e89b-12d3-a456-426655440000'
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_uuid_failure(self):
-#         self.field['format'] = 'uuid'
-#         _type = types.StringType(self.field)
-#
-#         value = '1234567812345678123456781234567?'
-#         self.assertRaises(exceptions.InvalidUUID, _type.cast, value)
-#         value = '1234567812345678123456781234567'
-#         self.assertRaises(exceptions.InvalidUUID, _type.cast, value)
-#         value = 'X23e4567-e89b-12d3-a456-426655440000'
-#         self.assertRaises(exceptions.InvalidUUID, _type.cast, value)
-#
-#
-# class TestNumber(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestNumber, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'number',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True
-#             }
-#         }
-#
-#     def test_number_type_simple_true(self):
-#         value = '10.00'
-#         _type = types.NumberType(self.field)
-#
-#         self.assertEquals(_type.cast(value), Decimal(value))
-#
-#     def test_number_type_simple_false(self):
-#         value = 'string'
-#         _type = types.NumberType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidCastError, _type.cast, value)
-#
-#     def test_number_type_with_localized_settings(self):
-#         _type = types.NumberType(self.field)
-#         for value in [
-#             '10,000.00',
-#             '10,000,000.23',
-#             '10.23',
-#             '1,000',
-#             '100%',
-#             '1000‰'
-#         ]:
-#             self.assertTrue(_type.cast(value))
-#
-#         self.field['groupChar'] = '#'
-#         _type = types.NumberType(self.field)
-#         for value in [
-#             '10#000.00',
-#             '10#000#000.23',
-#             '10.23',
-#             '1#000'
-#         ]:
-#             self.assertTrue(_type.cast(value))
-#
-#         self.field['decimalChar'] = '@'
-#         _type = types.NumberType(self.field)
-#         for value in [
-#             '10#000@00',
-#             '10#000#000@23',
-#             '10@23',
-#             '1#000'
-#         ]:
-#             self.assertTrue(_type.cast(value))
-#
-#     def test_number_type_with_currency_format_true(self):
-#         self.field['format'] = 'currency'
-#         _type = types.NumberType(self.field)
-#         for value in [
-#             '10,000.00',
-#             '10,000,000.00',
-#             '$10000.00',
-#             '  10,000.00 €',
-#         ]:
-#             self.assertTrue(_type.cast(value))
-#
-#         self.field['decimalChar'] = ','
-#         self.field['groupChar'] = ' '
-#
-#         _type = types.NumberType(self.field)
-#         for value in [
-#             '10 000,00',
-#             '10 000 000,00',
-#             '10000,00 ₪',
-#             '  10 000,00 £',
-#         ]:
-#             self.assertTrue(_type.cast(value))
-#
-#
-#     def test_number_type_with_currency_format_false(self):
-#         value1 = '10,000a.00'
-#         value2 = '10+000.00'
-#         value3 = '$10:000.00'
-#         self.field['format'] = 'currency'
-#         _type = types.NumberType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidCastError, _type.cast, value1)
-#         self.assertRaises(exceptions.InvalidCastError, _type.cast, value2)
-#         self.assertRaises(exceptions.InvalidCastError, _type.cast, value3)
+
 #
 #     def test_number_type_with_already_cast_value(self):
 #         for value in [1, 1.0, Decimal(1)]:

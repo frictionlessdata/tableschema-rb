@@ -1,9 +1,11 @@
 require "json"
 require "json-schema"
 require "uuid"
+require "currencies"
 
 require "jsontableschema/version"
 require "jsontableschema/exceptions"
+require "jsontableschema/types/number"
 require "jsontableschema/types/string"
 require "jsontableschema/validate"
 require "jsontableschema/model"
