@@ -509,76 +509,67 @@ describe JsonTableSchema::Types do
       end
     end
 
+  end
+
+  describe JsonTableSchema::Types::Time do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'time',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::Time.new(field) }
+
+    it 'casts a standard ISO8601 time string' do
+      value = '06:00:00'
+      expect(type.cast(value)).to eq(Tod::TimeOfDay.new(6,0))
+    end
+
+    it 'raises an error when the string is not iso8601' do
+      value = '3 am'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+    end
+
+    it 'parses a generic time string' do
+      value = '3:00 am'
+      field['format'] = 'any'
+      type = JsonTableSchema::Types::Time.new(field)
+      expect(type.cast(value)).to eq(Tod::TimeOfDay.new(3,0))
+    end
+
+    it 'raises an error when type format is incorrect' do
+      value = 3.00
+      self.field['format'] = 'fmt:any'
+      type = JsonTableSchema::Types::Time.new(field)
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+
+      value = {}
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+
+      value = []
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+    end
+
+    it 'works with an already cast value' do
+      value = Tod::TimeOfDay.new(06,00)
+      ['default', 'any', 'fmt:any'].each do |f|
+        field['format'] = f
+        type = JsonTableSchema::Types::Time.new(field)
+        expect(type.cast(value)).to eq(value)
+      end
+    end
 
   end
 
 
 end
 
-
-#
-#     def test_date_type_with_already_cast_value(self):
-#         for value in [date(2015, 1, 1)]:
-#             for format in ['default', 'any', 'fmt:%Y-%m-%d']:
-#                 self.field['format'] = format
-#                 _type = types.DateType(self.field)
-#                 self.assertEqual(_type.cast(value), value)
-#
-#
-# class TestTime(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestTime, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'time',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True
-#             }
-#         }
-#
-#     def test_time_type_default(self):
-#         value = '06:00:00'
-#         _type = types.TimeType(self.field)
-#         self.assertEquals(_type.cast(value), time(6))
-#
-#     def test_time_type_non_iso_raises_error(self):
-#         value = '3 am'
-#         _type = types.TimeType(self.field)
-#         self.assertRaises(exceptions.InvalidTimeType, _type.cast, value)
-#
-#     def test_time_type_parsing(self):
-#         value = '3:00 am'
-#         self.field['format'] = 'any'
-#         _type = types.TimeType(self.field)
-#         self.assertEquals(_type.cast(value), time(3))
-#
-#     def test_time_type_format(self):
-#         value = '3:00'
-#         self.field['format'] = 'fmt:%H:%M'
-#         _type = types.TimeType(self.field)
-#         self.assertEquals(_type.cast(value), time(3))
-#
-#     def test_time_invalid_type_format(self):
-#         value = 3.00
-#         self.field['format'] = 'fmt:any'
-#         _type = types.TimeType(self.field)
-#         self.assertRaises(exceptions.InvalidTimeType, _type.cast, value)
-#
-#         value = {}
-#         _type = types.TimeType(self.field)
-#         self.assertRaises(exceptions.InvalidTimeType, _type.cast, value)
-#
-#         value = []
-#         _type = types.TimeType(self.field)
-#         self.assertRaises(exceptions.InvalidTimeType, _type.cast, value)
-#
-#     def test_time_type_with_already_cast_value(self):
-#         for value in [time(12, 0, 0)]:
-#             for format in ['default', 'any', 'fmt:any']:
-#                 self.field['format'] = format
-#                 _type = types.TimeType(self.field)
-#                 self.assertEqual(_type.cast(value), value)
 #
 #
 # class TestDateTime(base.BaseTestCase):
