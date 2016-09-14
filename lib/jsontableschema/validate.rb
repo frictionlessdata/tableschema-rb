@@ -29,7 +29,7 @@ module JsonTableSchema
       def check_foreign_keys
         return if self['foreignKeys'].nil?
         self['foreignKeys'].each do |keys|
-          foreign_keys(keys).each { |fk| check_field_value(fk, 'foreignKey.fields') }
+          foreign_key_fields(keys).each { |fk| check_field_value(fk, 'foreignKey.fields') }
           add_error("A JSON Table Schema foreignKey.fields must contain the same number entries as foreignKey.reference.fields.") if field_count_mismatch?(keys)
         end
       end
@@ -42,7 +42,7 @@ module JsonTableSchema
         [self['primaryKey']].flatten
       end
 
-      def foreign_keys(keys)
+      def foreign_key_fields(keys)
         [keys['fields']].flatten
       end
 

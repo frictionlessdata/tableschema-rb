@@ -100,7 +100,17 @@ schema_hash = {
           "type" => "string"
       }
   ],
-  "primaryKey" => "id"
+  "primaryKey" => "id",
+  "foreignKeys" => [
+    {
+        "fields" => "state",
+        "reference" => {
+            "datapackage" => "http://data.okfn.org/data/mydatapackage/",
+            "resource" => "the-resource",
+            "fields" => "state_id"
+        }
+    }
+  ]
 }
 
 schema = JsonTableSchema::Schema.new(schema_hash)
@@ -113,7 +123,8 @@ schema.fields
 #=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
 schema.primary_key
 #=> "id"
-schema.foreign_key # TODO
+schema.foreign_keys
+#=> [{"fields" => "state", "reference" => { "datapackage" => "http://data.okfn.org/data/mydatapackage/", "resource" => "the-resource", "fields" => "state_id" } } ]
 schema.cast(field_name, value) #TODO
 schema.get_field('id')
 #=> {"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}

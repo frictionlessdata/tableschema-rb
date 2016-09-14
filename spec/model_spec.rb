@@ -141,9 +141,63 @@ describe JsonTableSchema::Model do
       expect(s.primary_key).to eq(['id', 'title'])
     end
 
-    it 'returns nil if there is not primary key' do
+    it 'returns nil if there is no primary key' do
       s = JsonTableSchema::Schema.new(schema_min)
       expect(s.primary_key).to eq(nil)
+    end
+
+  end
+
+  context 'foreign key' do
+
+    it 'with a valid foreign key string' do
+      schema = load_schema('schema_valid_fk_string.json')
+      schema = JsonTableSchema::Schema.new(schema)
+      expect(schema.foreign_keys).to eq([
+        {
+            "fields" => "state",
+            "reference" => {
+                "datapackage" => "http://data.okfn.org/data/mydatapackage/",
+                "resource" => "the-resource",
+                "fields" => "state_id"
+            }
+        }
+      ])
+    end
+
+    it 'with a valid foreign key self reference' do
+      schema = load_schema('schema_valid_fk_string_self_referencing.json')
+      schema = JsonTableSchema::Schema.new(schema)
+      expect(schema.foreign_keys).to eq([
+        {
+            "fields" => "parent",
+            "reference" => {
+                "datapackage" => "",
+                "resource" => "self",
+                "fields" => "id"
+            }
+        }
+      ])
+    end
+
+    it 'with a valid foreign key array' do
+      schema = load_schema('schema_valid_fk_array.json')
+      schema = JsonTableSchema::Schema.new(schema)
+      expect(schema.foreign_keys).to eq([
+          {
+              "fields" => ["id", "title"],
+              "reference" => {
+                  "datapackage" => "http://data.okfn.org/data/mydatapackage/",
+                  "resource" => "the-resource",
+                  "fields" => ["fk_id", "title_id"]
+              }
+          }
+      ])
+    end
+
+    it 'returns an empty array if there is no foreign key' do
+      s = JsonTableSchema::Schema.new(schema_min)
+      expect(s.foreign_keys).to eq([])
     end
 
   end
