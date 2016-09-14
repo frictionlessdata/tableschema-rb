@@ -129,21 +129,21 @@ describe JsonTableSchema::Model do
 
   context 'primary key' do
 
-    it 'returns the primary key as a string' do
+    it 'returns a single primary key as an array' do
       schema = load_schema('schema_valid_pk_string.json')
       s = JsonTableSchema::Schema.new(schema)
-      expect(s.primary_key).to eq('id')
+      expect(s.primary_keys).to eq(['id'])
     end
 
     it 'returns the primary key as an array' do
       schema = load_schema('schema_valid_pk_array.json')
       s = JsonTableSchema::Schema.new(schema)
-      expect(s.primary_key).to eq(['id', 'title'])
+      expect(s.primary_keys).to eq(['id', 'title'])
     end
 
-    it 'returns nil if there is no primary key' do
+    it 'returns an empty array if there is no primary key' do
       s = JsonTableSchema::Schema.new(schema_min)
-      expect(s.primary_key).to eq(nil)
+      expect(s.primary_keys).to eq([])
     end
 
   end

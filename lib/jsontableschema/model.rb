@@ -16,8 +16,8 @@ module JsonTableSchema
       self['fields']
     end
 
-    def primary_key
-      self['primaryKey']
+    def primary_keys
+      [self['primaryKey']].flatten.reject { |k| k.nil? }
     end
 
     def foreign_keys

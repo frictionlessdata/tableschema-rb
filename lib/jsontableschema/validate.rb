@@ -38,10 +38,6 @@ module JsonTableSchema
         add_error("The JSON Table Schema #{type} value `#{key}` is not found in any of the schema's field names") if headers.select { |f| key == f }.count == 0
       end
 
-      def primary_keys
-        [self['primaryKey']].flatten
-      end
-
       def foreign_key_fields(keys)
         [keys['fields']].flatten
       end

@@ -121,8 +121,8 @@ schema.required_headers
 #=> ["id"]
 schema.fields
 #=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
-schema.primary_key
-#=> "id"
+schema.primary_keys
+#=> ["id"]
 schema.foreign_keys
 #=> [{"fields" => "state", "reference" => { "datapackage" => "http://data.okfn.org/data/mydatapackage/", "resource" => "the-resource", "fields" => "state_id" } } ]
 schema.cast(field_name, value) #TODO
