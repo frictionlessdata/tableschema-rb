@@ -6,4 +6,10 @@ module JsonTableSchema
       @message = message
     end
   end
+
+  class InvalidFormat < Exception ; end
+  class InvalidCast < Exception ; end
+  class InvalidEmail < Exception ; end
+  class InvalidURI < Exception ; end
+  class InvalidUUID < Exception ; end
 end

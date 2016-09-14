@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "coveralls", "~> 0.8.13"
 
   spec.add_dependency "json-schema", "~> 2.6.0"
+  spec.add_dependency "uuid", "~> 2.3.8"
 end
