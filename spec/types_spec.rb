@@ -433,106 +433,89 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe JsonTableSchema::Types::Date do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'date',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::Date.new(field) }
+
+    it 'casts a standard ISO8601 date string' do
+      value = '2019-01-01'
+      expect(type.cast(value)).to eq(Date.new(2019,01,01))
+    end
+
+    it 'returns an error for a non ISO8601 date string by default' do
+      value = '29/11/2015'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
+    end
+
+    it 'casts any parseable date' do
+      value = '10th Jan 1969'
+      field['format'] = 'any'
+      type = JsonTableSchema::Types::Date.new(field)
+      expect(type.cast(value)).to eq(Date.new(1969,01,10))
+    end
+
+    it 'raises an error for any when date is unparsable' do
+      value = '10th Jan nineteen sixty nine'
+      field['format'] = 'any'
+      type = JsonTableSchema::Types::Date.new(field)
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
+    end
+
+    it 'casts with a specified date format' do
+      value = '10/06/2014'
+      field['format'] = 'fmt:%d/%m/%Y'
+      type = JsonTableSchema::Types::Date.new(field)
+      expect(type.cast(value)).to eq(Date.new(2014,06,10))
+    end
+
+    it 'assumes the first day of the month' do
+      value = '2014-06'
+      field['format'] = 'fmt:%Y-%m'
+      type = JsonTableSchema::Types::Date.new(field)
+      expect(type.cast(value)).to eq(Date.new(2014,06,01))
+    end
+
+    it 'raises an error for an invalid fmt' do
+      value = '2014/12/19'
+      field['type'] = 'fmt:DD/MM/YYYY'
+      type = JsonTableSchema::Types::Date.new(field)
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
+    end
+
+    it 'raises an error for a valid fmt and invalid value' do
+      value = '2014/12/19'
+      field['type'] = 'fmt:%m/%d/%y'
+      type = JsonTableSchema::Types::Date.new(field)
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
+    end
+
+    it 'works with an already cast value' do
+      value = Date.new(2014,06,01)
+      ['default', 'any', 'fmt:%Y-%m-%d'].each do |f|
+        field['format'] = f
+        type = JsonTableSchema::Types::Date.new(field)
+        expect(type.cast(value)).to eq(value)
+      end
+    end
+
+
+  end
+
 
 end
 
-#
-#
-# class TestArray(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestArray, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'array',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True
-#             }
-#         }
-#
-#     def test_array_type_simple_true(self):
-#         value = ['1', '2']
-#         _type = types.ArrayType(self.field)
-#         self.assertEquals(_type.cast(value), value)
-#
-#     def test_array_type_simple_json_string(self):
-#         value = '["1", "2"]'
-#         _type = types.ArrayType(self.field)
-#         self.assertEquals(_type.cast(value), [u'1', u'2'])
-#
-#     def test_array_type_simple_false(self):
-#         value = 'string, string'
-#         _type = types.ArrayType(self.field)
-#         self.assertRaises(exceptions.InvalidArrayType, _type.cast, value)
-#
-#
-# class TestDate(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestDate, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'date',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True
-#             }
-#         }
-#
-#     def test_date_from_string_iso_format(self):
-#         value = '2019-01-01'
-#         _type = types.DateType(self.field)
-#
-#         self.assertEquals(_type.cast(value), date(2019, 1, 1))
-#
-#     def test_date_type_any_true(self):
-#         value = '10th Jan 1969'
-#         self.field['format'] = 'any'
-#         _type = types.DateType(self.field)
-#
-#         self.assertEquals(_type.cast(value), date(1969, 1, 10))
-#
-#     def test_date_type_fmt(self):
-#
-#         value = '10/06/2014'
-#         self.field['format'] = 'fmt:%d/%m/%Y'
-#         _type = types.DateType(self.field)
-#
-#         self.assertEquals(_type.cast(value), date(2014, 6, 10))
-#
-#     def test_date_type_fmt_stripping_bug(self):
-#
-#         value = '2014-06'
-#         self.field['format'] = 'fmt:%Y-%m'
-#         _type = types.DateType(self.field)
-#
-#         self.assertEquals(_type.cast(value), date(2014, 6, 1))
-#
-#     def test_non_iso_date_fails_for_default(self):
-#         value = '01-01-2019'
-#         _type = types.DateType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidDateType, _type.cast, value)
-#
-#     def test_date_type_any_parser_fail(self):
-#         value = '10th Jan nineteen sixty nine'
-#         self.field['format'] = 'any'
-#         _type = types.DateType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidDateType, _type.cast, value)
-#
-#     def test_invalid_fmt(self):
-#         value = '2014/12/19'
-#         self.field['type'] = 'fmt:DD/MM/YYYY'
-#         _type = types.DateType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidDateType, _type.cast, value)
-#
-#     def test_valid_fmt_invalid_value(self):
-#         value = '2014/12/19'
-#         self.field['type'] = 'fmt:%m/%d/%y'
-#         _type = types.DateType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidDateType, _type.cast, value)
+
 #
 #     def test_date_type_with_already_cast_value(self):
 #         for value in [date(2015, 1, 1)]:
