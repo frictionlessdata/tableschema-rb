@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe JsonTableSchema::Types do
 
-  describe ::String do
+  describe JsonTableSchema::Types::String do
 
     let(:field) {
       {
@@ -235,7 +235,7 @@ describe JsonTableSchema::Types do
 
   end
 
-  describe ::Integer do
+  describe JsonTableSchema::Types::Integer do
 
     let(:field) {
       {
@@ -267,7 +267,7 @@ describe JsonTableSchema::Types do
 
   end
 
-  describe ::Boolean do
+  describe JsonTableSchema::Types::Boolean do
 
     let(:field) {
       {
