@@ -99,7 +99,8 @@ schema_hash = {
           "name" => "height",
           "type" => "string"
       }
-  ]
+  ],
+  "primaryKey" => "id"
 }
 
 schema = JsonTableSchema::Schema.new(schema_hash)
@@ -110,7 +111,8 @@ schema.required_headers
 #=> ["id"]
 schema.fields
 #=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
-schema.primary_key # TODO
+schema.primary_key
+#=> "id"
 schema.foreign_key # TODO
 schema.cast(field_name, value) #TODO
 schema.get_field('id')

@@ -16,6 +16,10 @@ module JsonTableSchema
       self['fields']
     end
 
+    def primary_key
+      self['primaryKey']
+    end
+
     def required_headers
       fields.select { |f| f['constraints']!= nil && f['constraints']['required'] == true }
             .map { |f| transform(f['name']) }
