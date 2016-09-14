@@ -28,6 +28,10 @@ module JsonTableSchema
       get_field(key)['type']
     end
 
+    def get_constraints(key)
+      get_field(key)['constraints'] || {}
+    end
+
     def required_headers
       fields.select { |f| f['constraints']!= nil && f['constraints']['required'] == true }
             .map { |f| transform(f['name']) }

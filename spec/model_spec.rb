@@ -104,6 +104,20 @@ describe JsonTableSchema::Model do
 
   end
 
+  context 'get constraints' do
+
+    it 'gets the constraints for a field' do
+      s = JsonTableSchema::Schema.new(schema)
+      expect(s.get_constraints('id')).to eq({"required" => true})
+    end
+
+    it 'returns an empty hash where there are no constraints' do
+      s = JsonTableSchema::Schema.new(schema_min)
+      expect(s.get_constraints('id')).to eq({})
+    end
+
+  end
+
   context 'case insensitive headers' do
 
     let(:new_schema) {
