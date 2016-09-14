@@ -5,11 +5,9 @@
 [![Gem Version](http://img.shields.io/gem/v/jsontableschema.svg?style=flat-square)](https://rubygems.org/gems/jsontableschema)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://theodi.mit-license.org)
 
-# JsonTableSchema
+# JSON Table Schema
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/jsontableschema`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A utility library for working with [JSON Table Schema](http://dataprotocols.org/json-table-schema/) in Ruby.
 
 ## Installation
 
@@ -29,7 +27,103 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Validate a schema
+
+To validate that a schema meets the JSON Table Schema spec, you can pass a schema to the initializer like so:
+
+```ruby
+schema_hash = {
+  "fields" => [
+      {
+          "name" => "id"
+      },
+      {
+          "name" => "height"
+      }
+  ]
+}
+
+schema = JsonTableSchema::Schema.new(schema_hash)
+schema.valid?
+#=> true
+```
+
+You can also pass a file path or URL to the initializer:
+
+```ruby
+schema = JsonTableSchema::Schema.new('http://example.org/schema.json')
+schema.valid?
+#=> true
+```
+
+If the schema is invalid, you can access the errors via the `messages` attribute
+
+```ruby
+schema_hash = {
+  "fields" => [
+    {
+      "name"=>"id",
+      "title"=>"Identifier",
+      "type"=>"integer"
+   },
+   {
+     "name"=>"title",
+     "title"=>"Title",
+     "type"=>"string"
+    }
+  ],
+ "primaryKey"=>"identifier"
+}
+
+schema.valid?
+#=> false
+schema.messages
+#=> ["The JSON Table Schema primaryKey value `identifier` is not found in any of the schema's field names"]
+```
+
+## Schema Model
+
+You can also access the schema via a Ruby model, with some useful methods for interaction:
+
+```ruby
+schema_hash = {
+  "fields" => [
+      {
+          "name" => "id",
+          "type" => "string",
+          "constraints" => {
+            "required" => true,
+          }
+      },
+      {
+          "name" => "height",
+          "type" => "string"
+      }
+  ]
+}
+
+schema = JsonTableSchema::Schema.new(schema_hash)
+
+schema.headers
+#=> ["id", "height"]
+schema.required_headers
+#=> ["id"]
+schema.fields
+#=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
+schema.primary_key # TODO
+schema.foreign_key # TODO
+schema.cast(field_name, value) #TODO
+schema.get_field('id')
+#=> {"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}
+schema.has_field?('foo')
+#=> false
+schema.get_type('id') # TODO
+schema.get_fields_by_type('string')
+#=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
+schema.get_constraints('id') # TODO
+schema.convert_row(row) # TODO
+schema.convert(rows) # TODO
+```
 
 ## Development
 
