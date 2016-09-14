@@ -267,86 +267,56 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe ::Boolean do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'boolean',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::Boolean.new(field) }
+
+    it 'casts a simple true value' do
+      value = 't'
+      expect(type.cast(value)).to be true
+    end
+
+    it 'casts a simple false value' do
+      value = 'f'
+      expect(type.cast(value)).to be false
+    end
+
+    it 'casts truthy values' do
+      ['yes', 1, 't', 'true', true].each do |value|
+        expect(type.cast(value)).to be true
+      end
+    end
+
+    it 'casts falsy values' do
+      ['no', 0, 'f', 'false', false].each do |value|
+        expect(type.cast(value)).to be false
+      end
+    end
+
+    it 'raises for invalid values' do
+      value = 'not a true value'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+
+      value = 11231902333
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+    end
+
+  end
+
+
 end
 
-
-#
-#
-# class TestBoolean(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestBoolean, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'boolean',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True
-#             }
-#         }
-#
-#     def test_boolean_type_simple_true(self):
-#         value = 'y'
-#         _type = types.BooleanType(self.field)
-#
-#         self.assertTrue(_type.cast(value))
-#
-#     def test_boolean_type_simple_false(self):
-#         value = 'n'
-#         _type = types.BooleanType(self.field)
-#
-#         self.assertFalse(_type.cast(value))
-#
-#     def test_yes_no(self):
-#         _type = types.BooleanType(self.field)
-#
-#         value = 'yes'
-#         self.assertTrue(_type.cast(value))
-#         value = 'no'
-#         self.assertFalse(_type.cast(value))
-#
-#     def test_one_or_zero(self):
-#         _type = types.BooleanType(self.field)
-#
-#         value = '1'
-#         self.assertTrue(_type.cast(value))
-#         value = '0'
-#         self.assertFalse(_type.cast(value))
-#
-#         value = 1
-#         self.assertTrue(_type.cast(value))
-#         value = 0
-#         self.assertFalse(_type.cast(value))
-#
-#     def test_t_or_f(self):
-#         _type = types.BooleanType(self.field)
-#
-#         value = 't'
-#         self.assertTrue(_type.cast(value))
-#         value = 'f'
-#         self.assertFalse(_type.cast(value))
-#
-#     def test_true_or_false(self):
-#         _type = types.BooleanType(self.field)
-#
-#         value = 'true'
-#         self.assertTrue(_type.cast(value))
-#         value = 'false'
-#         self.assertFalse(_type.cast(value))
-#
-#     def test_invalid_boolean_value_fails(self):
-#         _type = types.BooleanType(self.field)
-#
-#         value = 'not a true value'
-#         self.assertRaises(exceptions.InvalidBooleanType, _type.cast, value)
-#         value = 11231902333
-#         self.assertRaises(exceptions.InvalidBooleanType, _type.cast, value)
-#
-#     def test_boolean_type_with_already_cast_value(self):
-#         for value in [True, False]:
-#             for format in ['default']:
-#                 self.field['format'] = format
-#                 _type = types.BooleanType(self.field)
-#                 self.assertEqual(_type.cast(value), value)
 #
 #
 # class TestNull(base.BaseTestCase):
