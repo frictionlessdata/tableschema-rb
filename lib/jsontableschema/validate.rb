@@ -14,37 +14,31 @@ module JsonTableSchema
     end
 
     def validate
-      @messages = JSON::Validator.fully_validate(@validator, @schema)
-      if @schema.class == Hash
-        check_primary_keys
-        check_foreign_keys
-      end
+      @messages = JSON::Validator.fully_validate(@validator, self)
+      check_primary_keys
+      check_foreign_keys
     end
 
     private
 
       def check_primary_keys
-        return if @schema['primaryKey'].nil?
+        return if self['primaryKey'].nil?
         primary_keys.each { |pk| check_field_value(pk, 'primaryKey') }
       end
 
       def check_foreign_keys
-        return if @schema['foreignKeys'].nil?
-        @schema['foreignKeys'].each do |keys|
-          foreign_keys(keys).each { |fk| check_field_value(fk, 'foreignKey.fields') }
+        return if self['foreignKeys'].nil?
+        self['foreignKeys'].each do |keys|
+          foreign_key_fields(keys).each { |fk| check_field_value(fk, 'foreignKey.fields') }
           add_error("A JSON Table Schema foreignKey.fields must contain the same number entries as foreignKey.reference.fields.") if field_count_mismatch?(keys)
         end
       end
 
       def check_field_value(key, type)
-        add_error("The JSON Table Schema #{type} value `#{key}` is not found in any of the schema's field names") if field_names.select { |f| key == f }.count == 0
+        add_error("The JSON Table Schema #{type} value `#{key}` is not found in any of the schema's field names") if headers.select { |f| key == f }.count == 0
       end
 
-      def primary_keys
-        [@schema['primaryKey']].flatten
-      end
-
-      def foreign_keys(keys)
+      def foreign_key_fields(keys)
         [keys['fields']].flatten
       end
 

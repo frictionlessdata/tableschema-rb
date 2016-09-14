@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Schema do
+describe JsonTableSchema::Validate do
 
   context 'simple validation' do
 
@@ -24,12 +24,6 @@ describe JsonTableSchema::Schema do
 
       it 'with an empty schema' do
         schema = load_schema('schema_invalid_empty.json')
-        schema = JsonTableSchema::Schema.new(schema)
-        expect(schema.valid?).to eq(false)
-      end
-
-      it 'with a wrong type' do
-        schema = load_schema('schema_invalid_wrong_type.json')
         schema = JsonTableSchema::Schema.new(schema)
         expect(schema.valid?).to eq(false)
       end
