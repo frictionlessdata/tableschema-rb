@@ -1,5 +1,6 @@
 [![Build Status](http://img.shields.io/travis/theodi/jsontableschema.rb.svg?style=flat-square)](https://travis-ci.org/theodi/jsontableschema.rb)
 [![Dependency Status](http://img.shields.io/gemnasium/theodi/jsontableschema.rb.svg?style=flat-square)](https://gemnasium.com/theodi/jsontableschema.rb)
+[![Coverage Status](https://coveralls.io/repos/github/theodi/jsontableschema.rb/badge.svg)](https://coveralls.io/github/theodi/jsontableschema.rb)
 [![Code Climate](http://img.shields.io/codeclimate/github/theodi/jsontableschema.rb.svg?style=flat-square)](https://codeclimate.com/github/theodi/jsontableschema.rb)
 [![Gem Version](http://img.shields.io/gem/v/jsontableschema.svg?style=flat-square)](https://rubygems.org/gems/jsontableschema)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://theodi.mit-license.org)
