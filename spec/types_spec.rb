@@ -235,48 +235,41 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe ::Integer do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'integer',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::Integer.new(field) }
+
+    it 'casts a simple integer' do
+      value = '1'
+      expect(type.cast(value)).to eq(1)
+    end
+
+    it 'raises when the value is not an integer' do
+      value = 'string'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+    end
+
+    it 'casts when value is already cast' do
+      value = 1
+      expect(type.cast(value)).to eq(1)
+    end
+
+  end
+
 end
 
 
-#
-#     def test_number_type_with_already_cast_value(self):
-#         for value in [1, 1.0, Decimal(1)]:
-#             for format in ['default', 'currency']:
-#                 self.field['format'] = format
-#                 _type = types.NumberType(self.field)
-#                 self.assertEqual(_type.cast(value), value)
-#
-#
-# class TestInteger(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestInteger, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'integer',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True
-#             }
-#         }
-#
-#     def test_integer_type_simple(self):
-#         value = 1
-#         _type = types.IntegerType(self.field)
-#
-#         self.assertEquals(_type.cast(value), value)
-#
-#     def test_integer_type_simple_raises(self):
-#         value = 'string'
-#         _type = types.IntegerType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidCastError, _type.cast, value)
-#
-#     def test_integer_type_with_already_cast_value(self):
-#         for value in [1]:
-#             for format in ['default']:
-#                 self.field['format'] = format
-#                 _type = types.IntegerType(self.field)
-#                 self.assertEqual(_type.cast(value), value)
 #
 #
 # class TestBoolean(base.BaseTestCase):
