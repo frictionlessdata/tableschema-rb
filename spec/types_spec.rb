@@ -359,40 +359,46 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe JsonTableSchema::Types::Object do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'object',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::Object.new(field) }
+
+    it 'casts a hash' do
+      value = {'key' => 'value'}
+      expect(type.cast(value)).to eq(value)
+    end
+
+    it 'casts JSON string' do
+      value = '{"key": "value"}'
+      expect(type.cast(value)).to eq(JSON.parse(value))
+    end
+
+    it 'raises when value is not a hash' do
+      value = ['boo', 'ya']
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidObjectType)
+    end
+
+    it 'raises when value is not JSON' do
+      value = 'fdsfdsfsdfdsfdsfdsfds'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidObjectType)
+    end
+
+  end
+
 
 end
 
-#
-#
-# class TestObject(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestObject, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'object',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True
-#             }
-#         }
-#
-#     def test_dict(self):
-#         value = {'key': 'value'}
-#         _type = types.ObjectType(self.field)
-#
-#         self.assertDictEqual(_type.cast(value), value)
-#
-#     def test_json_string(self):
-#         value = '{"key": "value"}'
-#         _type = types.ObjectType(self.field)
-#
-#         self.assertDictEqual(_type.cast(value), {'key': 'value'})
-#
-#     def test_invalid(self):
-#         value = ['boo', 'ya']
-#         _type = types.ObjectType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidObjectType, _type.cast, value)
 #
 #
 # class TestArray(base.BaseTestCase):

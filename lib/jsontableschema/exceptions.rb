@@ -12,4 +12,5 @@ module JsonTableSchema
   class InvalidEmail < Exception ; end
   class InvalidURI < Exception ; end
   class InvalidUUID < Exception ; end
+  class InvalidObjectType < Exception ; end
 end
