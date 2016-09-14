@@ -5,6 +5,7 @@ require "currencies"
 
 require "jsontableschema/version"
 require "jsontableschema/exceptions"
+require "jsontableschema/types/base"
 require "jsontableschema/types/boolean"
 require "jsontableschema/types/integer"
 require "jsontableschema/types/number"
