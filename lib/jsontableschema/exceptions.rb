@@ -6,4 +6,18 @@ module JsonTableSchema
       @message = message
     end
   end
+
+  class InvalidFormat < Exception ; end
+  class InvalidCast < Exception ; end
+  class InvalidEmail < Exception ; end
+  class InvalidURI < Exception ; end
+  class InvalidUUID < Exception ; end
+  class InvalidObjectType < Exception ; end
+  class InvalidArrayType < Exception ; end
+  class InvalidDateType < Exception ; end
+  class InvalidTimeType < Exception ; end
+  class InvalidDateTimeType < Exception ; end
+  class InvalidGeoJSONType < Exception ; end
+  class InvalidGeoPointType < Exception ; end
+  class ConstraintError < Exception ; end
 end
