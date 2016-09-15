@@ -35,7 +35,7 @@ module JsonTableSchema
         begin
           return ::Tod::TimeOfDay.parse(value)
         rescue ArgumentError
-          raise JsonTableSchema::InvalidDateType.new("#{value} is not a valid date")
+          raise JsonTableSchema::InvalidTimeType.new("#{value} is not a valid time")
         end
       end
 

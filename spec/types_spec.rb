@@ -529,6 +529,12 @@ describe JsonTableSchema::Types do
       expect(type.cast(value)).to eq(Tod::TimeOfDay.new(3,0))
     end
 
+    it 'raises when a time string is invalid' do
+      value = 'Flava Flav'
+      field['format'] = 'any'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+    end
+
     it 'raises an error when type format is incorrect' do
       value = 3.00
       self.field['format'] = 'fmt:any'
