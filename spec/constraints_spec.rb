@@ -54,6 +54,31 @@ describe JsonTableSchema::Constraints do
 
   end
 
+  describe JsonTableSchema::Constraints::MinLength do
+
+    before(:each) do
+      field['constraints']['minLength'] = 5
+    end
+
+    it 'handles with a valid value' do
+      @value = 'string'
+      expect(constraints.validate!).to eq(true)
+    end
+
+    it 'handles when the value is equal' do
+      field['constraints']['minLength'] = 6
+      @value = 'string'
+      expect(constraints.validate!).to eq(true)
+    end
+
+    it 'handles with an invalid value' do
+      field['constraints']['minLength'] = 10
+      @value = 'string'
+      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
+    end
+
+  end
+
 end
 
 
