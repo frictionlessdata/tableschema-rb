@@ -4,10 +4,9 @@ module JsonTableSchema
 
       def check_required
         if required? && is_empty?
-          raise JsonTableSchema::ConstraintError.new("The field #{@field['name']} requires a value")
-        else
-          true
+          raise JsonTableSchema::ConstraintError.new("The field `#{@field['name']}` requires a value")
         end
+        true
       end
 
       private
