@@ -3,6 +3,7 @@ require "jsontableschema/constraints/min_length"
 require "jsontableschema/constraints/max_length"
 require "jsontableschema/constraints/minimum"
 require "jsontableschema/constraints/maximum"
+require "jsontableschema/constraints/enum"
 
 module JsonTableSchema
   class Constraints
@@ -11,6 +12,7 @@ module JsonTableSchema
     include JsonTableSchema::Constraints::MaxLength
     include JsonTableSchema::Constraints::Minimum
     include JsonTableSchema::Constraints::Maximum
+    include JsonTableSchema::Constraints::Enum
 
     def initialize(field, value)
       @field = field
@@ -47,7 +49,7 @@ module JsonTableSchema
     end
 
     def parse_constraint(constraint)
-      if @value.is_a?(::Integer)
+      if @value.is_a?(::Integer) && constraint.is_a?(::String)
         constraint.to_i
       elsif @value.is_a?(::Tod::TimeOfDay)
         Tod::TimeOfDay.parse(constraint)
@@ -55,6 +57,10 @@ module JsonTableSchema
         DateTime.parse(constraint)
       elsif @value.is_a?(::Date)
         Date.parse(constraint)
+      elsif @value.is_a?(::Float) && constraint.is_a?(Array)
+        constraint.map { |c| Float(c) }
+      else
+        constraint
       end
     end
 

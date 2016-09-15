@@ -438,273 +438,72 @@ describe JsonTableSchema::Constraints do
 
   end
 
+  describe JsonTableSchema::Constraints::Enum do
+
+    context 'with string type' do
+
+      before(:each) do
+        field['type'] = 'string'
+        field['constraints']['enum'] = ['alice', 'bob', 'chuck']
+        @value = 'bob'
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = 'ian'
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+      it 'is case sensitive' do
+        @value = 'Bob'
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+    end
+
+    context 'with integer type' do
+
+      before(:each) do
+        field['type'] = 'integer'
+        field['constraints']['enum'] = [1,2,3]
+        @value = 2
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = '6'
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+    end
+
+    context 'with number type' do
+
+      before(:each) do
+        field['type'] = 'number'
+        field['constraints']['enum'] = ["1.0","2.0","3.0"]
+        @value = Float(3)
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = Float(6)
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+    end
+
 end
 
-
-#
-# class TestIntegerTypeConstraints_Maximum(ConstraintsBase):
-#
-#     '''Test `maximum` constraint for IntegerType'''
-#
-#     def test_constraints_maximum_valid_value(self):
-#         value = 12
-#         field = self._make_default_field(type='integer',
-#                                          constraints={'maximum': 13})
-#         _type = types.IntegerType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_maximum_valid_value_equals(self):
-#         value = 12
-#         field = self._make_default_field(type='integer',
-#                                          constraints={'maximum': 12})
-#         _type = types.IntegerType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_maximum_invalid_value(self):
-#         value = 12
-#         field = self._make_default_field(type='integer',
-#                                          constraints={'maximum': 11})
-#         _type = types.IntegerType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must not be more than 11")
-#
-#
-# class TestDateTypeConstraints_Maximum(ConstraintsBase):
-#
-#     '''Test `maximum` constraint for DateType'''
-#
-#     def test_constraints_maximum_valid_value(self):
-#         value = '1978-05-29'
-#         field = self._make_default_field(type='date',
-#                                          constraints={'maximum': '1978-05-30'})
-#         _type = types.DateType(field)
-#
-#         self.assertEqual(_type.cast(value),
-#                          datetime.datetime.strptime(value, '%Y-%m-%d').date())
-#
-#     def test_constraints_maximum_valid_value_equals(self):
-#         value = '1978-05-29'
-#         field = self._make_default_field(type='date',
-#                                          constraints={'maximum': '1978-05-29'})
-#         _type = types.DateType(field)
-#
-#         self.assertEqual(_type.cast(value),
-#                          datetime.datetime.strptime(value, '%Y-%m-%d').date())
-#
-#     def test_constraints_maximum_invalid_value(self):
-#         value = '1978-05-29'
-#         # value of maximum constraint should have the same format
-#         field = self._make_default_field(type='date',
-#                                          constraints={'maximum':
-#                                                       '1978-05-28'})
-#         _type = types.DateType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must not be more than 1978-05-28")
-#
-#
-# class TestDateTimeTypeConstraints_Maximum(ConstraintsBase):
-#
-#     '''Test `maximum` constraint for DateTimeType'''
-#
-#     def test_constraints_maximum_valid_value(self):
-#         value = '1978-05-29T12:30:20Z'
-#         field = self._make_default_field(type='datetime',
-#                                          constraints={'maximum':
-#                                                       '1978-05-30T12:30:20Z'})
-#         _type = types.DateTimeType(field)
-#
-#         self.assertEqual(_type.cast(value),
-#                          datetime.datetime.strptime(
-#                             value, '%Y-%m-%dT%H:%M:%SZ'))
-#
-#     def test_constraints_maximum_valid_value_equals(self):
-#         value = '1978-05-29T12:30:20Z'
-#         field = self._make_default_field(type='datetime',
-#                                          constraints={'maximum':
-#                                                       '1978-05-29T12:30:20Z'})
-#         _type = types.DateTimeType(field)
-#
-#         self.assertEqual(_type.cast(value),
-#                          datetime.datetime.strptime(
-#                             value, '%Y-%m-%dT%H:%M:%SZ'))
-#
-#     def test_constraints_maximum_invalid_value(self):
-#         value = '1978-05-29T12:30:20Z'
-#         field = self._make_default_field(type='datetime',
-#                                          constraints={'maximum':
-#                                                       '1978-05-28T12:30:20Z'})
-#         _type = types.DateTimeType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must not be more than "
-#                          "1978-05-28 12:30:20")
-#
-#
-# class TestTimeTypeConstraints_Maximum(ConstraintsBase):
-#
-#     '''Test `maximum` constraint for TimeType'''
-#
-#     def test_constraints_maximum_valid_value(self):
-#         value = '12:30:20'
-#         field = self._make_default_field(type='time',
-#                                          constraints={'maximum': '13:30:20'})
-#         _type = types.TimeType(field)
-#
-#         struct_time = time.strptime(value, '%H:%M:%S')
-#         expected_time = datetime.time(struct_time.tm_hour, struct_time.tm_min,
-#                                       struct_time.tm_sec)
-#         self.assertEqual(_type.cast(value), expected_time)
-#
-#     def test_constraints_maximum_valid_value_equals(self):
-#         value = '12:30:20'
-#         field = self._make_default_field(type='time',
-#                                          constraints={'maximum': '12:30:20'})
-#         _type = types.TimeType(field)
-#
-#         struct_time = time.strptime(value, '%H:%M:%S')
-#         expected_time = datetime.time(struct_time.tm_hour, struct_time.tm_min,
-#                                       struct_time.tm_sec)
-#         self.assertEqual(_type.cast(value), expected_time)
-#
-#     def test_constraints_maximum_invalid_value(self):
-#         value = '12:30:20'
-#         field = self._make_default_field(type='time',
-#                                          constraints={'maximum': '11:30:20'})
-#         _type = types.TimeType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must not be more than 11:30:20")
-#
-#
-# class TestUnsupportedTypeConstraints_Maximum(ConstraintsBase):
-#
-#     '''Test `maximum` constraint for an unsupported type'''
-#
-#     def test_constraints_minlength_valid_value(self):
-#         '''maximum with unsupported type'''
-#         value = 'string'
-#         field = self._make_default_field(type='string',
-#                                          constraints={'maximum': 2})
-#         _type = types.StringType(field)
-#
-#         with pytest.raises(exceptions.ConstraintNotSupported) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "Field type 'string' does not support "
-#                          "the maximum constraint")
-#
-#
-# class TestStringTypeConstraints_Enum(ConstraintsBase):
-#
-#     '''Test `enum` constraint for StringType'''
-#
-#     def test_constraints_enum_valid_value(self):
-#         '''value is in enum array'''
-#         value = "bob"
-#         field = self._make_default_field(
-#             type='string', constraints={'enum': ['alice', 'bob', 'chuck']})
-#
-#         _type = types.StringType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_enum_invalid_value(self):
-#         '''value is not in enum array'''
-#         value = "fred"
-#         field = self._make_default_field(
-#             type='string', constraints={'enum': ['alice', 'bob', 'chuck']})
-#
-#         _type = types.StringType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The value for field 'Name' "
-#                          "must be in the enum array")
-#
-#     def test_constraints_enum_invalid_value_case_sensitive(self):
-#         '''value comparison is case sensitive'''
-#         value = "Bob"
-#         field = self._make_default_field(
-#             type='string', constraints={'enum': ['alice', 'bob', 'chuck']})
-#
-#         _type = types.StringType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The value for field 'Name' "
-#                          "must be in the enum array")
-#
-#
-# class TestIntegerTypeConstraints_Enum(ConstraintsBase):
-#
-#     '''Test `enum` constraint for IntegerType'''
-#
-#     def test_constraints_enum_valid_value(self):
-#         '''value is in enum array'''
-#         value = 5
-#         field = self._make_default_field(
-#             type='integer', constraints={'enum': [1, 3, 5]})
-#
-#         _type = types.IntegerType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_enum_invalid_value(self):
-#         '''value is not in enum array'''
-#         value = 2
-#         field = self._make_default_field(
-#             type='integer', constraints={'enum': [1, 3, 5]})
-#
-#         _type = types.IntegerType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The value for field 'Name' "
-#                          "must be in the enum array")
-#
-#
-# class TestNumberTypeConstraints_Enum(ConstraintsBase):
-#
-#     '''Test `enum` constraint for NumberType'''
-#
-#     def test_constraints_enum_valid_value(self):
-#         '''value is in enum array'''
-#         value = 5
-#         field = self._make_default_field(
-#             type='number', constraints={'enum': ["1.0", "3.0", "5.0"]})
-#
-#         _type = types.NumberType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_enum_invalid_value(self):
-#         '''value is not in enum array'''
-#         value = 2
-#         field = self._make_default_field(
-#             type='number', constraints={'enum': ["1.0", "3.0", "5.0"]})
-#
-#         _type = types.NumberType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The value for field 'Name' "
-#                          "must be in the enum array")
 #
 #
 # class TestBooleanTypeConstraints_Enum(ConstraintsBase):
