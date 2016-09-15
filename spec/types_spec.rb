@@ -567,56 +567,69 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe JsonTableSchema::Types::DateTime do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'datetime',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::DateTime.new(field) }
+
+    it 'casts a standard ISO8601 date string' do
+      value = '2019-01-01T02:00:00Z'
+      expect(type.cast(value)).to eq(DateTime.new(2019,01,01,2,0,0))
+    end
+
+    it 'guesses when fomat is any' do
+      value = '10th Jan 1969 9am'
+      field['format'] = 'any'
+      expect(type.cast(value)).to eq(DateTime.new(1969,01,10,9,0,0))
+    end
+
+    it 'accepts a specified format' do
+      value = '21/11/06 16:30'
+      field['format'] = 'fmt:%d/%m/%y %H:%M'
+      expect(type.cast(value)).to eq(DateTime.new(2006,11,21,16,30,00))
+    end
+
+    it 'fails with a non iso datetime by default' do
+      value = 'Mon 1st Jan 2014 9 am'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateTimeType)
+    end
+
+    it 'raises an exception for an unparsable datetime' do
+      value = 'the land before time'
+      field['format'] = 'any'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateTimeType)
+    end
+
+    it 'raises if the date format is invalid' do
+      value = '21/11/06 16:30'
+      field['format'] = 'fmt:notavalidformat'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateTimeType)
+    end
+
+    it 'works fine with an already cast value' do
+      value = DateTime.new(2015, 1, 1, 12, 0, 0)
+      ['default', 'any', 'fmt:any'].each do |format|
+        field['format'] = format
+        expect(type.cast(value)).to eq(value)
+      end
+    end
+
+  end
+
 
 end
 
-#
-#
-# class TestDateTime(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestDateTime, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'datetime',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True
-#             }
-#         }
-#
-#     def test_valid_iso_datetime(self):
-#         value = '2014-01-01T06:00:00Z'
-#         _type = types.DateTimeType(self.field)
-#         self.assertEquals(_type.cast(value), datetime(2014, 1, 1, 6))
-#
-#     def test_any_parser_guessing(self):
-#         value = '10th Jan 1969 9 am'
-#         self.field['format'] = 'any'
-#         _type = types.DateTimeType(self.field)
-#         self.assertEquals(_type.cast(value), datetime(1969, 1, 10, 9))
-#
-#     def test_specified_format(self):
-#         value = '21/11/06 16:30'
-#         self.field['format'] = 'fmt:%d/%m/%y %H:%M'
-#         _type = types.DateTimeType(self.field)
-#         self.assertEquals(_type.cast(value), datetime(2006, 11, 21, 16, 30))
-#
-#     def test_non_iso_datetime_fails_for_default(self):
-#         value = 'Mon 1st Jan 2014 9 am'
-#         _type = types.DateTimeType(self.field)
-#         self.assertRaises(exceptions.InvalidDateTimeType, _type.cast, value)
-#
-#     def test_unparsable_date_raises_exception(self):
-#         value = 'the land before time'
-#         self.field['format'] = 'any'
-#         _type = types.DateTimeType(self.field)
-#         self.assertRaises(exceptions.InvalidDateTimeType, _type.cast, value)
-#
-#     def test_invalid_date_format(self):
-#         value = '21/11/06 16:30'
-#         self.field['format'] = 'fmt:notavalidformat'
-#         _type = types.DateTimeType(self.field)
-#         self.assertRaises(exceptions.InvalidDateTimeType, _type.cast, value)
+
 #
 #     def test_datetime_type_with_already_cast_value(self):
 #         for value in [datetime(2015, 1, 1, 12, 0, 0)]:

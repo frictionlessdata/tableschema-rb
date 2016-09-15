@@ -16,4 +16,6 @@ module JsonTableSchema
   class InvalidArrayType < Exception ; end
   class InvalidDateType < Exception ; end
   class InvalidTimeType < Exception ; end
+  class InvalidDateTimeType < Exception ; end
+
 end
