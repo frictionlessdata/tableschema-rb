@@ -17,5 +17,5 @@ module JsonTableSchema
   class InvalidDateType < Exception ; end
   class InvalidTimeType < Exception ; end
   class InvalidDateTimeType < Exception ; end
-
+  class InvalidGeoJSONType < Exception ; end
 end

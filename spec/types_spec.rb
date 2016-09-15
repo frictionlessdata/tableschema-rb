@@ -604,17 +604,66 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe JsonTableSchema::Types::DateTime do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'geojson',
+        'format' => 'default',
+        'constraints' => {
+          'required' => false
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::GeoJSON.new(field) }
+
+    it 'raises with invalid GeoJSON' do
+      value = {'coordinates' => [0, 0, 0], 'type' =>'Point'}
+        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoJSONType)
+    end
+
+    it 'handles a GeoJSON hash' do
+      value = {
+        "properties" => {
+          "Ã" => "Ã"
+        },
+        "type" => "Feature",
+        "geometry" => nil,
+      }
+
+      expect(type.cast(value)).to eq(value)
+    end
+
+    it 'handles a GeoJSON string' do
+      value = '{"geometry": null, "type": "Feature", "properties": {"\\u00c3": "\\u00c3"}}'
+
+      expect(type.cast(value)).to eq(JSON.parse value)
+    end
+
+    it 'raises with an invalid JSON string' do
+      value = 'notjson'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoJSONType)
+    end
+
+  end
+
 
 end
 
+# class TestGeoJson(base.BaseTestCase):
+
+
 
 #
-#     def test_datetime_type_with_already_cast_value(self):
-#         for value in [datetime(2015, 1, 1, 12, 0, 0)]:
-#             for format in ['default', 'any', 'fmt:any']:
-#                 self.field['format'] = format
-#                 _type = types.DateTimeType(self.field)
-#                 self.assertEqual(_type.cast(value), value)
+#     def test_geojson_type_simple_false(self):
+#         value = ''
+#         self.field['type'] = 'geojson'
+#         _type = types.GeoJSONType(self.field)
+#
+#         # Required is false so cast null value to None
+#         assert _type.cast(value) == None
 #
 #
 # class TestGeoPoint(base.BaseTestCase):
@@ -695,60 +744,6 @@ end
 #         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast,
 #                           '{"longitude": "a", "latitude": "21.00"}')
 #
-#
-# class TestGeoJson(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestGeoJson, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'geojson',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': False
-#             }
-#         }
-#
-#     def test_geojson_type(self):
-#         value = {'coordinates': [0, 0, 0], 'type': 'Point'}
-#         self.field['type'] = 'geojson'
-#         _type = types.GeoJSONType(self.field)
-#
-#         self.assertRaises(exceptions.InvalidGeoJSONType, _type.cast, value)
-#
-#     def test_geojson_type_simple_true(self):
-#         value = {
-#             "properties": {
-#                 "Ã": "Ã"
-#             },
-#             "type": "Feature",
-#             "geometry": None,
-#         }
-#
-#         self.field['type'] = 'geojson'
-#         _type = types.GeoJSONType(self.field)
-#
-#         self.assertEquals(_type.cast(value), value)
-#
-#     def test_geojson_type_cast_from_string(self):
-#         value = '{"geometry": null, "type": "Feature", "properties": {"\\u00c3": "\\u00c3"}}'
-#         self.field['type'] = 'geojson'
-#         _type = types.GeoJSONType(self.field)
-#
-#         self.assertEquals(_type.cast(value), {
-#             "properties": {
-#                 "Ã": "Ã"
-#             },
-#             "type": "Feature",
-#             "geometry": None,
-#         })
-#
-#     def test_geojson_type_simple_false(self):
-#         value = ''
-#         self.field['type'] = 'geojson'
-#         _type = types.GeoJSONType(self.field)
-#
-#         # Required is false so cast null value to None
-#         assert _type.cast(value) == None
 #
 #
 # class TestNullValues(base.BaseTestCase):
