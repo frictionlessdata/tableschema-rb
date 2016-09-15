@@ -29,84 +29,76 @@ describe JsonTableSchema::Types do
 
     context 'emails' do
 
-      let(:email_field) {
+      before(:each) do
         field['format'] = 'email'
-        field
-      }
-
-      let(:email_type) { JsonTableSchema::Types::String.new(email_field) }
+      end
 
       it 'casts an email' do
         value = 'test@test.com'
-        expect(email_type.cast(value)).to eq(value)
+        expect(type.cast(value)).to eq(value)
 
         value = '\$A12345@example.com'
-        expect(email_type.cast(value)).to eq(value)
+        expect(type.cast(value)).to eq(value)
 
         value = '!def!xyz%abc@example.com'
-        expect(email_type.cast(value)).to eq(value)
+        expect(type.cast(value)).to eq(value)
       end
 
       it 'fails with an invalid email' do
         value = 1
-        expect { email_type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
 
         value = 'notanemail'
-        expect { email_type.cast(value) }.to raise_error(JsonTableSchema::InvalidEmail)
+        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidEmail)
       end
 
     end
 
     context 'uris' do
 
-      let(:uri_field) {
+      before(:each) do
         field['format'] = 'uri'
-        field
-      }
-
-      let(:uri_type) { JsonTableSchema::Types::String.new(uri_field) }
+      end
 
       it 'casts a uri' do
         value = 'http://test.com'
-        expect(uri_type.cast(value)).to eq(value)
+        expect(type.cast(value)).to eq(value)
       end
 
       it 'raises an expection for an invalid URI' do
         value = 'notauri'
-        expect { uri_type.cast(value) }.to raise_error(JsonTableSchema::InvalidURI)
+        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidURI)
       end
 
     end
 
     context 'uuid' do
 
-      let(:uuid_field) {
+      before(:each) do
         field['format'] = 'uuid'
-        field
-      }
+      end
 
-      let(:uuid_type) { JsonTableSchema::Types::String.new(uuid_field) }
 
       it 'casts a uuid' do
         value = '12345678123456781234567812345678'
-        expect(uuid_type.cast(value)).to eq(value)
+        expect(type.cast(value)).to eq(value)
 
         value = 'urn:uuid:12345678-1234-5678-1234-567812345678'
-        expect(uuid_type.cast(value)).to eq(value)
+        expect(type.cast(value)).to eq(value)
 
         value = '123e4567-e89b-12d3-a456-426655440000'
-        expect(uuid_type.cast(value)).to eq(value)
+        expect(type.cast(value)).to eq(value)
       end
 
       it 'raises for invalid uuids' do
         value = '1234567812345678123456781234567?'
-        expect { uuid_type.cast(value) }.to raise_error(JsonTableSchema::InvalidUUID)
+        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidUUID)
 
         value = '1234567812345678123456781234567'
-        expect { uuid_type.cast(value) }.to raise_error(JsonTableSchema::InvalidUUID)
+        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidUUID)
 
         value = 'X23e4567-e89b-12d3-a456-426655440000'
-        expect { uuid_type.cast(value) }.to raise_error(JsonTableSchema::InvalidUUID)
+        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidUUID)
       end
 
     end
@@ -137,7 +129,6 @@ describe JsonTableSchema::Types do
       [1, 1.0, Float(1)].each do |value|
         ['default', 'currency'].each do |format|
           field['format'] = format
-          type = JsonTableSchema::Types::Number.new(field)
           expect(type.cast(value)).to eq(Float(value))
         end
       end
@@ -161,7 +152,6 @@ describe JsonTableSchema::Types do
       end
 
       field['groupChar'] = '#'
-      type = JsonTableSchema::Types::Number.new(field)
 
       [
         '10#000.00',
@@ -173,7 +163,6 @@ describe JsonTableSchema::Types do
       end
 
       field['decimalChar'] = '@'
-      type = JsonTableSchema::Types::Number.new(field)
 
       [
         '10#000@00',
@@ -209,7 +198,6 @@ describe JsonTableSchema::Types do
 
         field['decimalChar'] = ','
         field['groupChar'] = ' '
-        currency_type = JsonTableSchema::Types::Number.new(currency_field)
 
         [
           '10 000,00',
@@ -461,42 +449,36 @@ describe JsonTableSchema::Types do
     it 'casts any parseable date' do
       value = '10th Jan 1969'
       field['format'] = 'any'
-      type = JsonTableSchema::Types::Date.new(field)
       expect(type.cast(value)).to eq(Date.new(1969,01,10))
     end
 
     it 'raises an error for any when date is unparsable' do
       value = '10th Jan nineteen sixty nine'
       field['format'] = 'any'
-      type = JsonTableSchema::Types::Date.new(field)
       expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
     end
 
     it 'casts with a specified date format' do
       value = '10/06/2014'
       field['format'] = 'fmt:%d/%m/%Y'
-      type = JsonTableSchema::Types::Date.new(field)
       expect(type.cast(value)).to eq(Date.new(2014,06,10))
     end
 
     it 'assumes the first day of the month' do
       value = '2014-06'
       field['format'] = 'fmt:%Y-%m'
-      type = JsonTableSchema::Types::Date.new(field)
       expect(type.cast(value)).to eq(Date.new(2014,06,01))
     end
 
     it 'raises an error for an invalid fmt' do
       value = '2014/12/19'
       field['type'] = 'fmt:DD/MM/YYYY'
-      type = JsonTableSchema::Types::Date.new(field)
       expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
     end
 
     it 'raises an error for a valid fmt and invalid value' do
       value = '2014/12/19'
       field['type'] = 'fmt:%m/%d/%y'
-      type = JsonTableSchema::Types::Date.new(field)
       expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
     end
 
@@ -504,7 +486,6 @@ describe JsonTableSchema::Types do
       value = Date.new(2014,06,01)
       ['default', 'any', 'fmt:%Y-%m-%d'].each do |f|
         field['format'] = f
-        type = JsonTableSchema::Types::Date.new(field)
         expect(type.cast(value)).to eq(value)
       end
     end
@@ -539,14 +520,12 @@ describe JsonTableSchema::Types do
     it 'parses a generic time string' do
       value = '3:00 am'
       field['format'] = 'any'
-      type = JsonTableSchema::Types::Time.new(field)
       expect(type.cast(value)).to eq(Tod::TimeOfDay.new(3,0))
     end
 
     it 'raises an error when type format is incorrect' do
       value = 3.00
       self.field['format'] = 'fmt:any'
-      type = JsonTableSchema::Types::Time.new(field)
       expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
 
       value = {}
@@ -560,7 +539,6 @@ describe JsonTableSchema::Types do
       value = Tod::TimeOfDay.new(06,00)
       ['default', 'any', 'fmt:any'].each do |f|
         field['format'] = f
-        type = JsonTableSchema::Types::Time.new(field)
         expect(type.cast(value)).to eq(value)
       end
     end
