@@ -748,6 +748,30 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe JsonTableSchema::Types::Any do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'any',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::Any.new(field) }
+
+    it 'returns the value' do
+      ['1', 2, Time.now].each do |value|
+        expect(type.cast(value)).to eq(value)
+      end
+    end
+
+
+  end
+
   context 'null values' do
 
     let(:none_string_types) {
@@ -838,7 +862,6 @@ describe JsonTableSchema::Types do
     end
 
   end
-
 
 end
 
