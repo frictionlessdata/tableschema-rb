@@ -4,11 +4,13 @@ module JsonTableSchema
 
       def initialize(field)
         @field = field
+        @required = field['required'] == 'true' || field['required'] == true
         @type = @field['type']
         set_format
       end
 
       def cast(value)
+        return nil if is_null?(value)
         send("cast_#{@format}", value)
       rescue NoMethodError => e
         if e.message.start_with?('undefined method `cast_')
@@ -25,6 +27,16 @@ module JsonTableSchema
           @format = @field['format'] || 'default'
         end
       end
+
+      private
+
+        def is_null?(value)
+          null_values.include?(value) && @required == false
+        end
+
+        def null_values
+          ['null', 'none', 'nil', 'nan', '-', '', nil]
+        end
 
     end
   end

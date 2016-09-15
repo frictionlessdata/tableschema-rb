@@ -647,6 +647,12 @@ describe JsonTableSchema::Types do
       expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoJSONType)
     end
 
+    it 'casts to none if string is blank' do
+      value = ''
+      # Required is false so cast null value to nil
+      expect(type.cast(value)).to eq(nil)
+    end
+
   end
 
 
