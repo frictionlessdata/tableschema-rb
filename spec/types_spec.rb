@@ -307,7 +307,7 @@ describe JsonTableSchema::Types do
     let(:field) {
       {
         'name' => 'Name',
-        'type' => 'boolean',
+        'type' => 'null',
         'format' => 'default',
         'constraints' => {
           'required' => true
@@ -748,90 +748,100 @@ describe JsonTableSchema::Types do
 
   end
 
+  context 'null values' do
+
+    let(:none_string_types) {
+      {
+        'number' => JsonTableSchema::Types::Number,
+        'integer' => JsonTableSchema::Types::Integer,
+        'boolean' => JsonTableSchema::Types::Boolean,
+        'array' => JsonTableSchema::Types::Array,
+        'object' => JsonTableSchema::Types::Object,
+        'date' => JsonTableSchema::Types::Date,
+        'time' => JsonTableSchema::Types::Time,
+        'datetime' => JsonTableSchema::Types::DateTime,
+        'geopoint' => JsonTableSchema::Types::GeoPoint,
+        'geojson' => JsonTableSchema::Types::GeoJSON,
+        #'any' => JsonTableSchema::Types::Any
+      }
+    }
+
+    let(:string_types) {
+      {
+        'string' => JsonTableSchema::Types::String,
+      }
+    }
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'string',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true,
+        }
+      }
+    }
+
+    it 'raises for null values on required fields' do
+      none_string_types.each do |name, value|
+        field['type'] = name
+        type = value.new(field)
+        expect { type.cast('null') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('none') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('nil') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('nan') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('-') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('') }.to raise_error(JsonTableSchema::ConstraintError)
+      end
+    end
+
+    it 'raises for null value on required string fields' do
+      string_types.each do |name, value|
+        field['type'] = name
+        type = value.new(field)
+        expect { type.cast('null') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('none') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('nil') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('nan') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('-') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('') }.to raise_error(JsonTableSchema::ConstraintError)
+      end
+    end
+
+    it 'returns nil for optional fields' do
+      field['constraints']['required'] = false
+      none_string_types.each do |name, value|
+        field['type'] = name
+        type = value.new(field)
+        expect(type.cast('null')).to eq(nil)
+        expect(type.cast('none')).to eq(nil)
+        expect(type.cast('nil')).to eq(nil)
+        expect(type.cast('nan')).to eq(nil)
+        expect(type.cast('-')).to eq(nil)
+        expect(type.cast('')).to eq(nil)
+      end
+    end
+
+    it 'returns nil for optional string types' do
+      field['constraints']['required'] = false
+      string_types.each do |name, value|
+        field['type'] = name
+        type = value.new(field)
+        expect(type.cast('null')).to eq(nil)
+        expect(type.cast('none')).to eq(nil)
+        expect(type.cast('nil')).to eq(nil)
+        expect(type.cast('nan')).to eq(nil)
+        expect(type.cast('-')).to eq(nil)
+        expect(type.cast('')).to eq(nil)
+      end
+    end
+
+  end
+
 
 end
 
-
-# class TestNullValues(base.BaseTestCase):
-#
-#     none_string_types = {
-#         'number': types.NumberType,
-#         'integer': types.IntegerType,
-#         'boolean': types.BooleanType,
-#         'null': types.NullType,
-#         'array': types.ArrayType,
-#         'object': types.ObjectType,
-#         'date': types.DateType,
-#         'time': types.TimeType,
-#         'datetime': types.DateTimeType,
-#         'geopoint': types.GeoPointType,
-#         'geojson': types.GeoJSONType,
-#         'any': types.AnyType,
-#     }
-#
-#     string_types = {
-#         'string': types.StringType,
-#     }
-#
-#     def setUp(self):
-#         super(TestNullValues, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'string',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True,
-#             }
-#         }
-#
-#     def test_required_field_non_string_types(self):
-#         error = exceptions.ConstraintError
-#         for name, value in self.none_string_types.items():
-#             self.field['type'] = name
-#             _type = value(self.field)
-#             self.assertRaises(error, _type.cast, 'null')
-#             self.assertRaises(error, _type.cast, 'none')
-#             self.assertRaises(error, _type.cast, 'nil')
-#             self.assertRaises(error, _type.cast, 'nan')
-#             self.assertRaises(error, _type.cast, '-')
-#             self.assertRaises(error, _type.cast, '')
-#
-#     def test_required_field_string_types(self):
-#         error = exceptions.ConstraintError
-#         for name, value in self.string_types.items():
-#             self.field['type'] = name
-#             _type = value(self.field)
-#             self.assertRaises(error, _type.cast, 'null')
-#             self.assertRaises(error, _type.cast, 'none')
-#             self.assertRaises(error, _type.cast, 'nil')
-#             self.assertRaises(error, _type.cast, 'nan')
-#             self.assertRaises(error, _type.cast, '-')
-#             assert _type.cast('') == ''
-#
-#     def test_optional_field_non_string_types(self):
-#         self.field['constraints']['required'] = False
-#         for name, value in self.none_string_types.items():
-#             self.field['type'] = name
-#             _type = value(self.field)
-#             assert _type.cast('null') == None
-#             assert _type.cast('none') == None
-#             assert _type.cast('nil') == None
-#             assert _type.cast('nan') == None
-#             assert _type.cast('-') == None
-#             assert _type.cast('') == None
-#
-#     def test_optional_field_non_string_types(self):
-#         self.field['constraints']['required'] = False
-#         for name, value in self.string_types.items():
-#             self.field['type'] = name
-#             _type = value(self.field)
-#             assert _type.cast('null') == None
-#             assert _type.cast('none') == None
-#             assert _type.cast('nil') == None
-#             assert _type.cast('nan') == None
-#             assert _type.cast('-') == None
-#             assert _type.cast('') == ''
-#
 #
 # class TestAny(base.BaseTestCase):
 #     def setUp(self):

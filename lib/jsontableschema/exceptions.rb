@@ -19,4 +19,5 @@ module JsonTableSchema
   class InvalidDateTimeType < Exception ; end
   class InvalidGeoJSONType < Exception ; end
   class InvalidGeoPointType < Exception ; end
+  class ConstraintError < Exception ; end
 end
