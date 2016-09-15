@@ -27,6 +27,12 @@ describe JsonTableSchema::Types do
       expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
     end
 
+    it 'raises for an unsupported format' do
+      field['format'] = 'foo'
+      value = 'foo'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidFormat)
+    end
+
     context 'emails' do
 
       before(:each) do
