@@ -224,170 +224,116 @@ describe JsonTableSchema::Constraints do
 
   end
 
+  describe JsonTableSchema::Constraints::Minimum do
+
+    context 'with integer type' do
+
+      before(:each) do
+        field['type'] = 'integer'
+        field['constraints']['minimum'] = 5
+        @value = 20
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = 5
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        field['constraints']['minimum'] = 25
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be less than 25')
+      end
+
+    end
+
+    context 'with date type' do
+
+      before(:each) do
+        field['type'] = 'date'
+        field['constraints']['minimum'] = '1978-05-28'
+        @value = Date.parse('1978-05-29')
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = Date.parse('1978-05-28')
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = Date.parse('1970-05-28')
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be less than 1978-05-28')
+      end
+
+    end
+
+    context 'with datetime type' do
+
+      before(:each) do
+        field['type'] = 'date'
+        field['constraints']['minimum'] = '1978-05-28T12:30:20Z'
+        @value = DateTime.parse('1978-05-29T12:30:20Z')
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = DateTime.parse('1978-05-28T12:30:20Z')
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = DateTime.parse('1970-05-29T12:30:20Z')
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be less than 1978-05-28T12:30:20Z')
+      end
+
+    end
+
+    context 'with time type' do
+
+      before(:each) do
+        field['type'] = 'time'
+        field['constraints']['minimum'] = '11:30:00'
+        @value = Tod::TimeOfDay.parse('12:30:20')
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = Tod::TimeOfDay.parse('11:30:00')
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = Tod::TimeOfDay.parse('07:00:00')
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be less than 11:30:00')
+      end
+
+    end
+
+    it 'raises for an unsupported type' do
+      @value = 'sdsdasdsadsad'
+      field['constraints']['minimum'] = 3
+      field['type'] = 'string'
+      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintNotSupported, 'The field type `string` does not support the `minimum` constraint')
+    end
+
+  end
+
 end
 
-#
-# class TestIntegerTypeConstraints_Minimum(ConstraintsBase):
-#
-#     '''Test `minimum` constraint for IntegerType'''
-#
-#     def test_constraints_minimum_valid_value(self):
-#         value = 12
-#         field = self._make_default_field(type='integer',
-#                                          constraints={'minimum': 5})
-#         _type = types.IntegerType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_minimum_valid_value_equals(self):
-#         value = 12
-#         field = self._make_default_field(type='integer',
-#                                          constraints={'minimum': 12})
-#         _type = types.IntegerType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_minimum_invalid_value(self):
-#         value = 12
-#         field = self._make_default_field(type='integer',
-#                                          constraints={'minimum': 13})
-#         _type = types.IntegerType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must not be less than 13")
-#
-#
-# class TestDateTypeConstraints_Minimum(ConstraintsBase):
-#
-#     '''Test `minimum` constraint for DateType'''
-#
-#     def test_constraints_minimum_valid_value(self):
-#         value = '1978-05-29'
-#         field = self._make_default_field(type='date',
-#                                          constraints={'minimum': '1978-05-28'})
-#         _type = types.DateType(field)
-#
-#         self.assertEqual(_type.cast(value),
-#                          datetime.datetime.strptime(value, '%Y-%m-%d').date())
-#
-#     def test_constraints_minimum_valid_value_equals(self):
-#         value = '1978-05-29'
-#         field = self._make_default_field(type='date',
-#                                          constraints={'minimum': '1978-05-29'})
-#         _type = types.DateType(field)
-#
-#         self.assertEqual(_type.cast(value),
-#                          datetime.datetime.strptime(value, '%Y-%m-%d').date())
-#
-#     def test_constraints_minimum_invalid_value(self):
-#         value = '1978-05-29'
-#         field = self._make_default_field(type='date',
-#                                          constraints={'minimum': '1978-05-30'})
-#         _type = types.DateType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must not be less than 1978-05-30")
-#
-#
-# class TestDateTimeTypeConstraints_Minimum(ConstraintsBase):
-#
-#     '''Test `minimum` constraint for DateTimeType'''
-#
-#     def test_constraints_minimum_valid_value(self):
-#         value = '1978-05-29T12:30:20Z'
-#         field = self._make_default_field(type='datetime',
-#                                          constraints={'minimum':
-#                                                       '1978-05-28T12:30:20Z'})
-#         _type = types.DateTimeType(field)
-#
-#         self.assertEqual(_type.cast(value),
-#                          datetime.datetime.strptime(
-#                             value, '%Y-%m-%dT%H:%M:%SZ'))
-#
-#     def test_constraints_minimum_valid_value_equals(self):
-#         value = '1978-05-29T12:30:20Z'
-#         field = self._make_default_field(type='datetime',
-#                                          constraints={'minimum':
-#                                                       '1978-05-29T12:30:20Z'})
-#         _type = types.DateTimeType(field)
-#
-#         self.assertEqual(_type.cast(value),
-#                          datetime.datetime.strptime(
-#                             value, '%Y-%m-%dT%H:%M:%SZ'))
-#
-#     def test_constraints_minimum_invalid_value(self):
-#         value = '1978-05-29T12:30:20Z'
-#         field = self._make_default_field(type='datetime',
-#                                          constraints={'minimum':
-#                                                       '1978-05-30T12:30:20Z'})
-#         _type = types.DateTimeType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must not be less than "
-#                          "1978-05-30 12:30:20")
-#
-#
-# class TestTimeTypeConstraints_Minimum(ConstraintsBase):
-#
-#     '''Test `minimum` constraint for TimeType'''
-#
-#     def test_constraints_minimum_valid_value(self):
-#         value = '12:30:20'
-#         field = self._make_default_field(type='time',
-#                                          constraints={'minimum': '11:30:20'})
-#         _type = types.TimeType(field)
-#
-#         struct_time = time.strptime(value, '%H:%M:%S')
-#         expected_time = datetime.time(struct_time.tm_hour, struct_time.tm_min,
-#                                       struct_time.tm_sec)
-#         self.assertEqual(_type.cast(value), expected_time)
-#
-#     def test_constraints_minimum_valid_value_equals(self):
-#         value = '12:30:20'
-#         field = self._make_default_field(type='time',
-#                                          constraints={'minimum': '12:30:20'})
-#         _type = types.TimeType(field)
-#
-#         struct_time = time.strptime(value, '%H:%M:%S')
-#         expected_time = datetime.time(struct_time.tm_hour, struct_time.tm_min,
-#                                       struct_time.tm_sec)
-#         self.assertEqual(_type.cast(value), expected_time)
-#
-#     def test_constraints_minimum_invalid_value(self):
-#         value = '12:30:20'
-#         field = self._make_default_field(type='time',
-#                                          constraints={'minimum': '13:30:20'})
-#         _type = types.TimeType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must not be less than 13:30:20")
-#
-#
-# class TestUnsupportedTypeConstraints_Minimum(ConstraintsBase):
-#
-#     '''Test `minimum` constraint for an unsupported type'''
-#
-#     def test_constraints_minlength_valid_value(self):
-#         '''minimum with unsupported type'''
-#         value = 'string'
-#         field = self._make_default_field(type='string',
-#                                          constraints={'minimum': 2})
-#         _type = types.StringType(field)
-#
-#         with pytest.raises(exceptions.ConstraintNotSupported) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "Field type 'string' does not support "
-#                          "the minimum constraint")
-#
+
 #
 # class TestIntegerTypeConstraints_Maximum(ConstraintsBase):
 #
