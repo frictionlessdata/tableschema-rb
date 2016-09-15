@@ -604,7 +604,7 @@ describe JsonTableSchema::Types do
 
   end
 
-  describe JsonTableSchema::Types::DateTime do
+  describe JsonTableSchema::Types::GeoJSON do
 
     let(:field) {
       {
@@ -655,103 +655,103 @@ describe JsonTableSchema::Types do
 
   end
 
+  describe JsonTableSchema::Types::GeoPoint do
+
+    let(:field) {
+      {
+        'name' => 'Name',
+        'type' => 'geopoint',
+        'format' => 'default',
+        'constraints' => {
+          'required' => true
+        }
+      }
+    }
+
+    let(:type) { JsonTableSchema::Types::GeoPoint.new(field) }
+
+    it 'handles a simple point string' do
+      value = '10.0, 21.00'
+      expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
+    end
+
+    it 'raises an error for points outside of the longitude range' do
+      value = '310.0, 921.00'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+    end
+
+    it 'raises an error for points outside of the latitude range' do
+      value = '10.0, 921.00'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+    end
+
+    it 'raises for something that is not a geopoint' do
+      value = 'this is not a geopoint'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+    end
+
+    it 'raises for non decimal values' do
+      value = 'blah, blah'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+    end
+
+    it 'raises for wrong length of points' do
+      value = '10.0, 21.00, 1'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+    end
+
+    it 'handles an array' do
+      field['format'] = 'array'
+      value = [10.0, 21.00]
+      expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
+      value = ["10.0", "21.00"]
+      expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
+    end
+
+    it 'handles an array as a JSON string' do
+      field['format'] = 'array'
+      value = '[10.0, 21.00]'
+      expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
+    end
+
+    it 'raises for an invalid array' do
+      field['format'] = 'array'
+      value = '1,2'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      value = '["a", "b"]'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      value = '1,2'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+    end
+
+    it 'handles an object' do
+      field['format'] = 'object'
+      value = {"longitude" => 10.0, "latitude" => 21.00}
+      expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
+      value = {"longitude" => "10.0", "latitude" => "21.00"}
+      expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
+    end
+
+    it 'handles an object as a JSON string' do
+      field['format'] = 'object'
+      value = '{"longitude": "10.0", "latitude": "21.00"}'
+      expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
+    end
+
+    it 'raises for an invalid object' do
+      field['format'] = 'object'
+      value = '{"blah": "10.0", "latitude": "21.00"}'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      value = '{"longitude": "a", "latitude": "21.00"}'
+      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+    end
+
+  end
+
 
 end
 
-# class TestGeoJson(base.BaseTestCase):
 
-
-
-#
-#     def test_geojson_type_simple_false(self):
-#         value = ''
-#         self.field['type'] = 'geojson'
-#         _type = types.GeoJSONType(self.field)
-#
-#         # Required is false so cast null value to None
-#         assert _type.cast(value) == None
-#
-#
-# class TestGeoPoint(base.BaseTestCase):
-#     def setUp(self):
-#         super(TestGeoPoint, self).setUp()
-#         self.field = {
-#             'name': 'Name',
-#             'type': 'geopoint',
-#             'format': 'default',
-#             'constraints': {
-#                 'required': True
-#             }
-#         }
-#
-#     def test_geopoint_type_simple_true(self):
-#         value = '10.0, 21.00'
-#         _type = types.GeoPointType(self.field)
-#         self.assertEquals(_type.cast(value), [Decimal(10.0), Decimal(21)])
-#
-#     def test_values_outside_longitude_range(self):
-#         value = '310.0, 921.00'
-#         _type = types.GeoPointType(self.field)
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast, value)
-#
-#     def test_values_outside_latitude_range(self):
-#         value = '10.0, 921.00'
-#         _type = types.GeoPointType(self.field)
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast, value)
-#
-#     def test_geopoint_type_simple_false(self):
-#         value = 'this is not a geopoint'
-#         _type = types.GeoPointType(self.field)
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast, value)
-#
-#     def test_non_decimal_values(self):
-#         value = 'blah, blah'
-#         _type = types.GeoPointType(self.field)
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast, value)
-#
-#     def test_wrong_length_of_points(self):
-#         value = '10.0, 21.00, 1'
-#         _type = types.GeoPointType(self.field)
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast, value)
-#
-#     def test_array(self):
-#         self.field['format'] = 'array'
-#         _type = types.GeoPointType(self.field)
-#         self.assertEquals(_type.cast('[10.0, 21.00]'),
-#                           [Decimal(10.0), Decimal(21)])
-#         self.assertEquals(_type.cast('["10.0", "21.00"]'),
-#                           [Decimal(10.0), Decimal(21)])
-#
-#     def test_array_invalid(self):
-#         self.field['format'] = 'array'
-#         _type = types.GeoPointType(self.field)
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast, '1,2')
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast,
-#                           '["a", "b"]')
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast,
-#                           '[1, 2, 3]')
-#
-#     def test_object(self):
-#         self.field['format'] = 'object'
-#         _type = types.GeoPointType(self.field)
-#         self.assertEquals(_type.cast('{"longitude": 10.0, "latitude": 21.00}'),
-#                           [Decimal(10.0), Decimal(21)])
-#         self.assertEquals(
-#             _type.cast('{"longitude": "10.0", "latitude": "21.00"}'),
-#             [Decimal(10.0), Decimal(21)]
-#         )
-#
-#     def test_array_object(self):
-#         self.field['format'] = 'object'
-#         _type = types.GeoPointType(self.field)
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast, '[ ')
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast,
-#                           '{"blah": "10.0", "latitude": "21.00"}')
-#         self.assertRaises(exceptions.InvalidGeoPointType, _type.cast,
-#                           '{"longitude": "a", "latitude": "21.00"}')
-#
-#
-#
 # class TestNullValues(base.BaseTestCase):
 #
 #     none_string_types = {
