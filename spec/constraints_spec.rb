@@ -331,6 +331,113 @@ describe JsonTableSchema::Constraints do
 
   end
 
+  describe JsonTableSchema::Constraints::Maximum do
+
+    context 'with integer type' do
+
+      before(:each) do
+        field['type'] = 'integer'
+        field['constraints']['maximum'] = 5
+        @value = 4
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = 5
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        field['constraints']['maximum'] = 2
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be more than 2')
+      end
+
+    end
+
+    context 'with date type' do
+
+      before(:each) do
+        field['type'] = 'date'
+        field['constraints']['maximum'] = '1978-05-28'
+        @value = Date.parse('1978-05-27')
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = Date.parse('1978-05-27')
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = Date.parse('2016-05-28')
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be more than 1978-05-28')
+      end
+
+    end
+
+    context 'with datetime type' do
+
+      before(:each) do
+        field['type'] = 'date'
+        field['constraints']['maximum'] = '1978-05-28T12:30:20Z'
+        @value = DateTime.parse('1978-05-27T12:30:20Z')
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = DateTime.parse('1978-05-28T12:30:20Z')
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = DateTime.parse('2016-05-29T12:30:20Z')
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be more than 1978-05-28T12:30:20Z')
+      end
+
+    end
+
+    context 'with time type' do
+
+      before(:each) do
+        field['type'] = 'time'
+        field['constraints']['maximum'] = '11:30:00'
+        @value = Tod::TimeOfDay.parse('10:30:20')
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = Tod::TimeOfDay.parse('11:30:00')
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = Tod::TimeOfDay.parse('14:00:00')
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be more than 11:30:00')
+      end
+
+    end
+
+    it 'raises for an unsupported type' do
+      @value = 'sdsdasdsadsad'
+      field['constraints']['maximum'] = 3
+      field['type'] = 'string'
+      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintNotSupported, 'The field type `string` does not support the `maximum` constraint')
+    end
+
+  end
+
 end
 
 

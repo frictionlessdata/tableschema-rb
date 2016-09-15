@@ -2,6 +2,7 @@ require "jsontableschema/constraints/required"
 require "jsontableschema/constraints/min_length"
 require "jsontableschema/constraints/max_length"
 require "jsontableschema/constraints/minimum"
+require "jsontableschema/constraints/maximum"
 
 module JsonTableSchema
   class Constraints
@@ -9,6 +10,7 @@ module JsonTableSchema
     include JsonTableSchema::Constraints::MinLength
     include JsonTableSchema::Constraints::MaxLength
     include JsonTableSchema::Constraints::Minimum
+    include JsonTableSchema::Constraints::Maximum
 
     def initialize(field, value)
       @field = field
@@ -42,6 +44,18 @@ module JsonTableSchema
     def is_supported_type?(constraint)
       klass = "JsonTableSchema::Types::#{@field['type'].capitalize}"
       Kernel.const_get(klass).supported_constraints.include?(constraint)
+    end
+
+    def parse_constraint(constraint)
+      if @value.is_a?(::Integer)
+        constraint.to_i
+      elsif @value.is_a?(::Tod::TimeOfDay)
+        Tod::TimeOfDay.parse(constraint)
+      elsif @value.is_a?(::DateTime)
+        DateTime.parse(constraint)
+      elsif @value.is_a?(::Date)
+        Date.parse(constraint)
+      end
     end
 
   end

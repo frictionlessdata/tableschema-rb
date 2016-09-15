@@ -9,20 +9,6 @@ module JsonTableSchema
         true
       end
 
-      private
-
-      def parse_constraint(constraint)
-        if @value.is_a?(::Integer)
-          constraint.to_i
-        elsif @value.is_a?(::Tod::TimeOfDay)
-          Tod::TimeOfDay.parse(constraint)
-        elsif @value.is_a?(::DateTime)
-          DateTime.parse(constraint)
-        elsif @value.is_a?(::Date)
-          Date.parse(constraint)
-        end
-      end
-
     end
   end
 end
