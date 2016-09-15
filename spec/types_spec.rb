@@ -344,6 +344,9 @@ describe JsonTableSchema::Types do
 
       value = ''
       expect(type.cast(value)).to be nil
+
+      value = nil
+      expect(type.cast(value)).to be nil
     end
 
     it 'raises for non null values' do
