@@ -130,10 +130,11 @@ describe JsonTableSchema::Constraints do
 
     end
 
-    it 'handles with an invalid value' do
-      field['constraints']['minLength'] = 10
-      @value = 'string'
-      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
+    it 'raises for an unsupported type' do
+      @value = 2
+      field['constraints']['minLength'] = 3
+      field['type'] = 'integer'
+      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintNotSupported, 'The field type `integer` does not support the `minLength` constraint')
     end
 
   end
@@ -141,130 +142,6 @@ describe JsonTableSchema::Constraints do
 end
 
 
-#
-#
-# class TestStringTypeConstraints_MinLength(ConstraintsBase):
-#
-#     '''Test `minLength` constraint for StringType'''
-#
-#     def test_constraints_minlength_valid_value(self):
-#         '''minLength with valid value'''
-#         value = 'string'
-#         field = self._make_default_field(type='string',
-#                                          constraints={'minLength': 5})
-#         _type = types.StringType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_minlength_valid_value_equals(self):
-#         '''minLength with valid value equal to each other.'''
-#         value = 'string'
-#         field = self._make_default_field(type='string',
-#                                          constraints={'minLength': 6})
-#         _type = types.StringType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_minlength_invalid_value(self):
-#         '''minLength with invalid value'''
-#         value = 'string'
-#         field = self._make_default_field(type='string',
-#                                          constraints={'minLength': 10})
-#         _type = types.StringType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must have a minimum length of 10")
-#
-#
-# class TestArrayTypeConstraints_MinLength(ConstraintsBase):
-#
-#     '''Test `minLength` constraint for ArrayType'''
-#
-#     def test_constraints_minlength_valid_value(self):
-#         '''minLength with valid value'''
-#         value = ['a', 'b', 'c']
-#         field = self._make_default_field(type='array',
-#                                          constraints={'minLength': 2})
-#         _type = types.ArrayType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_minlength_valid_value_equals(self):
-#         '''minLength with valid value equal to each other.'''
-#         value = ['a', 'b', 'c']
-#         field = self._make_default_field(type='array',
-#                                          constraints={'minLength': 3})
-#         _type = types.ArrayType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_minlength_invalid_value(self):
-#         '''minLength with invalid value'''
-#         value = ['a', 'b', 'c']
-#         field = self._make_default_field(type='array',
-#                                          constraints={'minLength': 4})
-#         _type = types.ArrayType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must have a minimum length of 4")
-#
-#
-# class TestObjectTypeConstraints_MinLength(ConstraintsBase):
-#
-#     '''Test `minLength` constraint for ObjectType'''
-#
-#     def test_constraints_minlength_valid_value(self):
-#         '''minLength with valid value'''
-#         value = {'a': 1, 'b': 2, 'c': 3}
-#         field = self._make_default_field(type='object',
-#                                          constraints={'minLength': 2})
-#         _type = types.ObjectType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_minlength_valid_value_equals(self):
-#         '''minLength with valid value equal to each other.'''
-#         value = {'a': 1, 'b': 2, 'c': 3}
-#         field = self._make_default_field(type='object',
-#                                          constraints={'minLength': 3})
-#         _type = types.ObjectType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_minlength_invalid_value(self):
-#         '''minLength with invalid value'''
-#         value = {'a': 1, 'b': 2, 'c': 3}
-#         field = self._make_default_field(type='object',
-#                                          constraints={'minLength': 4})
-#         _type = types.ObjectType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must have a minimum length of 4")
-#
-#
-# class TestUnsupportedTypeConstraints_MinLength(ConstraintsBase):
-#
-#     '''Test `minLength` constraint for an unsupported type'''
-#
-#     def test_constraints_minlength_valid_value(self):
-#         '''minLength with unsupported type'''
-#         value = 2
-#         field = self._make_default_field(type='integer',
-#                                          constraints={'minLength': 2})
-#         _type = types.IntegerType(field)
-#
-#         with pytest.raises(exceptions.ConstraintNotSupported) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "Field type 'integer' does not support "
-#                          "the minLength constraint")
-#
 #
 # class TestStringTypeConstraints_MaxLength(ConstraintsBase):
 #

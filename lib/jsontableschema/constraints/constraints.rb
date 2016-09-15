@@ -15,7 +15,12 @@ module JsonTableSchema
     def validate!
       result = true
       @constraints.each do |c|
-        result = self.send("check_#{underscore c.first}")
+        constraint = c.first
+        if is_supported_type?(constraint)
+          result = self.send("check_#{underscore constraint}")
+        else
+          raise(JsonTableSchema::ConstraintNotSupported.new("The field type `#{@field['type']}` does not support the `#{constraint}` constraint"))
+        end
       end
       result
     end
@@ -28,6 +33,11 @@ module JsonTableSchema
             gsub(/([a-z\d])([A-Z])/,'\1_\2').
             tr("-", "_").
             downcase
+    end
+
+    def is_supported_type?(constraint)
+      klass = "JsonTableSchema::Types::#{@field['type'].capitalize}"
+      Kernel.const_get(klass).supported_constraints.include?(constraint)
     end
 
   end
