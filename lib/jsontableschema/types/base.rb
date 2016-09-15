@@ -20,7 +20,7 @@ module JsonTableSchema
 
       def set_format
         if @field['format'].start_with?('fmt:')
-          @format, @format_string = *@field['format'].split(':')
+          @format, @format_string = *@field['format'].split(':', 2)
         else
           @format = @field['format'] || 'default'
         end
