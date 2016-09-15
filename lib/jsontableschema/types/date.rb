@@ -32,14 +32,10 @@ module JsonTableSchema
       def cast_any(value)
         return value if value.is_a?(type)
 
-        begin
-          date = ::Date._parse(value)
-          if date.values.count == 3
-            ::Date.parse(value)
-          else
-            raise JsonTableSchema::InvalidDateType.new("#{value} is not a valid date")
-          end
-        rescue ArgumentError
+        date = ::Date._parse(value)
+        if date.values.count == 3
+          ::Date.parse(value)
+        else
           raise JsonTableSchema::InvalidDateType.new("#{value} is not a valid date")
         end
       end
