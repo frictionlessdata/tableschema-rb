@@ -1,10 +1,12 @@
 require "jsontableschema/constraints/required"
 require "jsontableschema/constraints/min_length"
+require "jsontableschema/constraints/max_length"
 
 module JsonTableSchema
   class Constraints
     include JsonTableSchema::Constraints::Required
     include JsonTableSchema::Constraints::MinLength
+    include JsonTableSchema::Constraints::MaxLength
 
     def initialize(field, value)
       @field = field

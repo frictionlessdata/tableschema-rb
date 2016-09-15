@@ -139,132 +139,93 @@ describe JsonTableSchema::Constraints do
 
   end
 
+  describe JsonTableSchema::Constraints::MaxLength do
+
+    context 'with string type' do
+
+      before(:each) do
+        field['type'] = 'string'
+        field['constraints']['maxLength'] = 7
+      end
+
+      it 'handles with a valid value' do
+        @value = 'string'
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles when the value is equal' do
+        field['constraints']['maxLength'] = 6
+        @value = 'string'
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        field['constraints']['maxLength'] = 10
+        @value = 'stringggggggggggg'
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a maximum length of 10')
+      end
+
+    end
+
+    context 'with array type' do
+
+      before(:each) do
+        field['type'] = 'array'
+        field['constraints']['maxLength'] = 4
+        @value = ['a', 'b', 'c']
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles when the value is equal' do
+        field['constraints']['maxLength'] = 3
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        field['constraints']['maxLength'] = 2
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a maximum length of 2')
+      end
+
+    end
+
+    context 'with object type' do
+
+      before(:each) do
+        field['type'] = 'object'
+        field['constraints']['maxLength'] = 4
+        @value = {'a' => 1, 'b' => 2, 'c' => 3}
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles when the value is equal' do
+        field['constraints']['maxLength'] = 3
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        field['constraints']['maxLength'] = 2
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a maximum length of 2')
+      end
+
+    end
+
+    it 'raises for an unsupported type' do
+      @value = 2
+      field['constraints']['maxLength'] = 3
+      field['type'] = 'integer'
+      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintNotSupported, 'The field type `integer` does not support the `maxLength` constraint')
+    end
+
+  end
+
 end
 
-
-#
-# class TestStringTypeConstraints_MaxLength(ConstraintsBase):
-#
-#     '''Test `maxLength` constraint for StringType'''
-#
-#     def test_constraints_maxlength_valid_value(self):
-#         '''maxLength with valid value'''
-#         value = 'string'
-#         field = self._make_default_field(type='string',
-#                                          constraints={'maxLength': 7})
-#         _type = types.StringType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_maxlength_valid_value_equals(self):
-#         '''maxLength with valid value equal to each other'''
-#         value = 'string'
-#         field = self._make_default_field(type='string',
-#                                          constraints={'maxLength': 6})
-#         _type = types.StringType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_maxlength_invalid_value(self):
-#         '''maxLength with invalid value'''
-#         value = 'string'
-#         field = self._make_default_field(type='string',
-#                                          constraints={'maxLength': 5})
-#         _type = types.StringType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must have a maximum length of 5")
-#
-#
-# class TestArrayTypeConstraints_MaxLength(ConstraintsBase):
-#
-#     '''Test `maxLength` constraint for ArrayType'''
-#
-#     def test_constraints_maxlength_valid_value(self):
-#         '''maxLength with valid value'''
-#         value = ['a', 'b', 'c']
-#         field = self._make_default_field(type='array',
-#                                          constraints={'maxLength': 4})
-#         _type = types.ArrayType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_maxlength_valid_value_equals(self):
-#         '''maxLength with valid value equal to each other'''
-#         value = ['a', 'b', 'c']
-#         field = self._make_default_field(type='array',
-#                                          constraints={'maxLength': 3})
-#         _type = types.ArrayType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_maxlength_invalid_value(self):
-#         '''maxLength with invalid value'''
-#         value = ['a', 'b', 'c']
-#         field = self._make_default_field(type='array',
-#                                          constraints={'maxLength': 2})
-#         _type = types.ArrayType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must have a maximum length of 2")
-#
-#
-# class TestObjectTypeConstraints_MaxLength(ConstraintsBase):
-#
-#     '''Test `maxLength` constraint for ObjectType'''
-#
-#     def test_constraints_maxlength_valid_value(self):
-#         '''maxLength with valid value'''
-#         value = {'a': 1, 'b': 2, 'c': 3}
-#         field = self._make_default_field(type='object',
-#                                          constraints={'maxLength': 4})
-#         _type = types.ObjectType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_maxlength_valid_value_equals(self):
-#         '''maxLength with valid value equal to each other'''
-#         value = {'a': 1, 'b': 2, 'c': 3}
-#         field = self._make_default_field(type='object',
-#                                          constraints={'maxLength': 3})
-#         _type = types.ObjectType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_maxlength_invalid_value(self):
-#         '''maxLength with invalid value'''
-#         value = {'a': 1, 'b': 2, 'c': 3}
-#         field = self._make_default_field(type='object',
-#                                          constraints={'maxLength': 2})
-#         _type = types.ObjectType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The field 'Name' must have a maximum length of 2")
-#
-#
-# class TestUnsupportedTypeConstraints_MaxLength(ConstraintsBase):
-#
-#     '''Test `maxLength` constraint for an unsupported type'''
-#
-#     def test_constraints_minlength_valid_value(self):
-#         '''maxLength with unsupported type'''
-#         value = 2
-#         field = self._make_default_field(type='integer',
-#                                          constraints={'maxLength': 2})
-#         _type = types.IntegerType(field)
-#
-#         with pytest.raises(exceptions.ConstraintNotSupported) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "Field type 'integer' does not support "
-#                          "the maxLength constraint")
-#
 #
 # class TestIntegerTypeConstraints_Minimum(ConstraintsBase):
 #
