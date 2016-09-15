@@ -56,19 +56,78 @@ describe JsonTableSchema::Constraints do
 
   describe JsonTableSchema::Constraints::MinLength do
 
-    before(:each) do
-      field['constraints']['minLength'] = 5
+    context 'with string type' do
+
+      before(:each) do
+        field['type'] = 'string'
+        field['constraints']['minLength'] = 5
+      end
+
+      it 'handles with a valid value' do
+        @value = 'string'
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles when the value is equal' do
+        field['constraints']['minLength'] = 6
+        @value = 'string'
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        field['constraints']['minLength'] = 10
+        @value = 'string'
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
+      end
+
     end
 
-    it 'handles with a valid value' do
-      @value = 'string'
-      expect(constraints.validate!).to eq(true)
+    context 'with array type' do
+
+      before(:each) do
+        field['type'] = 'array'
+        field['constraints']['minLength'] = 2
+        @value = ['a', 'b', 'c']
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles when the value is equal' do
+        field['constraints']['minLength'] = 3
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        field['constraints']['minLength'] = 10
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
+      end
+
     end
 
-    it 'handles when the value is equal' do
-      field['constraints']['minLength'] = 6
-      @value = 'string'
-      expect(constraints.validate!).to eq(true)
+    context 'with object type' do
+
+      before(:each) do
+        field['type'] = 'object'
+        field['constraints']['minLength'] = 2
+        @value = {'a' => 1, 'b' => 2, 'c' => 3}
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles when the value is equal' do
+        field['constraints']['minLength'] = 3
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        field['constraints']['minLength'] = 10
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
+      end
+
     end
 
     it 'handles with an invalid value' do
