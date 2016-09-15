@@ -502,6 +502,32 @@ describe JsonTableSchema::Constraints do
 
     end
 
+    context 'with boolean type' do
+
+      before(:each) do
+        field['type'] = 'boolean'
+        field['constraints']['enum'] = [true]
+        @value = true
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = false
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+      it 'handles when value is equivalent to possible values in enum array' do
+        field['constraints']['enum'] = ['yes', 'y', 't', '1', 1]
+        expect(constraints.validate!).to eq(true)
+      end
+
+    end
+
+  end
+
 end
 
 #

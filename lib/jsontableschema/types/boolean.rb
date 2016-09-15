@@ -24,24 +24,10 @@ module JsonTableSchema
         ::Boolean
       end
 
-      def true_values
-        ['yes', 'y', 'true', 't', '1']
-      end
-
-      def false_values
-        ['no', 'n', 'false', 'f', '0']
-      end
-
       def cast_default(value)
-        if value.is_a?(type)
-          return value
-        elsif true_values.include?(value.to_s.downcase)
-          true
-        elsif false_values.include?(value.to_s.downcase)
-          false
-        else
-          raise JsonTableSchema::InvalidCast.new("#{value} is not a #{name}")
-        end
+        value = cast_boolean(value)
+        raise JsonTableSchema::InvalidCast.new("#{value} is not a #{name}") if value.nil?
+        value
       end
 
     end

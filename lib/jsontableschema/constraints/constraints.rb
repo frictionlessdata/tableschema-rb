@@ -7,6 +7,8 @@ require "jsontableschema/constraints/enum"
 
 module JsonTableSchema
   class Constraints
+    include JsonTableSchema::Helpers
+
     include JsonTableSchema::Constraints::Required
     include JsonTableSchema::Constraints::MinLength
     include JsonTableSchema::Constraints::MaxLength
@@ -59,6 +61,8 @@ module JsonTableSchema
         Date.parse(constraint)
       elsif @value.is_a?(::Float) && constraint.is_a?(Array)
         constraint.map { |c| Float(c) }
+      elsif @value.is_a?(Boolean) && constraint.is_a?(Array)
+        constraint.map { |c| cast_boolean(c) }
       else
         constraint
       end

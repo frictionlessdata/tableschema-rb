@@ -8,6 +8,7 @@ require "tod/core_extensions"
 
 require "jsontableschema/version"
 require "jsontableschema/exceptions"
+require "jsontableschema/helpers"
 
 require "jsontableschema/constraints/constraints"
 

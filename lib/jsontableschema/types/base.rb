@@ -1,6 +1,8 @@
 module JsonTableSchema
   module Types
     class Base
+      include JsonTableSchema::Helpers
+
 
       def initialize(field)
         @field = field
