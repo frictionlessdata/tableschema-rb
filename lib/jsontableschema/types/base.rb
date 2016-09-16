@@ -6,7 +6,8 @@ module JsonTableSchema
 
       def initialize(field)
         @field = field
-        @required = ['true', true].include?(field['constraints']['required'])
+        @constraints = field['constraints'] || {}
+        @required = ['true', true].include?(@constraints['required'])
         @type = @field['type']
         set_format
       end
