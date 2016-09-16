@@ -2,6 +2,8 @@ module JsonTableSchema
   class Schema < Hash
     include JsonTableSchema::Validate
     include JsonTableSchema::Model
+    include JsonTableSchema::Data
+    include JsonTableSchema::Helpers
 
     def initialize(schema, opts = {})
       self.merge! parse_schema(schema)

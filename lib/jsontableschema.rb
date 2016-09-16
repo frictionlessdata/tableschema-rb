@@ -29,6 +29,7 @@ require "jsontableschema/types/time"
 
 require "jsontableschema/validate"
 require "jsontableschema/model"
+require "jsontableschema/data"
 require "jsontableschema/schema"
 
 module JsonTableSchema

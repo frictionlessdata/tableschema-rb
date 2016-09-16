@@ -21,4 +21,6 @@ module JsonTableSchema
   class InvalidGeoPointType < Exception ; end
   class ConstraintError < Exception ; end
   class ConstraintNotSupported < Exception ; end
+  class ConversionError < Exception ; end
+  class MultipleInvalid < Exception ; end
 end

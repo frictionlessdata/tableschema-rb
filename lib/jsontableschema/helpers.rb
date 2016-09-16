@@ -21,5 +21,9 @@ module JsonTableSchema
       ['no', 'n', 'false', 'f', '0']
     end
 
+    def get_class_for_type(type)
+      "JsonTableSchema::Types::#{type.capitalize}"
+    end
+
   end
 end

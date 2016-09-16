@@ -48,7 +48,7 @@ module JsonTableSchema
     end
 
     def is_supported_type?(constraint)
-      klass = "JsonTableSchema::Types::#{@field['type'].capitalize}"
+      klass = get_class_for_type(@field['type'])
       Kernel.const_get(klass).supported_constraints.include?(constraint)
     end
 
