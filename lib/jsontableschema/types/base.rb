@@ -13,7 +13,7 @@ module JsonTableSchema
       end
 
       def cast(value)
-        check_required(value)
+        JsonTableSchema::Constraints.new(@field, value).validate!
         return nil if is_null?(value)
         send("cast_#{@format}", value)
       rescue NoMethodError => e
@@ -40,12 +40,6 @@ module JsonTableSchema
 
         def null_values
           ['null', 'none', 'nil', 'nan', '-', '']
-        end
-
-        def check_required(value)
-          if null_values.include?(value) && @required == true && @type != 'null'
-            raise JsonTableSchema::ConstraintError.new("The field #{@field['name']} requires a value")
-          end
         end
 
     end
