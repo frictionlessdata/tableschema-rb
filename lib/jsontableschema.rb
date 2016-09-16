@@ -8,6 +8,9 @@ require "tod/core_extensions"
 
 require "jsontableschema/version"
 require "jsontableschema/exceptions"
+require "jsontableschema/helpers"
+
+require "jsontableschema/constraints/constraints"
 
 require "jsontableschema/types/base"
 require "jsontableschema/types/any"
@@ -27,9 +30,6 @@ require "jsontableschema/types/time"
 require "jsontableschema/validate"
 require "jsontableschema/model"
 require "jsontableschema/schema"
-
-module JsonTableSchema
-end
 
 module JsonTableSchema
   module Types

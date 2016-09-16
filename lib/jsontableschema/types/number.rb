@@ -6,7 +6,7 @@ module JsonTableSchema
         'number'
       end
 
-      def supported_constraints
+      def self.supported_constraints
         [
           'required',
           'pattern',
