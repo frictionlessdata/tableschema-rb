@@ -526,50 +526,37 @@ describe JsonTableSchema::Constraints do
 
     end
 
+    context 'with array type' do
+
+      before(:each) do
+        field['type'] = 'array'
+        field['constraints']['enum'] = [
+          ['first','second','third'],
+          ['fred','alice','bob']
+        ]
+        @value = ['first', 'second', 'third']
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = ['foo', 'bar', 'baz']
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+      it 'handles with a valid value and a different order' do
+        @value = ['third', 'second', 'first']
+        expect(constraints.validate!).to eq(true)
+      end
+
+    end
+
   end
 
 end
 
-#
-#
-# class TestBooleanTypeConstraints_Enum(ConstraintsBase):
-#
-#     '''Test `enum` constraint for BooleanType'''
-#
-#     def test_constraints_enum_valid_value(self):
-#         '''value is in enum array'''
-#         value = 'true'
-#         field = self._make_default_field(
-#             type='boolean', constraints={'enum': [True, ]})
-#
-#         _type = types.BooleanType(field)
-#
-#         self.assertEqual(_type.cast(value), True)
-#
-#     def test_constraints_enum_invalid_value(self):
-#         '''value is not in enum array'''
-#         value = 'true'
-#         field = self._make_default_field(
-#             type='boolean', constraints={'enum': [False, ]})
-#
-#         _type = types.BooleanType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The value for field 'Name' "
-#                          "must be in the enum array")
-#
-#     def test_constraints_enum_valid_value_alternate_truths(self):
-#         '''value is equivalent to possible values in enum array'''
-#         value = 'true'
-#         field = self._make_default_field(
-#             type='boolean', constraints={'enum': ['yes', 'y',
-#                                                   't', '1', 1]})
-#
-#         _type = types.BooleanType(field)
-#
-#         self.assertEqual(_type.cast(value), True)
 #
 #
 # class TestArrayTypeConstraints_Enum(ConstraintsBase):
