@@ -553,64 +553,40 @@ describe JsonTableSchema::Constraints do
 
     end
 
+    context 'with object type' do
+
+      before(:each) do
+        field['type'] = 'object'
+        field['constraints']['enum'] =  [{'a' => 'first',
+                                          'b' => 'second',
+                                          'c' => 'third'}]
+        @value = {'a' => 'first', 'b' => 'second', 'c' => 'third'}
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = {
+            'a' => 'fred',
+            'b' => 'alice',
+            'c' => 'bob'
+          }
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+      it 'handles with a valid value and a different order' do
+        @value = {'b' => 'second', 'a' => 'first', 'c' => 'third'}
+        expect(constraints.validate!).to eq(true)
+      end
+
+    end
+
   end
 
 end
 
-#
-#
-# class TestArrayTypeConstraints_Enum(ConstraintsBase):
-#
-#     '''Test `enum` constraint for ArrayType'''
-#
-#     def test_constraints_enum_valid_value(self):
-#         '''value is in enum array'''
-#         value = ['first', 'second', 'third']
-#         field = self._make_default_field(
-#             type='array', constraints={'enum': [["first",
-#                                                  "second",
-#                                                  "third"],
-#                                                 ["fred",
-#                                                  "alice",
-#                                                  "bob"], ]})
-#
-#         _type = types.ArrayType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_enum_invalid_value(self):
-#         '''value is not in enum array'''
-#         value = ['first', 'second', 'third']
-#         field = self._make_default_field(
-#             type='array', constraints={'enum': [["fred",
-#                                                  "alice",
-#                                                  "bob"], ]})
-#
-#         _type = types.ArrayType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The value for field 'Name' "
-#                          "must be in the enum array")
-#
-#     def test_constraints_enum_invalid_value_different_order(self):
-#         '''value is not in enum array. Same members in each array, but
-#         different order.'''
-#         value = ['first', 'second', 'third']
-#         field = self._make_default_field(
-#             type='array', constraints={'enum': [["first",
-#                                                  "third",
-#                                                  "second"], ]})
-#
-#         _type = types.ArrayType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The value for field 'Name' "
-#                          "must be in the enum array")
-#
 #
 # class TestObjectTypeConstraints_Enum(ConstraintsBase):
 #
