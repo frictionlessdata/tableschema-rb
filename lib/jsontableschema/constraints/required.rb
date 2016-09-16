@@ -12,7 +12,7 @@ module JsonTableSchema
       private
 
       def required?
-        required == true && @type != 'null'
+        required == true && @field['type'] != 'null'
       end
 
       def is_empty?

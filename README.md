@@ -27,6 +27,33 @@ Or install it yourself as:
 
 ## Usage
 
+### Parse a CSV
+
+Validate and cast data from a CSV as described by a schema.
+
+```ruby
+schema = {
+    "fields": [
+        {
+            "name" => "id",
+            "title" => "Identifier",
+            "type" => "integer"
+        },
+        {
+            "name" => "title",
+            "title" => "Title",
+            "type" => "string"
+        }
+    ]
+} # Can also be a URL or a path
+
+csv = 'https://raw.githubusercontent.com/okfn/jsontableschema-py/master/data/simple_data.csv' # Can also be a url or array of arrays
+
+table = JsonTableSchema::Table(csv, schema)
+table.rows
+#=> [[1,'foo'],[2,'bar'],[3,'baz']]
+```
+
 ### Validate a schema
 
 To validate that a schema meets the JSON Table Schema spec, you can pass a schema to the initializer like so:

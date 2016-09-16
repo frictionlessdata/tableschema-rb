@@ -481,13 +481,13 @@ describe JsonTableSchema::Types do
 
     it 'raises an error for an invalid fmt' do
       value = '2014/12/19'
-      field['type'] = 'fmt:DD/MM/YYYY'
+      field['format'] = 'fmt:DD/MM/YYYY'
       expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
     end
 
     it 'raises an error for a valid fmt and invalid value' do
       value = '2014/12/19'
-      field['type'] = 'fmt:%m/%d/%y'
+      field['format'] = 'fmt:%m/%d/%y'
       expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
     end
 
