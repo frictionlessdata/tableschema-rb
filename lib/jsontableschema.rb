@@ -5,6 +5,7 @@ require "currencies"
 require "date"
 require "tod"
 require "tod/core_extensions"
+require "csv"
 
 require "jsontableschema/version"
 require "jsontableschema/exceptions"
@@ -31,6 +32,7 @@ require "jsontableschema/validate"
 require "jsontableschema/model"
 require "jsontableschema/data"
 require "jsontableschema/schema"
+require "jsontableschema/table"
 
 module JsonTableSchema
   module Types
