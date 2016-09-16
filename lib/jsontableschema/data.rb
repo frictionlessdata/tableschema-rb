@@ -27,6 +27,12 @@ module JsonTableSchema
       row
     end
 
+    def cast(field_name, value)
+      convert_column(value, get_field(field_name), true)
+    end
+
+    private
+
     def raise_header_error(row)
       raise(JsonTableSchema::ConversionError.new("The number of items to convert (#{row.count}) does not match the number of headers in the schema (#{fields.count})"))
     end
