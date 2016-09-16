@@ -57,12 +57,14 @@ module JsonTableSchema
         Tod::TimeOfDay.parse(constraint)
       elsif @value.is_a?(::DateTime)
         DateTime.parse(constraint)
-      elsif @value.is_a?(::Date)
+      elsif @value.is_a?(::Date) && constraint.is_a?(::String)
         Date.parse(constraint)
       elsif @value.is_a?(::Float) && constraint.is_a?(Array)
         constraint.map { |c| Float(c) }
       elsif @value.is_a?(Boolean) && constraint.is_a?(Array)
         constraint.map { |c| cast_boolean(c) }
+      elsif @value.is_a?(Date) && constraint.is_a?(Array)
+        constraint.map { |c| Date.parse(c) }
       else
         constraint
       end

@@ -583,55 +583,29 @@ describe JsonTableSchema::Constraints do
 
     end
 
+    context 'with date type' do
+
+      before(:each) do
+        field['type'] = 'date'
+        field['constraints']['enum'] = ['2015-10-22']
+        @value = Date.parse('2015-10-22')
+      end
+
+      it 'handles with a valid value' do
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = Date.parse('2016-10-22')
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+    end
+
   end
 
 end
 
-#
-# class TestObjectTypeConstraints_Enum(ConstraintsBase):
-#
-#     '''Test `enum` constraint for ObjectType'''
-#
-#     def test_constraints_enum_valid_value(self):
-#         '''value is in enum array'''
-#         value = {'a': 'first', 'b': 'second', 'c': 'third'}
-#         field = self._make_default_field(
-#             type='object', constraints={'enum': [{'a': 'first',
-#                                                   'b': 'second',
-#                                                   'c': 'third'}]})
-#
-#         _type = types.ObjectType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
-#
-#     def test_constraints_enum_invalid_value(self):
-#         '''value is not in enum array'''
-#         value = {'a': 'first', 'b': 'second', 'c': 'third'}
-#         field = self._make_default_field(
-#             type='object', constraints={'enum': [{'a': 'fred',
-#                                                   'b': 'alice',
-#                                                   'c': 'bob'}]})
-#
-#         _type = types.ObjectType(field)
-#
-#         with pytest.raises(exceptions.ConstraintError) as e:
-#             _type.cast(value)
-#         self.assertEqual(
-#             e.value.msg, "The value for field 'Name' "
-#                          "must be in the enum array")
-#
-#     def test_constraints_enum_valid_value_different_order(self):
-#         '''value is in enum array. Same members in each array, but different
-#         order.'''
-#         value = {'a': 'first', 'b': 'second', 'c': 'third'}
-#         field = self._make_default_field(
-#             type='object', constraints={'enum': [{'a': 'first',
-#                                                   'c': 'third',
-#                                                   'b': 'second'}], })
-#
-#         _type = types.ObjectType(field)
-#
-#         self.assertEqual(_type.cast(value), value)
 #
 #
 # class TestDateTypeConstraints_Enum(ConstraintsBase):
