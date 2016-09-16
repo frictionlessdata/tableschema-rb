@@ -22,7 +22,26 @@ module JsonTableSchema
     end
 
     def get_class_for_type(type)
-      "JsonTableSchema::Types::#{type.capitalize}"
+      "JsonTableSchema::Types::#{type_class_lookup[type]}"
+    end
+
+    def type_class_lookup
+      {
+        'any' => 'Any',
+        'array' => 'Array',
+        'base' => 'Base',
+        'boolean' => 'Boolean',
+        'date' => 'Date',
+        'datetime' => 'DateTime',
+        'geojson' => 'GeoJSON',
+        'geopoint' => 'GeoPoint',
+        'integer' => 'Integer',
+        'null' => 'Null',
+        'number' => 'Number',
+        'object' => 'Object',
+        'string' => 'String',
+        'time' => 'Time',
+      }
     end
 
   end
