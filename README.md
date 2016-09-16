@@ -97,7 +97,7 @@ schema_hash = {
       },
       {
           "name" => "height",
-          "type" => "string"
+          "type" => "number"
       }
   ],
   "primaryKey" => "id",
@@ -120,12 +120,13 @@ schema.headers
 schema.required_headers
 #=> ["id"]
 schema.fields
-#=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
+#=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"number", "format"=>"default"}]
 schema.primary_keys
 #=> ["id"]
 schema.foreign_keys
 #=> [{"fields" => "state", "reference" => { "datapackage" => "http://data.okfn.org/data/mydatapackage/", "resource" => "the-resource", "fields" => "state_id" } } ]
-schema.cast(field_name, value) #TODO
+schema.cast('height', '10')
+#=> 10.0
 schema.get_field('id')
 #=> {"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}
 schema.has_field?('foo')
@@ -136,8 +137,45 @@ schema.get_fields_by_type('string')
 #=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
 schema.get_constraints('id')
 #=> {"required" => true}
-schema.convert_row(row) # TODO
-schema.convert(rows) # TODO
+schema.convert_row(['string', '10.0'])
+#=> ['string', 10.0]
+schema.convert([['foo', '12.0'],['bar', '10.0']])
+#=> [['foo', 12.0],['bar', 10.0]]
+```
+
+When converting a row (using `convert_row`), or a number of rows (using `convert`), by default the converter will fail on the first error it finds. If you pass `false` as the second argument, the errors will be collected into a `errors` attribute for you to review later. For example:
+
+```ruby
+schema_hash = {
+  "fields" => [
+      {
+          "name" => "id",
+          "type" => "string",
+          "constraints" => {
+            "required" => true,
+          }
+      },
+      {
+          "name" => "height",
+          "type" => "number"
+      }
+  ]
+}
+
+schema = JsonTableSchema::Schema.new(schema_hash)
+
+rows = [
+  ['foo', 'notanumber'],
+  ['bar', 'notanumber'],
+  ['wrong column count']
+]
+
+schema.convert(rows)
+#=> JsonTableSchema::InvalidCast: notanumber is not a number
+schema.convert(rows, false)
+#=> JsonTableSchema::MultipleInvalid
+schema.errors
+#=> [#<JsonTableSchema::InvalidCast: notanumber is not a number>, #<JsonTableSchema::InvalidCast: notanumber is not a number>, #<JsonTableSchema::ConversionError: The number of items to convert (1) does not match the number of headers in the schema (2)>]
 ```
 
 ## Development
