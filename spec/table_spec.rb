@@ -107,4 +107,10 @@ describe JsonTableSchema::Table do
     expect(table.schema.errors.count).to eq(2)
   end
 
+  it 'allows a limit to be set' do
+    expect(table.rows(limit: 1)).to eq([
+      [1,'foo']
+    ])
+  end
+
 end
