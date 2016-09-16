@@ -548,7 +548,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with a valid value and a different order' do
         @value = ['third', 'second', 'first']
-        expect(constraints.validate!).to eq(true)
+        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
     end
