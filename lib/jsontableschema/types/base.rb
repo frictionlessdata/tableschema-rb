@@ -12,8 +12,8 @@ module JsonTableSchema
         set_format
       end
 
-      def cast(value)
-        JsonTableSchema::Constraints.new(@field, value).validate!
+      def cast(value, skip_constraints = false)
+        JsonTableSchema::Constraints.new(@field, value).validate! unless skip_constraints
         return nil if is_null?(value)
         send("cast_#{@format}", value)
       rescue NoMethodError => e
