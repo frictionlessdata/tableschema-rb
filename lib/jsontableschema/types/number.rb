@@ -52,6 +52,7 @@ module JsonTableSchema
           value.gsub(group_char, '')
                .gsub(decimal_char, '.')
                .gsub(percent_char, '')
+               .gsub(Regexp.new(currency_symbols.join '|'), '')
         end
 
     end
