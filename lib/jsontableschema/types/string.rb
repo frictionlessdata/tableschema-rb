@@ -34,7 +34,7 @@ module JsonTableSchema
 
       def cast_email(value)
         value = cast_default(value)
-        if value =~ email_pattern
+        if (value =~ email_pattern) != nil
           value
         else
           raise JsonTableSchema::InvalidEmail.new("#{value} is not a valid email")
@@ -43,7 +43,7 @@ module JsonTableSchema
 
       def cast_uri(value)
         value = cast_default(value)
-        if value =~ URI::regexp
+        if (value =~ URI::regexp) != nil
           value
         else
           raise JsonTableSchema::InvalidURI.new("#{value} is not a valid uri")

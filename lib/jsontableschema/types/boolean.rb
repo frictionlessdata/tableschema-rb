@@ -25,7 +25,7 @@ module JsonTableSchema
       end
 
       def cast_default(value)
-        value = cast_boolean(value)
+        value = convert_to_boolean(value)
         raise JsonTableSchema::InvalidCast.new("#{value} is not a #{name}") if value.nil?
         value
       end

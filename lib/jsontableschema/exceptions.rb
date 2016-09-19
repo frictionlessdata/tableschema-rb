@@ -1,4 +1,6 @@
 module JsonTableSchema
+  class Exception < ::Exception ; end
+  
   class SchemaException < Exception
     attr_reader :message
 

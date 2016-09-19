@@ -113,4 +113,26 @@ describe JsonTableSchema::Table do
     ])
   end
 
+  it 'infers a schema' do
+    table = JsonTableSchema::Table.infer_schema(csv)
+    expect(table.schema).to eq({
+      "fields" => [
+        {
+          "name"=>"id",
+          "title"=>"",
+          "description"=>"",
+          "type"=>"string",
+          "format"=>"default"
+        },
+        {
+          "name"=>"title",
+          "title"=>"",
+          "description"=>"",
+          "type"=>"string",
+          "format"=>"default"
+        }
+      ]
+    })
+  end
+
 end

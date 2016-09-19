@@ -33,6 +33,7 @@ require "jsontableschema/model"
 require "jsontableschema/data"
 require "jsontableschema/schema"
 require "jsontableschema/table"
+require "jsontableschema/infer"
 
 module JsonTableSchema
   module Types

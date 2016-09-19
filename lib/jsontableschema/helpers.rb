@@ -1,7 +1,7 @@
 module JsonTableSchema
   module Helpers
 
-    def cast_boolean(value)
+    def convert_to_boolean(value)
       if value.is_a?(Boolean)
         return value
       elsif true_values.include?(value.to_s.downcase)

@@ -3,10 +3,14 @@ module JsonTableSchema
 
     attr_reader :schema
 
+    def self.infer_schema(csv, opts = {})
+      JsonTableSchema::Table.new(csv, nil, opts)
+    end
+
     def initialize(csv, schema, opts = {})
-      @schema = JsonTableSchema::Schema.new(schema)
       @opts = opts
       @csv = parse_csv(csv)
+      @schema = schema.nil? ? infer_schema(@csv) : JsonTableSchema::Schema.new(schema)
     end
 
     def parse_csv(csv)
@@ -35,6 +39,11 @@ module JsonTableSchema
         array.map do |row|
           Hash[row.map.with_index { |col, i| [headers[i], col] }]
         end
+      end
+
+      def infer_schema(csv)
+        inferer = JsonTableSchema::Infer.new(csv.headers, csv.to_a)
+        inferer.schema
       end
 
   end

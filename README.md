@@ -47,11 +47,23 @@ schema = {
     ]
 } # Can also be a URL or a path
 
-csv = 'https://raw.githubusercontent.com/okfn/jsontableschema-py/master/data/simple_data.csv' # Can also be a url or array of arrays
+csv = 'https://github.com/theodi/jsontableschema.rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
 
-table = JsonTableSchema::Table(csv, schema)
+table = JsonTableSchema::Table.new(csv, schema)
 table.rows
 #=> [[1,'foo'],[2,'bar'],[3,'baz']]
+```
+
+### Infer a schema
+
+If you don't have a schema for a CSV, and want to generate one, you can infer a schema like so:
+
+```ruby
+csv = 'https://github.com/theodi/jsontableschema.rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
+
+table = JsonTableSchema::Table.infer_schema(csv)
+table.schema
+#=> {"fields"=>[{"name"=>"id", "title"=>"", "description"=>"", "type"=>"string", "format"=>"default"}, {"name"=>"title", "title"=>"", "description"=>"", "type"=>"string", "format"=>"default"}]}
 ```
 
 ### Validate a schema
