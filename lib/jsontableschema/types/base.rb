@@ -24,6 +24,13 @@ module JsonTableSchema
         end
       end
 
+      def test(value)
+        cast(value, true)
+        true
+      rescue JsonTableSchema::Exception
+        false
+      end
+
       def set_format
         if @field['format'].start_with?('fmt:')
           @format, @format_string = *@field['format'].split(':', 2)
