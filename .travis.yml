@@ -1,4 +1,19 @@
+---
 language: ruby
 rvm:
-  - 2.1.4
+- 2.1.4
 before_install: gem install bundler -v 1.11.2
+deploy:
+  provider: rubygems
+  api_key:
+    secure: wH1kuoIanHWL0ohGKyFtcXDusgR5T5qD2QnaQS9vjIG6a//ClpYpDZ3iSxHG9CkkrbaKJDVhcGsKJOECcQRnLQ2/g9PC84c4tMzfgp3q5w7FdWfxe86diS3sXN4gw6+Xb+KhueOhO6RaghG1BJPBd2kj2G8uw6f/KT+8qOMaS+IRpuW8FkO7x8CZvUSLbzai21kYaneDglb5j/AY/sF2s+jGO/3VPmMjaJCJ7pU84Wqby6PixPMiP2EKVyhx1fD8m8CcPTAfPhiwxq1AkxxFJIkty730ECzwDVfrF9Ph5dcoR57jPliCSctNVREele2Q4ItBxi5Da5U3PiqHYu6AZR4pARoPMaO8m/ZwfvRftzwNDd7jnnkxLgWRRKDofU6wuxB+Jg8V7CbThTXyPFgn8RXYsL4tshOCCmicT8fbKO/f+S21gSQtQI1fZc6dc0WZqRCCY50NLnRH0eAJzXKfQxQ7iuKsF/nfGmZiAmVCZRKWVlGjQ+v5q5erXr+nS9prWotg/CrWiGhPkhHuEj8izBXxclzAuQHGE0H+IRwZFT/7Ym1KUKKhMx5mFRpf4EqLQ+mzIe8+4Ogn8YQclVP/3j14FtGCFiRegqy8SSfsKxTunF6i76Nbdj8v5Pkb0NZzvRjaBkbhvYKIAmLK1GaYC0lQS7gaqXqCRS64XjvAOGQ=
+  gem: jsontableschema
+  true:
+    tags: true
+    repo: theodi/jsontableschema.rb
+env:
+  global:
+    secure: gLxfDoypzEGnY3sgSPI5Rqi14kvzpE8pL5F0uz+DsxZGb2b9CIRsVfc4Uhym7HQtwRoswJn6+bao7lSDnb/favrUC1n+XlkQdXddPeyfkGLZwP8+xLhVmlDkPdMdWkhNl8ykZN1IiMm0ZCgCrgU5R0yvfRurGHSz5RseBrfXddPEidYYu1sN4pQW8YvE7npWaDwocF3TUmxKvfSX6oSFYfBi5KhOoxKtInxfep7q2ENxFPYlEdYgLYsUVNjMAzZF4JG0X9UuSpqD0LYbuMEENF4LQMPiLFvsn+NobE/bnaO/4myHXrHlISQB1ClHLTMisU0XUOeuTArH1LQLQ34AVYEUyv5/QoDSxoFdGfk22GToNpkHZR2yPIE2jflnb8OAKIK7KWQbL+YMOnfIqgPLDZxCUWKMjLQmflPorEtlB3GeFZ1fJYXRUFSnZidJHuyyOLkfdn3Qys80AoJFNkyh8MjOKcVIvow4FqnWSOw3sHBmQ57Ba5+z8IHSnnxoq+n+eWlYovZ/3aMyS+RSVYOsUN4uE71o7hEJ/y/MHPI5OZJ6TbWeYQwtji7O+HetgG3rpyVY7WTJ6+5Jgxux37SXP/H1fAKgb5tXNiosfJ442QPxo99Lgc2qoEGXVg640B5ctFUG7CwdwOlxWP8xJwKnSqb0blI8lCg+WrK7bCT2pt8=
+after_success:
+- gem install henry
+- henry deploy
