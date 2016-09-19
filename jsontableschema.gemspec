@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "webmock", "~> 2.1.0"
   spec.add_development_dependency "coveralls", "~> 0.8.13"
   spec.add_development_dependency "henry", "~> 0.1.3"
+  spec.add_development_dependency "addressable", "~> 2.3"
 
   spec.add_dependency "json-schema", "~> 2.6.0"
   spec.add_dependency "uuid", "~> 2.3.8"
