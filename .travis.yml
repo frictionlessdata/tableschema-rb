@@ -11,9 +11,3 @@ deploy:
   true:
     tags: true
     repo: theodi/jsontableschema.rb
-env:
-  global:
-    secure: gLxfDoypzEGnY3sgSPI5Rqi14kvzpE8pL5F0uz+DsxZGb2b9CIRsVfc4Uhym7HQtwRoswJn6+bao7lSDnb/favrUC1n+XlkQdXddPeyfkGLZwP8+xLhVmlDkPdMdWkhNl8ykZN1IiMm0ZCgCrgU5R0yvfRurGHSz5RseBrfXddPEidYYu1sN4pQW8YvE7npWaDwocF3TUmxKvfSX6oSFYfBi5KhOoxKtInxfep7q2ENxFPYlEdYgLYsUVNjMAzZF4JG0X9UuSpqD0LYbuMEENF4LQMPiLFvsn+NobE/bnaO/4myHXrHlISQB1ClHLTMisU0XUOeuTArH1LQLQ34AVYEUyv5/QoDSxoFdGfk22GToNpkHZR2yPIE2jflnb8OAKIK7KWQbL+YMOnfIqgPLDZxCUWKMjLQmflPorEtlB3GeFZ1fJYXRUFSnZidJHuyyOLkfdn3Qys80AoJFNkyh8MjOKcVIvow4FqnWSOw3sHBmQ57Ba5+z8IHSnnxoq+n+eWlYovZ/3aMyS+RSVYOsUN4uE71o7hEJ/y/MHPI5OZJ6TbWeYQwtji7O+HetgG3rpyVY7WTJ6+5Jgxux37SXP/H1fAKgb5tXNiosfJ442QPxo99Lgc2qoEGXVg640B5ctFUG7CwdwOlxWP8xJwKnSqb0blI8lCg+WrK7bCT2pt8=
-after_success:
-- gem install henry
-- bundle exec henry deploy
