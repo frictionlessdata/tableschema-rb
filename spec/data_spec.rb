@@ -91,6 +91,11 @@ describe JsonTableSchema::Data do
       expect(schema.errors.count).to eq(2)
     end
 
+    it 'aliases to convert_row' do
+      row = ['string', '10.0', '1', 'string', 'string']
+      expect(schema.convert_row(row)).to eq(['string', Float(10.0), 1, 'string', 'string'])
+    end
+
   end
 
   context 'convert' do
@@ -171,6 +176,22 @@ describe JsonTableSchema::Data do
         JsonTableSchema::ConversionError,
         'The number of items to convert (4) does not match the number of headers in the schema (5)'
       )
+    end
+
+    it 'aliases to convert' do
+      rows = [
+        ['string', '10.0', '1', 'string', 'string'],
+        ['string', '10.0', '1', 'string', 'string'],
+        ['string', '10.0', '1', 'string', 'string'],
+        ['string', '10.0', '1', 'string', 'string'],
+        ['string', '10.0', '1', 'string', 'string']
+      ]
+
+      converted_rows = schema.convert(rows)
+
+      converted_rows.each do |row|
+        expect(row).to eq(['string', Float(10.0), 1, 'string', 'string'])
+      end
     end
 
   end

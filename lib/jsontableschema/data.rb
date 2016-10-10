@@ -21,6 +21,8 @@ module JsonTableSchema
       rows
     end
 
+    alias_method :convert, :cast
+
     def cast_row(row, fail_fast = true)
       @errors ||= []
       raise_header_error(row) if row.count != fields.count
@@ -30,6 +32,8 @@ module JsonTableSchema
       check_for_errors
       row
     end
+
+    alias_method :convert_row, :cast_row
 
     private
 
@@ -50,6 +54,8 @@ module JsonTableSchema
         @errors << e
       end
     end
+
+    alias_method :convert_column, :cast_column
 
   end
 end
