@@ -7,11 +7,11 @@ module JsonTableSchema
       self['fields'] = (self['fields'] || []).map { |f| JsonTableSchema::Field.new(f) }
     end
 
-    def convert(rows, fail_fast = true)
+    def cast(rows, fail_fast = true)
       @errors ||= []
       rows.map! do |r|
         begin
-          convert_row(r, fail_fast)
+          cast_row(r, fail_fast)
         rescue MultipleInvalid, ConversionError => e
           raise e if fail_fast == true
           @errors << e if e.is_a?(ConversionError)
@@ -21,11 +21,11 @@ module JsonTableSchema
       rows
     end
 
-    def convert_row(row, fail_fast = true)
+    def cast_row(row, fail_fast = true)
       @errors ||= []
       raise_header_error(row) if row.count != fields.count
       fields.each_with_index do |field,i|
-        row[i] = convert_column(field, row[i], fail_fast)
+        row[i] = cast_column(field, row[i], fail_fast)
       end
       check_for_errors
       row
@@ -41,7 +41,7 @@ module JsonTableSchema
       raise(JsonTableSchema::MultipleInvalid.new("There were errors parsing the data")) if @errors.count > 0
     end
 
-    def convert_column(field, col, fail_fast)
+    def cast_column(field, col, fail_fast)
       field.cast_value(col)
     rescue Exception => e
       if fail_fast == true
