@@ -175,19 +175,4 @@ describe JsonTableSchema::Data do
 
   end
 
-  context 'cast' do
-
-    it 'casts a single value' do
-      expect(schema.cast('height', '10.0')).to eq(Float(10.0))
-    end
-
-    it 'raises with an incorrect value' do
-      expect { schema.cast('height', 'notdecimal') }.to raise_error(
-        JsonTableSchema::InvalidCast,
-        'notdecimal is not a number'
-      )
-    end
-
-  end
-
 end

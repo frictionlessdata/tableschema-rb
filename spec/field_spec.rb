@@ -5,9 +5,9 @@ describe JsonTableSchema::Field do
   before(:each) do
     @descriptor_min = {'name' => 'id'}
     @descriptor_max = {
-      'name' => 'id',
-      'type' => 'integer',
-      'format' => 'object',
+      'name' => 'amount',
+      'type' => 'number',
+      'format' => 'currency',
       'constraints' => {'required' => true}
     }
   end
@@ -22,12 +22,12 @@ describe JsonTableSchema::Field do
 
   it 'returns a type' do
     expect(described_class.new(@descriptor_min).type).to eq('string')
-    expect(described_class.new(@descriptor_max).type).to eq('integer')
+    expect(described_class.new(@descriptor_max).type).to eq('number')
   end
 
   it 'returns a format' do
     expect(described_class.new(@descriptor_min).format).to eq('default')
-    expect(described_class.new(@descriptor_max).format).to eq('object')
+    expect(described_class.new(@descriptor_max).format).to eq('currency')
   end
 
   it 'returns constraints' do
@@ -42,6 +42,17 @@ describe JsonTableSchema::Field do
 
   it 'casts a value' do
     expect(described_class.new(@descriptor_min).cast_value('string')).to eq('string')
+  end
+
+  it 'casts a single value' do
+    expect(described_class.new(@descriptor_max).cast_value('£10')).to eq(Float(10.0))
+  end
+
+  it 'raises with an incorrect value' do
+    expect { described_class.new(@descriptor_max).cast_value('notdecimal') }.to raise_error(
+      JsonTableSchema::InvalidCast,
+      'notdecimal is not a number'
+    )
   end
 
 end
