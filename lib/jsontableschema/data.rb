@@ -7,18 +7,20 @@ module JsonTableSchema
       self['fields'] = (self['fields'] || []).map { |f| JsonTableSchema::Field.new(f) }
     end
 
-    def cast(rows, fail_fast = true)
+    def cast(rows, fail_fast = true, limit = nil)
       @errors ||= []
-      rows.map! do |r|
+      parsed_rows = []
+      rows.each_with_index do |r, i|
         begin
           cast_row(r, fail_fast)
+          break if limit && (limit <= i)
         rescue MultipleInvalid, ConversionError => e
           raise e if fail_fast == true
           @errors << e if e.is_a?(ConversionError)
         end
       end
       check_for_errors
-      rows
+      parsed_rows
     end
 
     alias_method :convert, :cast
