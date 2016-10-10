@@ -22,7 +22,7 @@ module JsonTableSchema
     end
 
     def get_class_for_type(type)
-      "JsonTableSchema::Types::#{type_class_lookup[type]}"
+      "JsonTableSchema::Types::#{type_class_lookup[type] || 'String'}"
     end
 
     def type_class_lookup
