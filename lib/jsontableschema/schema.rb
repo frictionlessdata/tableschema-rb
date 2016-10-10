@@ -5,8 +5,8 @@ module JsonTableSchema
     include JsonTableSchema::Data
     include JsonTableSchema::Helpers
 
-    def initialize(schema, opts = {})
-      self.merge! parse_schema(schema)
+    def initialize(descriptor, opts = {})
+      self.merge! parse_schema(descriptor)
       @messages = []
       @opts = opts
       load_fields!
@@ -14,18 +14,18 @@ module JsonTableSchema
       expand!
     end
 
-    def parse_schema(schema)
-      if schema.class == Hash
-        schema
-      elsif schema.class == String
+    def parse_schema(descriptor)
+      if descriptor.class == Hash
+        descriptor
+      elsif descriptor.class == String
         begin
-          JSON.parse open(schema).read
+          JSON.parse open(descriptor).read
         rescue Errno::ENOENT
-          raise SchemaException.new("File not found at `#{schema}`")
+          raise SchemaException.new("File not found at `#{descriptor}`")
         rescue OpenURI::HTTPError => e
-          raise SchemaException.new("URL `#{schema}` returned #{e.message}")
+          raise SchemaException.new("URL `#{descriptor}` returned #{e.message}")
         rescue JSON::ParserError
-          raise SchemaException.new("File at `#{schema}` is not valid JSON")
+          raise SchemaException.new("File at `#{descriptor}` is not valid JSON")
         end
       else
         raise SchemaException.new("A schema must be a hash, path or URL")

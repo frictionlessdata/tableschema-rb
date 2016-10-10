@@ -7,10 +7,10 @@ module JsonTableSchema
       JsonTableSchema::Table.new(csv, nil, opts)
     end
 
-    def initialize(csv, schema, opts = {})
+    def initialize(csv, descriptor, opts = {})
       @opts = opts
       @csv = parse_csv(csv)
-      @schema = schema.nil? ? infer_schema(@csv) : JsonTableSchema::Schema.new(schema)
+      @schema = descriptor.nil? ? infer_schema(@csv) : JsonTableSchema::Schema.new(descriptor)
     end
 
     def parse_csv(csv)

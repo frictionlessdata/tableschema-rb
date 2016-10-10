@@ -5,7 +5,7 @@ describe JsonTableSchema::Schema do
   context 'initializes' do
 
     it 'with a hash' do
-      hash = load_schema('schema_valid_full.json')
+      hash = load_descriptor('schema_valid_full.json')
       schema = JsonTableSchema::Schema.new(hash)
       expect(schema['fields'].count).to eq(15)
       expect(schema['fields'].first.class).to eq(JsonTableSchema::Field)
@@ -30,8 +30,8 @@ describe JsonTableSchema::Schema do
     context 'raises an exception' do
 
       it 'when the schema is an incorrect type' do
-        schema = load_schema('schema_invalid_wrong_type.json')
-        expect { JsonTableSchema::Schema.new(schema) }.to raise_error(JsonTableSchema::SchemaException, 'A schema must be a hash, path or URL')
+        descriptor = load_descriptor('schema_invalid_wrong_type.json')
+        expect { JsonTableSchema::Schema.new(descriptor) }.to raise_error(JsonTableSchema::SchemaException, 'A schema must be a hash, path or URL')
       end
 
       it 'when the path does not exist' do
