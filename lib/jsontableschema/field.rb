@@ -25,9 +25,16 @@ module JsonTableSchema
       self['constraints'] || {}
     end
 
-    def cast_value(value)
-      klass = @type_class.send(:new, self)
-      klass.cast(value)
+    def cast_value(col, fail_fast = true)
+      klass = get_class_for_type(type)
+      converter = Kernel.const_get(klass).new(self)
+      converter.cast(col)
+    rescue Exception => e
+      if fail_fast == true
+        raise e
+      else
+        @errors << e
+      end
     end
 
     private
