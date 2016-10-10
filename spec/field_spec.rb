@@ -37,7 +37,7 @@ describe JsonTableSchema::Field do
 
   it 'returns the correct type class' do
     expect(described_class.new(@descriptor_min).type_class).to eq(JsonTableSchema::Types::String)
-    expect(described_class.new(@descriptor_max).type_class).to eq(JsonTableSchema::Types::Integer)
+    expect(described_class.new(@descriptor_max).type_class).to eq(JsonTableSchema::Types::Number)
   end
 
   it 'casts a value' do
