@@ -25,14 +25,10 @@ module JsonTableSchema
       @errors ||= []
       raise_header_error(row) if row.count != fields.count
       fields.each_with_index do |field,i|
-        row[i] = convert_column(row[i], field, fail_fast)
+        row[i] = convert_column(field, row[i], fail_fast)
       end
       check_for_errors
       row
-    end
-
-    def cast(field_name, value)
-      convert_column(value, get_field(field_name), true)
     end
 
     private
@@ -45,10 +41,8 @@ module JsonTableSchema
       raise(JsonTableSchema::MultipleInvalid.new("There were errors parsing the data")) if @errors.count > 0
     end
 
-    def convert_column(col, field, fail_fast)
-      klass = get_class_for_type(field['type'] || 'string')
-      converter = Kernel.const_get(klass).new(field)
-      converter.cast(col)
+    def convert_column(field, col, fail_fast)
+      field.cast_value(col)
     rescue Exception => e
       if fail_fast == true
         raise e
