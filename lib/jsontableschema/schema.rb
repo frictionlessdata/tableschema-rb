@@ -9,6 +9,7 @@ module JsonTableSchema
       self.merge! parse_schema(schema)
       @messages = []
       @opts = opts
+      load_fields!
       load_validator!
       expand!
     end

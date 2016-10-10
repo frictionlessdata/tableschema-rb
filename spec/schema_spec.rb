@@ -7,7 +7,8 @@ describe JsonTableSchema::Schema do
     it 'with a hash' do
       hash = load_schema('schema_valid_full.json')
       schema = JsonTableSchema::Schema.new(hash)
-      expect(hash).to eq(schema)
+      expect(schema['fields'].count).to eq(15)
+      expect(schema['fields'].first.class).to eq(JsonTableSchema::Field)
     end
 
     it 'with a file' do

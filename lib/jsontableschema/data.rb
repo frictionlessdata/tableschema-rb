@@ -3,6 +3,10 @@ module JsonTableSchema
 
     attr_reader :errors
 
+    def load_fields!
+      self['fields'] = (self['fields'] || []).map { |f| JsonTableSchema::Field.new(f) }
+    end
+
     def convert(rows, fail_fast = true)
       @errors ||= []
       rows.map! do |r|

@@ -53,10 +53,6 @@ module JsonTableSchema
 
     private
 
-      def fields
-        self['fields']
-      end
-
       def transform(name)
         name.downcase! if @opts[:case_insensitive_headers]
         name
