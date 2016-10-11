@@ -7,7 +7,7 @@ module JsonTableSchema
       self['fields'] = (self['fields'] || []).map { |f| JsonTableSchema::Field.new(f) }
     end
 
-    def cast(rows, fail_fast = true)
+    def cast_rows(rows, fail_fast = true)
       @errors ||= []
       rows.map! do |r|
         begin
@@ -21,7 +21,7 @@ module JsonTableSchema
       rows
     end
 
-    alias_method :convert, :cast
+    alias_method :convert, :cast_rows
 
     def cast_row(row, fail_fast = true)
       @errors ||= []
