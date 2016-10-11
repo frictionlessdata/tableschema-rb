@@ -3,11 +3,7 @@ module JsonTableSchema
 
     attr_reader :errors
 
-    def load_fields!
-      self['fields'] = (self['fields'] || []).map { |f| JsonTableSchema::Field.new(f) }
-    end
-
-    def cast(rows, fail_fast = true, limit = nil)
+    def cast_rows(rows, fail_fast = true, limit = nil)
       @errors ||= []
       parsed_rows = []
       rows.each_with_index do |r, i|
@@ -27,7 +23,7 @@ module JsonTableSchema
       parsed_rows
     end
 
-    alias_method :convert, :cast
+    alias_method :convert, :cast_rows
 
     def cast_row(row, fail_fast = true)
       @errors ||= []

@@ -98,7 +98,7 @@ describe JsonTableSchema::Data do
 
   end
 
-  context 'convert' do
+  context 'cast_rows' do
 
     it 'converts valid data' do
       rows = [
@@ -109,7 +109,7 @@ describe JsonTableSchema::Data do
         ['string', '10.0', '1', 'string', 'string']
       ]
 
-      converted_rows = schema.cast(rows)
+      converted_rows = schema.cast_rows(rows)
 
       converted_rows.each do |row|
         expect(row).to eq(['string', Float(10.0), 1, 'string', 'string'])
@@ -125,7 +125,7 @@ describe JsonTableSchema::Data do
         ['string', '10.0', 'integer', 'string', 'string']
       ]
 
-      expect { schema.cast(rows) }.to raise_error(
+      expect { schema.cast_rows(rows) }.to raise_error(
         JsonTableSchema::InvalidCast,
         'not is not a number'
       )
@@ -140,7 +140,7 @@ describe JsonTableSchema::Data do
         ['string', '10.0', 'integer', 'string', 'string']
       ]
 
-      expect { schema.cast(rows, false) }.to raise_error(
+      expect { schema.cast_rows(rows, false) }.to raise_error(
         JsonTableSchema::MultipleInvalid,
         'There were errors parsing the data'
       )
@@ -156,7 +156,7 @@ describe JsonTableSchema::Data do
         ['string', '10.0', '1', 'string', 'string']
       ]
 
-      expect { schema.cast(rows, false) }.to raise_error(
+      expect { schema.cast_rows(rows, false) }.to raise_error(
         JsonTableSchema::MultipleInvalid,
         'There were errors parsing the data'
       )
@@ -172,7 +172,7 @@ describe JsonTableSchema::Data do
         ['string', '10.0', '1', 'string', 'string']
       ]
 
-      expect { schema.cast(rows) }.to raise_error(
+      expect { schema.cast_rows(rows) }.to raise_error(
         JsonTableSchema::ConversionError,
         'The number of items to convert (4) does not match the number of headers in the schema (5)'
       )

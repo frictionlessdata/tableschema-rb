@@ -24,7 +24,7 @@ module JsonTableSchema
 
     def rows(opts = {})
       fail_fast = opts[:fail_fast] || opts[:fail_fast].nil?
-      converted = @schema.cast(@csv, fail_fast, opts[:limit])
+      converted = @schema.cast_rows(@csv, fail_fast, opts[:limit])
       opts[:keyed] ? coverted_to_hash(@csv.headers, converted) : converted
     end
 
