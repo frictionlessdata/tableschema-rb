@@ -9,11 +9,8 @@ module JsonTableSchema
       rows.each_with_index do |r, i|
         begin
           break if limit && (limit <= i)
-          if r.class == CSV::Row
-            parsed_rows << cast_row(r.fields, fail_fast)
-          else
-            parsed_rows << cast_row(r, fail_fast)
-          end
+          r = r.fields if r.class == CSV::Row
+          parsed_rows << cast_row(r, fail_fast)
         rescue MultipleInvalid, ConversionError => e
           raise e if fail_fast == true
           @errors << e if e.is_a?(ConversionError)
