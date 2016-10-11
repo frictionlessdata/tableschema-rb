@@ -65,5 +65,9 @@ module JsonTableSchema
         end
       end
 
+      def load_fields!
+        self['fields'] = (self['fields'] || []).map { |f| JsonTableSchema::Field.new(f) }
+      end
+
   end
 end
