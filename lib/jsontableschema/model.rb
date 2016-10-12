@@ -53,10 +53,6 @@ module JsonTableSchema
 
     private
 
-      def fields
-        self['fields']
-      end
-
       def transform(name)
         name.downcase! if @opts[:case_insensitive_headers]
         name
@@ -67,6 +63,10 @@ module JsonTableSchema
           f['type'] = DEFAULTS['type'] if f['type'] == nil
           f['format'] = DEFAULTS['format'] if f['format'] == nil
         end
+      end
+
+      def load_fields!
+        self['fields'] = (self['fields'] || []).map { |f| JsonTableSchema::Field.new(f) }
       end
 
   end

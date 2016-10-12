@@ -28,6 +28,7 @@ require "jsontableschema/types/object"
 require "jsontableschema/types/string"
 require "jsontableschema/types/time"
 
+require "jsontableschema/field"
 require "jsontableschema/validate"
 require "jsontableschema/model"
 require "jsontableschema/data"

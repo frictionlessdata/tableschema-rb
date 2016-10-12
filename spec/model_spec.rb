@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe JsonTableSchema::Model do
 
-  let(:schema) {
+  let(:descriptor) {
     {
       "fields" => [
           {
@@ -59,31 +59,31 @@ describe JsonTableSchema::Model do
   }
 
   it "returns headers" do
-    s = JsonTableSchema::Schema.new(schema)
+    s = JsonTableSchema::Schema.new(descriptor)
     expect(s.headers.count).to eq(5)
   end
 
   it "returns required headers" do
-    s = JsonTableSchema::Schema.new(schema)
+    s = JsonTableSchema::Schema.new(descriptor)
     expect(s.required_headers.count).to eq(2)
   end
 
   context "check for field presence" do
 
     it "returns true" do
-      s = JsonTableSchema::Schema.new(schema)
+      s = JsonTableSchema::Schema.new(descriptor)
       expect(s.has_field?('name')).to be true
     end
 
     it "returns false" do
-      s = JsonTableSchema::Schema.new(schema)
+      s = JsonTableSchema::Schema.new(descriptor)
       expect(s.has_field?('religion')).to be false
     end
 
   end
 
   it "gets fields by type" do
-    s = JsonTableSchema::Schema.new(schema)
+    s = JsonTableSchema::Schema.new(descriptor)
 
     expect(s.get_fields_by_type('string').count).to eq(3)
     expect(s.get_fields_by_type('number').count).to eq(1)
@@ -93,7 +93,7 @@ describe JsonTableSchema::Model do
   context 'get type' do
 
     it 'gets the type of a field' do
-      s = JsonTableSchema::Schema.new(schema)
+      s = JsonTableSchema::Schema.new(descriptor)
       expect(s.get_type('id')).to eq('string')
     end
 
@@ -107,7 +107,7 @@ describe JsonTableSchema::Model do
   context 'get constraints' do
 
     it 'gets the constraints for a field' do
-      s = JsonTableSchema::Schema.new(schema)
+      s = JsonTableSchema::Schema.new(descriptor)
       expect(s.get_constraints('id')).to eq({"required" => true})
     end
 
@@ -120,19 +120,19 @@ describe JsonTableSchema::Model do
 
   context 'case insensitive headers' do
 
-    let(:new_schema) {
-      new_schema = schema.dup
-      new_schema['fields'].map { |f| f['name'].capitalize! }
-      new_schema
+    let(:new_descriptor) {
+      new_descriptor = descriptor.dup
+      new_descriptor['fields'].map { |f| f['name'].capitalize! }
+      new_descriptor
     }
 
     it 'with headers' do
-      s = JsonTableSchema::Schema.new(new_schema, case_insensitive_headers: true)
+      s = JsonTableSchema::Schema.new(new_descriptor, case_insensitive_headers: true)
       expect(s.headers).to eq(['id', 'height', 'age', 'name', 'occupation'])
     end
 
     it 'with required' do
-      s = JsonTableSchema::Schema.new(new_schema, case_insensitive_headers: true)
+      s = JsonTableSchema::Schema.new(new_descriptor, case_insensitive_headers: true)
       expect(s.required_headers).to eq(['id', 'name'])
     end
 
@@ -158,14 +158,14 @@ describe JsonTableSchema::Model do
   context 'primary key' do
 
     it 'returns a single primary key as an array' do
-      schema = load_schema('schema_valid_pk_string.json')
-      s = JsonTableSchema::Schema.new(schema)
+      descriptor = load_descriptor('schema_valid_pk_string.json')
+      s = JsonTableSchema::Schema.new(descriptor)
       expect(s.primary_keys).to eq(['id'])
     end
 
     it 'returns the primary key as an array' do
-      schema = load_schema('schema_valid_pk_array.json')
-      s = JsonTableSchema::Schema.new(schema)
+      descriptor = load_descriptor('schema_valid_pk_array.json')
+      s = JsonTableSchema::Schema.new(descriptor)
       expect(s.primary_keys).to eq(['id', 'title'])
     end
 
@@ -179,8 +179,8 @@ describe JsonTableSchema::Model do
   context 'foreign key' do
 
     it 'with a valid foreign key string' do
-      schema = load_schema('schema_valid_fk_string.json')
-      schema = JsonTableSchema::Schema.new(schema)
+      descriptor = load_descriptor('schema_valid_fk_string.json')
+      schema = JsonTableSchema::Schema.new(descriptor)
       expect(schema.foreign_keys).to eq([
         {
             "fields" => "state",
@@ -194,8 +194,8 @@ describe JsonTableSchema::Model do
     end
 
     it 'with a valid foreign key self reference' do
-      schema = load_schema('schema_valid_fk_string_self_referencing.json')
-      schema = JsonTableSchema::Schema.new(schema)
+      descriptor = load_descriptor('schema_valid_fk_string_self_referencing.json')
+      schema = JsonTableSchema::Schema.new(descriptor)
       expect(schema.foreign_keys).to eq([
         {
             "fields" => "parent",
@@ -209,8 +209,8 @@ describe JsonTableSchema::Model do
     end
 
     it 'with a valid foreign key array' do
-      schema = load_schema('schema_valid_fk_array.json')
-      schema = JsonTableSchema::Schema.new(schema)
+      descriptor = load_descriptor('schema_valid_fk_array.json')
+      schema = JsonTableSchema::Schema.new(descriptor)
       expect(schema.foreign_keys).to eq([
           {
               "fields" => ["id", "title"],

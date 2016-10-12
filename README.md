@@ -164,8 +164,6 @@ schema.primary_keys
 #=> ["id"]
 schema.foreign_keys
 #=> [{"fields" => "state", "reference" => { "datapackage" => "http://data.okfn.org/data/mydatapackage/", "resource" => "the-resource", "fields" => "state_id" } } ]
-schema.cast('height', '10')
-#=> 10.0
 schema.get_field('id')
 #=> {"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}
 schema.has_field?('foo')
@@ -176,13 +174,13 @@ schema.get_fields_by_type('string')
 #=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
 schema.get_constraints('id')
 #=> {"required" => true}
-schema.convert_row(['string', '10.0'])
+schema.cast_row(['string', '10.0'])
 #=> ['string', 10.0]
-schema.convert([['foo', '12.0'],['bar', '10.0']])
+schema.cast([['foo', '12.0'],['bar', '10.0']])
 #=> [['foo', 12.0],['bar', 10.0]]
 ```
 
-When converting a row (using `convert_row`), or a number of rows (using `convert`), by default the converter will fail on the first error it finds. If you pass `false` as the second argument, the errors will be collected into a `errors` attribute for you to review later. For example:
+When casting a row (using `cast_row`), or a number of rows (using `cast`), by default the converter will fail on the first error it finds. If you pass `false` as the second argument, the errors will be collected into a `errors` attribute for you to review later. For example:
 
 ```ruby
 schema_hash = {
@@ -209,13 +207,30 @@ rows = [
   ['wrong column count']
 ]
 
-schema.convert(rows)
+schema.cast(rows)
 #=> JsonTableSchema::InvalidCast: notanumber is not a number
-schema.convert(rows, false)
+schema.cast(rows, false)
 #=> JsonTableSchema::MultipleInvalid
 schema.errors
 #=> [#<JsonTableSchema::InvalidCast: notanumber is not a number>, #<JsonTableSchema::InvalidCast: notanumber is not a number>, #<JsonTableSchema::ConversionError: The number of items to convert (1) does not match the number of headers in the schema (2)>]
 ```
+
+## Field
+
+```ruby
+# Init field
+field = JsonTableSchema::Field.new({'type': 'number'})
+
+# Cast a value
+field.cast_value('12345')
+#=> 12345.0
+```
+
+Data values can be cast to native Ruby objects with a Field instance. Type instances can be initialized with f[ield descriptors](http://dataprotocols.org/json-table-schema/#field-descriptors). This allows formats and constraints to be defined.
+
+Casting a value will check the value is of the expected type, is in the correct format, and complies with any constraints imposed by a schema. E.g. a date value (in ISO 8601 format) can be cast with a DateType instance. Values that can't be cast will raise an `InvalidCast` exception.
+
+Casting a value that doesn't meet the constraints will raise a `ConstraintError` exception.
 
 ## Development
 
@@ -226,7 +241,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/jsontableschema. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
 
 ## License
 

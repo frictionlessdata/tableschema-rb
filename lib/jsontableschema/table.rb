@@ -7,10 +7,10 @@ module JsonTableSchema
       JsonTableSchema::Table.new(csv, nil, opts)
     end
 
-    def initialize(csv, schema, opts = {})
+    def initialize(csv, descriptor, opts = {})
       @opts = opts
       @csv = parse_csv(csv)
-      @schema = schema.nil? ? infer_schema(@csv) : JsonTableSchema::Schema.new(schema)
+      @schema = descriptor.nil? ? infer_schema(@csv) : JsonTableSchema::Schema.new(descriptor)
     end
 
     def parse_csv(csv)
@@ -25,7 +25,7 @@ module JsonTableSchema
     def rows(opts = {})
       fail_fast = opts[:fail_fast] || opts[:fail_fast].nil?
       rows = opts[:limit] ? @csv.to_a.drop(1).take(opts[:limit]) : @csv.to_a.drop(1)
-      converted = @schema.convert(rows, fail_fast)
+      converted = @schema.cast_rows(rows, fail_fast)
       opts[:keyed] ? coverted_to_hash(@csv.headers, converted) : converted
     end
 
