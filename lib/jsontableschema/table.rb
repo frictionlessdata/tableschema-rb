@@ -14,8 +14,8 @@ module JsonTableSchema
     end
 
     def parse_csv(csv)
-      csv_string = csv.is_a?(Array) ? array_to_csv(csv) : open(csv).read
-      CSV.parse(csv_string, csv_options)
+      csv = csv.is_a?(Array) ? StringIO.new(array_to_csv csv) : open(csv)
+      CSV.new(csv, csv_options)
     end
 
     def csv_options
