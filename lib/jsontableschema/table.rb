@@ -14,8 +14,8 @@ module JsonTableSchema
     end
 
     def parse_csv(csv)
-      csv_string = csv.is_a?(Array) ? array_to_csv(csv) : open(csv).read
-      CSV.parse(csv_string, csv_options)
+      csv = csv.is_a?(Array) ? StringIO.new(array_to_csv csv) : open(csv)
+      CSV.new(csv, csv_options)
     end
 
     def csv_options
@@ -41,7 +41,9 @@ module JsonTableSchema
       end
 
       def infer_schema(csv)
-        inferer = JsonTableSchema::Infer.new(csv.headers, csv.to_a)
+        headers = csv.first.to_h.keys
+        csv.rewind
+        inferer = JsonTableSchema::Infer.new(headers, csv)
         inferer.schema
       end
 

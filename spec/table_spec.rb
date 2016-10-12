@@ -121,7 +121,7 @@ describe JsonTableSchema::Table do
           "name"=>"id",
           "title"=>"",
           "description"=>"",
-          "type"=>"string",
+          "type"=>"integer",
           "format"=>"default"
         },
         {
