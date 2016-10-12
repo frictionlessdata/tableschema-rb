@@ -1,5 +1,19 @@
 # Change Log
 
+## [v0.2.0](https://github.com/theodi/jsontableschema.rb/tree/v0.2.0) (2016-10-12)
+[Full Changelog](https://github.com/theodi/jsontableschema.rb/compare/v0.1.0...v0.2.0)
+
+**Closed issues:**
+
+- Ability to stream data? [\#10](https://github.com/theodi/jsontableschema.rb/issues/10)
+- Replace the types public API with the Field public API [\#9](https://github.com/theodi/jsontableschema.rb/issues/9)
+
+**Merged pull requests:**
+
+- Make sure streaming works [\#13](https://github.com/theodi/jsontableschema.rb/pull/13) ([pezholio](https://github.com/pezholio))
+- Stream CSV [\#12](https://github.com/theodi/jsontableschema.rb/pull/12) ([pezholio](https://github.com/pezholio))
+- Add `Field` class [\#11](https://github.com/theodi/jsontableschema.rb/pull/11) ([pezholio](https://github.com/pezholio))
+
 ## [v0.1.0](https://github.com/theodi/jsontableschema.rb/tree/v0.1.0) (2016-09-19)
 **Merged pull requests:**
 
