@@ -40,6 +40,7 @@ module JsonTableSchema
       type_matches = []
       @rows.each_with_index do |row, i|
         break if @row_limit && i > @row_limit
+        row = row.fields if row.class == CSV::Row
 
         row_length = row.count
         headers_length = @headers.count

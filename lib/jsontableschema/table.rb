@@ -41,7 +41,9 @@ module JsonTableSchema
       end
 
       def infer_schema(csv)
-        inferer = JsonTableSchema::Infer.new(csv.headers, csv.to_a)
+        headers = csv.first.to_h.keys
+        csv.rewind
+        inferer = JsonTableSchema::Infer.new(headers, csv)
         inferer.schema
       end
 
