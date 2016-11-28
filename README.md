@@ -1,11 +1,10 @@
-[![Build Status](http://img.shields.io/travis/theodi/jsontableschema.rb.svg?style=flat-square)](https://travis-ci.org/theodi/jsontableschema.rb)
-[![Dependency Status](http://img.shields.io/gemnasium/theodi/jsontableschema.rb.svg?style=flat-square)](https://gemnasium.com/theodi/jsontableschema.rb)
-[![Coverage Status](https://coveralls.io/repos/github/theodi/jsontableschema.rb/badge.svg)](https://coveralls.io/github/theodi/jsontableschema.rb)
-[![Code Climate](http://img.shields.io/codeclimate/github/theodi/jsontableschema.rb.svg?style=flat-square)](https://codeclimate.com/github/theodi/jsontableschema.rb)
-[![Gem Version](http://img.shields.io/gem/v/jsontableschema.svg?style=flat-square)](https://rubygems.org/gems/jsontableschema)
-[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://theodi.mit-license.org)
-
 # JSON Table Schema
+
+[![Travis](https://travis-ci.org/frictionlessdata/jsontableschema-rb.svg?branch=master)](https://travis-ci.org/frictionlessdata/jsontableschema-rb)
+[![Coveralls](http://img.shields.io/coveralls/frictionlessdata/jsontableschema-rb.svg?branch=master)](https://coveralls.io/r/frictionlessdata/jsontableschema-rb?branch=master)
+[![Gem Version](http://img.shields.io/gem/v/jsontableschema.svg?style=flat-square)](https://rubygems.org/gems/jsontableschema)
+[![SemVer](https://img.shields.io/badge/versions-SemVer-brightgreen.svg)](http://semver.org/)
+[![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
 
 A utility library for working with [JSON Table Schema](http://dataprotocols.org/json-table-schema/) in Ruby.
 
