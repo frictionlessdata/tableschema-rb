@@ -67,13 +67,15 @@ module JsonTableSchema
       guessed_type = 'string'
       guessed_format = 'default'
 
-      available_types.reverse_each do |type|
-        klass = get_class_for_type(type)
-        converter = Kernel.const_get(klass).new(@schema['fields'][index])
-        if converter.test(col) === true
-          guessed_type = type
-          guessed_format = guess_format(converter, col)
-          break
+      unless col.nil? || col == ""
+        available_types.reverse_each do |type|
+          klass = get_class_for_type(type)
+          converter = Kernel.const_get(klass).new(@schema['fields'][index])
+          if converter.test(col) === true
+            guessed_type = type
+            guessed_format = guess_format(converter, col)
+            break
+          end
         end
       end
 

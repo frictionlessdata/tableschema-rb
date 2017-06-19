@@ -47,7 +47,23 @@ describe JsonTableSchema::Infer do
     expect(schema.get_field('currency')['type']).to eq('number')
     expect(schema.get_field('currency')['format']).to eq('currency')
   end
+  
+  it 'infers a schema with empty fields' do
+    @filename = 'data_infer_empty_fields.csv'
 
+    inferer = JsonTableSchema::Infer.new(headers, data)
+    schema = inferer.schema
+
+    expect(schema.get_field('id')['type']).to eq('integer')
+    expect(schema.get_field('id')['format']).to eq('default')
+
+    expect(schema.get_field('age')['type']).to eq('integer')
+    expect(schema.get_field('age')['format']).to eq('default')
+
+    expect(schema.get_field('name')['type']).to eq('string')
+    expect(schema.get_field('name')['format']).to eq('default')
+  end
+    
   it 'infers a schema with international characters' do
     @filename = 'data_infer_utf8.csv'
 
