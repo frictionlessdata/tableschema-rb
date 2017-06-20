@@ -1,19 +1,19 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Schema do
+describe TableSchema::Schema do
 
   context 'initializes' do
 
     it 'with a hash' do
       hash = load_descriptor('schema_valid_full.json')
-      schema = JsonTableSchema::Schema.new(hash)
+      schema = TableSchema::Schema.new(hash)
       expect(schema['fields'].count).to eq(15)
-      expect(schema['fields'].first.class).to eq(JsonTableSchema::Field)
+      expect(schema['fields'].first.class).to eq(TableSchema::Field)
     end
 
     it 'with a file' do
       file = File.join( File.dirname(__FILE__), "fixtures", "schema_valid_full.json")
-      schema = JsonTableSchema::Schema.new(file)
+      schema = TableSchema::Schema.new(file)
       expect(schema['fields'].count).to eq(15)
     end
 
@@ -23,7 +23,7 @@ describe JsonTableSchema::Schema do
       stub_request(:get, url)
                   .to_return(body: File.open(path))
 
-      schema = JsonTableSchema::Schema.new(url)
+      schema = TableSchema::Schema.new(url)
       expect(schema['fields'].count).to eq(15)
     end
 
@@ -31,17 +31,17 @@ describe JsonTableSchema::Schema do
 
       it 'when the schema is an incorrect type' do
         descriptor = load_descriptor('schema_invalid_wrong_type.json')
-        expect { JsonTableSchema::Schema.new(descriptor) }.to raise_error(JsonTableSchema::SchemaException, 'A schema must be a hash, path or URL')
+        expect { TableSchema::Schema.new(descriptor) }.to raise_error(TableSchema::SchemaException, 'A schema must be a hash, path or URL')
       end
 
       it 'when the path does not exist' do
-        expect { JsonTableSchema::Schema.new('/some/fake/path') }.to raise_error(JsonTableSchema::SchemaException, 'File not found at `/some/fake/path`')
+        expect { TableSchema::Schema.new('/some/fake/path') }.to raise_error(TableSchema::SchemaException, 'File not found at `/some/fake/path`')
       end
 
       it 'when the url 404s' do
         url = 'http://www.example.com/schema.json'
         stub_request(:get, url).to_return(status: 404)
-        expect { JsonTableSchema::Schema.new(url) }.to raise_error(JsonTableSchema::SchemaException, 'URL `http://www.example.com/schema.json` returned 404 ')
+        expect { TableSchema::Schema.new(url) }.to raise_error(TableSchema::SchemaException, 'URL `http://www.example.com/schema.json` returned 404 ')
       end
 
       it 'when the url returns invalid JSON' do
@@ -49,7 +49,7 @@ describe JsonTableSchema::Schema do
         stub_request(:get, url)
                     .to_return(body: 'definitely,not,JSON')
 
-        expect { JsonTableSchema::Schema.new(url) }.to raise_error(JsonTableSchema::SchemaException, 'File at `http://www.example.com/schema.json` is not valid JSON')
+        expect { TableSchema::Schema.new(url) }.to raise_error(TableSchema::SchemaException, 'File at `http://www.example.com/schema.json` is not valid JSON')
       end
 
     end

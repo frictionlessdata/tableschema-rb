@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Infer do
+describe TableSchema::Infer do
 
   let(:filename) { @filename || "data_infer.csv" }
   let(:csv) { File.join( File.dirname(__FILE__), "fixtures", filename) }
@@ -8,7 +8,7 @@ describe JsonTableSchema::Infer do
   let(:headers) { data.shift }
 
   it 'infers a schema' do
-    inferer = JsonTableSchema::Infer.new(headers, data)
+    inferer = TableSchema::Infer.new(headers, data)
     schema = inferer.schema
 
     expect(schema.get_field('id')['type']).to eq('integer')
@@ -35,7 +35,7 @@ describe JsonTableSchema::Infer do
       ['http://example.co.uk/thing', 'them@example.com', '€5', 'thing']
     ]
 
-    inferer = JsonTableSchema::Infer.new(headers, data)
+    inferer = TableSchema::Infer.new(headers, data)
     schema = inferer.schema
 
     expect(schema.get_field('url')['type']).to eq('string')
@@ -47,27 +47,11 @@ describe JsonTableSchema::Infer do
     expect(schema.get_field('currency')['type']).to eq('number')
     expect(schema.get_field('currency')['format']).to eq('currency')
   end
-  
-  it 'infers a schema with empty fields' do
-    @filename = 'data_infer_empty_fields.csv'
 
-    inferer = JsonTableSchema::Infer.new(headers, data)
-    schema = inferer.schema
-
-    expect(schema.get_field('id')['type']).to eq('integer')
-    expect(schema.get_field('id')['format']).to eq('default')
-
-    expect(schema.get_field('age')['type']).to eq('integer')
-    expect(schema.get_field('age')['format']).to eq('default')
-
-    expect(schema.get_field('name')['type']).to eq('string')
-    expect(schema.get_field('name')['format']).to eq('default')
-  end
-    
   it 'infers a schema with international characters' do
     @filename = 'data_infer_utf8.csv'
 
-    inferer = JsonTableSchema::Infer.new(headers, data)
+    inferer = TableSchema::Infer.new(headers, data)
     schema = inferer.schema
 
     expect(schema.get_field('id')['type']).to eq('integer')
@@ -83,7 +67,7 @@ describe JsonTableSchema::Infer do
   it 'infers a schema with a row limit' do
     @filename = 'data_infer_row_limit.csv'
 
-    inferer = JsonTableSchema::Infer.new(headers, data, row_limit: 4)
+    inferer = TableSchema::Infer.new(headers, data, row_limit: 4)
     schema = inferer.schema
 
     expect(schema.get_field('id')['type']).to eq('integer')
@@ -97,28 +81,28 @@ describe JsonTableSchema::Infer do
   end
 
   it 'infers a schema with a primary key as a string' do
-    inferer = JsonTableSchema::Infer.new(headers, data, primary_key: 'id')
+    inferer = TableSchema::Infer.new(headers, data, primary_key: 'id')
     schema = inferer.schema
 
     expect(schema.primary_keys).to eq(['id'])
   end
 
   it 'infers a schema with a primary key as an array' do
-    inferer = JsonTableSchema::Infer.new(headers, data, primary_key: ['id', 'age'])
+    inferer = TableSchema::Infer.new(headers, data, primary_key: ['id', 'age'])
     schema = inferer.schema
 
     expect(schema.primary_keys).to eq(['id', 'age'])
   end
 
   it 'lets us be explicit' do
-    inferer = JsonTableSchema::Infer.new(headers, data, explicit: true)
+    inferer = TableSchema::Infer.new(headers, data, explicit: true)
     schema = inferer.schema
 
     expect(schema.get_field('id')['constraints']).to_not be_nil
   end
 
   it 'lets us not be explicit' do
-    inferer = JsonTableSchema::Infer.new(headers, data, explicit: false)
+    inferer = TableSchema::Infer.new(headers, data, explicit: false)
     schema = inferer.schema
 
     expect(schema.get_field('id')['constraints']).to be_nil

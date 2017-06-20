@@ -1,19 +1,20 @@
-# JSON Table Schema
+# Table Schema
+formerly known as JSON Table Schema
 
-[![Travis](https://travis-ci.org/frictionlessdata/jsontableschema-rb.svg?branch=master)](https://travis-ci.org/frictionlessdata/jsontableschema-rb)
+[![Travis](https://travis-ci.org/frictionlessdata/tableschema-rb.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-rb)
 [![Coveralls](http://img.shields.io/coveralls/frictionlessdata/jsontableschema-rb.svg?branch=master)](https://coveralls.io/r/frictionlessdata/jsontableschema-rb?branch=master)
 [![Gem Version](http://img.shields.io/gem/v/jsontableschema.svg)](https://rubygems.org/gems/jsontableschema)
 [![SemVer](https://img.shields.io/badge/versions-SemVer-brightgreen.svg)](http://semver.org/)
 [![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
 
-A utility library for working with [JSON Table Schema](http://dataprotocols.org/json-table-schema/) in Ruby.
+A utility library for working with [Table Schema](https://specs.frictionlessdata.io/table-schema/) in Ruby.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'jsontableschema'
+gem 'tableschema'
 ```
 
 And then execute:
@@ -22,7 +23,34 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install jsontableschema
+    $ gem install tableschema
+
+### Update from `jsontableschema`
+
+The library and its corresponding gem was previously called `jsontableschema`.
+Since version 0.3 the library was renamed `tableschema` and has a gem with the same name.
+
+The gem `jsontableschema` is no longer maintained. Here are the steps to transition your code to `tableschema`:
+
+1. Replace
+   ```ruby
+   gem 'jsontableschema'
+   ```
+  with
+
+  ```ruby
+  gem 'tableschema', '0.3.0'
+  ```
+
+2. Replace module name `JsonTableSchema` with module name `TableSchema`. For example:
+
+  ```ruby
+  JsonTableSchema::Table.infer_schema(csv)
+  ```
+  with
+  ```ruby
+  TableSchema::Table.infer_schema(csv)
+  ```
 
 ## Usage
 
@@ -48,7 +76,7 @@ schema = {
 
 csv = 'https://github.com/theodi/jsontableschema.rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
 
-table = JsonTableSchema::Table.new(csv, schema)
+table = TableSchema::Table.new(csv, schema)
 table.rows
 #=> [[1,'foo'],[2,'bar'],[3,'baz']]
 ```
@@ -60,7 +88,7 @@ If you don't have a schema for a CSV, and want to generate one, you can infer a 
 ```ruby
 csv = 'https://github.com/theodi/jsontableschema.rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
 
-table = JsonTableSchema::Table.infer_schema(csv)
+table = TableSchema::Table.infer_schema(csv)
 table.schema
 #=> {"fields"=>[{"name"=>"id", "title"=>"", "description"=>"", "type"=>"string", "format"=>"default"}, {"name"=>"title", "title"=>"", "description"=>"", "type"=>"string", "format"=>"default"}]}
 ```
@@ -81,7 +109,7 @@ schema_hash = {
   ]
 }
 
-schema = JsonTableSchema::Schema.new(schema_hash)
+schema = TableSchema::Schema.new(schema_hash)
 schema.valid?
 #=> true
 ```
@@ -89,7 +117,7 @@ schema.valid?
 You can also pass a file path or URL to the initializer:
 
 ```ruby
-schema = JsonTableSchema::Schema.new('http://example.org/schema.json')
+schema = TableSchema::Schema.new('http://example.org/schema.json')
 schema.valid?
 #=> true
 ```
@@ -151,7 +179,7 @@ schema_hash = {
   ]
 }
 
-schema = JsonTableSchema::Schema.new(schema_hash)
+schema = TableSchema::Schema.new(schema_hash)
 
 schema.headers
 #=> ["id", "height"]
@@ -198,7 +226,7 @@ schema_hash = {
   ]
 }
 
-schema = JsonTableSchema::Schema.new(schema_hash)
+schema = TableSchema::Schema.new(schema_hash)
 
 rows = [
   ['foo', 'notanumber'],
@@ -207,18 +235,18 @@ rows = [
 ]
 
 schema.cast(rows)
-#=> JsonTableSchema::InvalidCast: notanumber is not a number
+#=> TableSchema::InvalidCast: notanumber is not a number
 schema.cast(rows, false)
-#=> JsonTableSchema::MultipleInvalid
+#=> TableSchema::MultipleInvalid
 schema.errors
-#=> [#<JsonTableSchema::InvalidCast: notanumber is not a number>, #<JsonTableSchema::InvalidCast: notanumber is not a number>, #<JsonTableSchema::ConversionError: The number of items to convert (1) does not match the number of headers in the schema (2)>]
+#=> [#<TableSchema::InvalidCast: notanumber is not a number>, #<TableSchema::InvalidCast: notanumber is not a number>, #<TableSchema::ConversionError: The number of items to convert (1) does not match the number of headers in the schema (2)>]
 ```
 
 ## Field
 
 ```ruby
 # Init field
-field = JsonTableSchema::Field.new({'type': 'number'})
+field = TableSchema::Field.new({'type': 'number'})
 
 # Cast a value
 field.cast_value('12345')
@@ -239,7 +267,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/jsontableschema. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/frictionlessdata/tableschema-rb. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 

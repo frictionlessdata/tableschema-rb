@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Field do
+describe TableSchema::Field do
 
   before(:each) do
     @descriptor_min = {'name' => 'id'}
@@ -36,8 +36,8 @@ describe JsonTableSchema::Field do
   end
 
   it 'returns the correct type class' do
-    expect(described_class.new(@descriptor_min).type_class).to eq(JsonTableSchema::Types::String)
-    expect(described_class.new(@descriptor_max).type_class).to eq(JsonTableSchema::Types::Number)
+    expect(described_class.new(@descriptor_min).type_class).to eq(TableSchema::Types::String)
+    expect(described_class.new(@descriptor_max).type_class).to eq(TableSchema::Types::Number)
   end
 
   it 'casts a value' do
@@ -50,7 +50,7 @@ describe JsonTableSchema::Field do
 
   it 'raises with an incorrect value' do
     expect { described_class.new(@descriptor_max).cast_value('notdecimal') }.to raise_error(
-      JsonTableSchema::InvalidCast,
+      TableSchema::InvalidCast,
       'notdecimal is not a number'
     )
   end

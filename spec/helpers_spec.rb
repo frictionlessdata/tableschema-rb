@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Helpers do
+describe TableSchema::Helpers do
 
   let(:schema_hash) {
     {
@@ -20,7 +20,7 @@ describe JsonTableSchema::Helpers do
     }
   }
 
-  let(:schema) { JsonTableSchema::Schema.new(schema_hash) }
+  let(:schema) { TableSchema::Schema.new(schema_hash) }
 
   it 'returns the right classes' do
     {
@@ -39,7 +39,7 @@ describe JsonTableSchema::Helpers do
       'string' => 'String',
       'time' => 'Time',
     }.each do |tipe, klass|
-      expect(schema.get_class_for_type(tipe)).to eq("JsonTableSchema::Types::#{klass}")
+      expect(schema.get_class_for_type(tipe)).to eq("TableSchema::Types::#{klass}")
     end
 
   end
