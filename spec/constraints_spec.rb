@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Constraints do
+describe TableSchema::Constraints do
 
   let(:field) {
     {
@@ -11,9 +11,9 @@ describe JsonTableSchema::Constraints do
     }
   }
 
-  let(:constraints) { JsonTableSchema::Constraints.new(field, @value) }
+  let(:constraints) { TableSchema::Constraints.new(field, @value) }
 
-  describe JsonTableSchema::Constraints::Required do
+  describe TableSchema::Constraints::Required do
 
     before(:each) do
       field['type'] = 'string'
@@ -49,12 +49,12 @@ describe JsonTableSchema::Constraints do
     it 'raises an error for a required true constraint with no value' do
       @value = ''
       field['constraints']['required'] = true
-      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError)
+      expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError)
     end
 
   end
 
-  describe JsonTableSchema::Constraints::MinLength do
+  describe TableSchema::Constraints::MinLength do
 
     context 'with string type' do
 
@@ -77,7 +77,7 @@ describe JsonTableSchema::Constraints do
       it 'handles with an invalid value' do
         field['constraints']['minLength'] = 10
         @value = 'string'
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
       end
 
     end
@@ -101,7 +101,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         field['constraints']['minLength'] = 10
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
       end
 
     end
@@ -125,7 +125,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         field['constraints']['minLength'] = 10
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
       end
 
     end
@@ -134,12 +134,12 @@ describe JsonTableSchema::Constraints do
       @value = 2
       field['constraints']['minLength'] = 3
       field['type'] = 'integer'
-      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintNotSupported, 'The field type `integer` does not support the `minLength` constraint')
+      expect { constraints.validate! }.to raise_error(TableSchema::ConstraintNotSupported, 'The field type `integer` does not support the `minLength` constraint')
     end
 
   end
 
-  describe JsonTableSchema::Constraints::MaxLength do
+  describe TableSchema::Constraints::MaxLength do
 
     context 'with string type' do
 
@@ -162,7 +162,7 @@ describe JsonTableSchema::Constraints do
       it 'handles with an invalid value' do
         field['constraints']['maxLength'] = 10
         @value = 'stringggggggggggg'
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a maximum length of 10')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a maximum length of 10')
       end
 
     end
@@ -186,7 +186,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         field['constraints']['maxLength'] = 2
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a maximum length of 2')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a maximum length of 2')
       end
 
     end
@@ -210,7 +210,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         field['constraints']['maxLength'] = 2
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must have a maximum length of 2')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a maximum length of 2')
       end
 
     end
@@ -219,12 +219,12 @@ describe JsonTableSchema::Constraints do
       @value = 2
       field['constraints']['maxLength'] = 3
       field['type'] = 'integer'
-      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintNotSupported, 'The field type `integer` does not support the `maxLength` constraint')
+      expect { constraints.validate! }.to raise_error(TableSchema::ConstraintNotSupported, 'The field type `integer` does not support the `maxLength` constraint')
     end
 
   end
 
-  describe JsonTableSchema::Constraints::Minimum do
+  describe TableSchema::Constraints::Minimum do
 
     context 'with integer type' do
 
@@ -245,7 +245,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         field['constraints']['minimum'] = 25
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be less than 25')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be less than 25')
       end
 
     end
@@ -269,7 +269,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Date.parse('1970-05-28')
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be less than 1978-05-28')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be less than 1978-05-28')
       end
 
     end
@@ -293,7 +293,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = DateTime.parse('1970-05-29T12:30:20Z')
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be less than 1978-05-28T12:30:20Z')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be less than 1978-05-28T12:30:20Z')
       end
 
     end
@@ -317,7 +317,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Tod::TimeOfDay.parse('07:00:00')
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be less than 11:30:00')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be less than 11:30:00')
       end
 
     end
@@ -326,12 +326,12 @@ describe JsonTableSchema::Constraints do
       @value = 'sdsdasdsadsad'
       field['constraints']['minimum'] = 3
       field['type'] = 'string'
-      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintNotSupported, 'The field type `string` does not support the `minimum` constraint')
+      expect { constraints.validate! }.to raise_error(TableSchema::ConstraintNotSupported, 'The field type `string` does not support the `minimum` constraint')
     end
 
   end
 
-  describe JsonTableSchema::Constraints::Maximum do
+  describe TableSchema::Constraints::Maximum do
 
     context 'with integer type' do
 
@@ -352,7 +352,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         field['constraints']['maximum'] = 2
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be more than 2')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be more than 2')
       end
 
     end
@@ -376,7 +376,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Date.parse('2016-05-28')
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be more than 1978-05-28')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be more than 1978-05-28')
       end
 
     end
@@ -400,7 +400,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = DateTime.parse('2016-05-29T12:30:20Z')
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be more than 1978-05-28T12:30:20Z')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be more than 1978-05-28T12:30:20Z')
       end
 
     end
@@ -424,7 +424,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Tod::TimeOfDay.parse('14:00:00')
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The field `Name` must not be more than 11:30:00')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be more than 11:30:00')
       end
 
     end
@@ -433,12 +433,12 @@ describe JsonTableSchema::Constraints do
       @value = 'sdsdasdsadsad'
       field['constraints']['maximum'] = 3
       field['type'] = 'string'
-      expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintNotSupported, 'The field type `string` does not support the `maximum` constraint')
+      expect { constraints.validate! }.to raise_error(TableSchema::ConstraintNotSupported, 'The field type `string` does not support the `maximum` constraint')
     end
 
   end
 
-  describe JsonTableSchema::Constraints::Enum do
+  describe TableSchema::Constraints::Enum do
 
     context 'with string type' do
 
@@ -454,12 +454,12 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = 'ian'
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
       it 'is case sensitive' do
         @value = 'Bob'
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
     end
@@ -478,7 +478,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = '6'
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
     end
@@ -497,7 +497,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Float(6)
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
     end
@@ -516,7 +516,7 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = false
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
       it 'handles when value is equivalent to possible values in enum array' do
@@ -543,12 +543,12 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = ['foo', 'bar', 'baz']
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
       it 'handles with a valid value and a different order' do
         @value = ['third', 'second', 'first']
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
     end
@@ -573,7 +573,7 @@ describe JsonTableSchema::Constraints do
             'b' => 'alice',
             'c' => 'bob'
           }
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
       it 'handles with a valid value and a different order' do
@@ -597,14 +597,14 @@ describe JsonTableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Date.parse('2016-10-22')
-        expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
       end
 
     end
 
   end
 
-  describe JsonTableSchema::Constraints::Pattern do
+  describe TableSchema::Constraints::Pattern do
 
     context 'with string type' do
 
@@ -620,7 +620,7 @@ describe JsonTableSchema::Constraints do
 
         it 'handles with an invalid value' do
           @value = '078-05-112A'
-          expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
         end
 
     end
@@ -639,7 +639,7 @@ describe JsonTableSchema::Constraints do
 
         it 'handles with an invalid value' do
           @value = 678
-          expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
         end
 
     end
@@ -658,7 +658,7 @@ describe JsonTableSchema::Constraints do
 
         it 'handles with an invalid value' do
           @value = 7.12
-          expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
         end
 
     end
@@ -677,7 +677,7 @@ describe JsonTableSchema::Constraints do
 
         it 'handles with an invalid value' do
           @value = ['a', 'b', 'c', 'd']
-          expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
         end
 
     end
@@ -696,7 +696,7 @@ describe JsonTableSchema::Constraints do
 
         it 'handles with an invalid value' do
           @value = {'a' => 'fred', 'b' => 2, 'c' => 3}
-          expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
         end
 
     end
@@ -715,7 +715,7 @@ describe JsonTableSchema::Constraints do
 
         it 'handles with an invalid value' do
           @value = '2013-01-23'
-          expect { constraints.validate! }.to raise_error(JsonTableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
         end
 
     end

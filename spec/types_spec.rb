@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Types do
+describe TableSchema::Types do
 
-  describe JsonTableSchema::Types::String do
+  describe TableSchema::Types::String do
 
     let(:field) {
       {
@@ -15,7 +15,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::String.new(field) }
+    let(:type) { TableSchema::Types::String.new(field) }
 
     it 'casts a simple string' do
       value = 'a string'
@@ -24,13 +24,13 @@ describe JsonTableSchema::Types do
 
     it 'returns an error if the value is not a string' do
       value = 1
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
     end
 
     it 'raises for an unsupported format' do
       field['format'] = 'foo'
       value = 'foo'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidFormat)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidFormat)
     end
 
     context 'emails' do
@@ -52,10 +52,10 @@ describe JsonTableSchema::Types do
 
       it 'fails with an invalid email' do
         value = 1
-        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+        expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
 
         value = 'notanemail'
-        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidEmail)
+        expect { type.cast(value) }.to raise_error(TableSchema::InvalidEmail)
       end
 
     end
@@ -73,7 +73,7 @@ describe JsonTableSchema::Types do
 
       it 'raises an expection for an invalid URI' do
         value = 'notauri'
-        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidURI)
+        expect { type.cast(value) }.to raise_error(TableSchema::InvalidURI)
       end
 
     end
@@ -98,20 +98,20 @@ describe JsonTableSchema::Types do
 
       it 'raises for invalid uuids' do
         value = '1234567812345678123456781234567?'
-        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidUUID)
+        expect { type.cast(value) }.to raise_error(TableSchema::InvalidUUID)
 
         value = '1234567812345678123456781234567'
-        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidUUID)
+        expect { type.cast(value) }.to raise_error(TableSchema::InvalidUUID)
 
         value = 'X23e4567-e89b-12d3-a456-426655440000'
-        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidUUID)
+        expect { type.cast(value) }.to raise_error(TableSchema::InvalidUUID)
       end
 
     end
 
   end
 
-  describe JsonTableSchema::Types::Number do
+  describe TableSchema::Types::Number do
 
     let(:field) {
       {
@@ -124,7 +124,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::Number.new(field) }
+    let(:type) { TableSchema::Types::Number.new(field) }
 
     it 'casts a simple number' do
       value = '10.00'
@@ -142,7 +142,7 @@ describe JsonTableSchema::Types do
 
     it 'returns an error if the value is not a number' do
       value = 'string'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
     end
 
     it 'casts with localized settings' do
@@ -189,7 +189,7 @@ describe JsonTableSchema::Types do
       }
 
       let(:currency_type) {
-        JsonTableSchema::Types::Number.new(currency_field)
+        TableSchema::Types::Number.new(currency_field)
       }
 
       it 'casts successfully' do
@@ -220,16 +220,16 @@ describe JsonTableSchema::Types do
         value2 = '10+000.00'
         value3 = '$10:000.00'
 
-        expect { currency_type.cast(value1) }.to raise_error(JsonTableSchema::InvalidCast)
-        expect { currency_type.cast(value2) }.to raise_error(JsonTableSchema::InvalidCast)
-        expect { currency_type.cast(value3) }.to raise_error(JsonTableSchema::InvalidCast)
+        expect { currency_type.cast(value1) }.to raise_error(TableSchema::InvalidCast)
+        expect { currency_type.cast(value2) }.to raise_error(TableSchema::InvalidCast)
+        expect { currency_type.cast(value3) }.to raise_error(TableSchema::InvalidCast)
       end
 
     end
 
   end
 
-  describe JsonTableSchema::Types::Integer do
+  describe TableSchema::Types::Integer do
 
     let(:field) {
       {
@@ -242,7 +242,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::Integer.new(field) }
+    let(:type) { TableSchema::Types::Integer.new(field) }
 
     it 'casts a simple integer' do
       value = '1'
@@ -251,7 +251,7 @@ describe JsonTableSchema::Types do
 
     it 'raises when the value is not an integer' do
       value = 'string'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
     end
 
     it 'casts when value is already cast' do
@@ -261,7 +261,7 @@ describe JsonTableSchema::Types do
 
   end
 
-  describe JsonTableSchema::Types::Boolean do
+  describe TableSchema::Types::Boolean do
 
     let(:field) {
       {
@@ -274,7 +274,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::Boolean.new(field) }
+    let(:type) { TableSchema::Types::Boolean.new(field) }
 
     it 'casts a simple true value' do
       value = 't'
@@ -300,15 +300,15 @@ describe JsonTableSchema::Types do
 
     it 'raises for invalid values' do
       value = 'not a true value'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
 
       value = 11231902333
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
     end
 
   end
 
-  describe JsonTableSchema::Types::Null do
+  describe TableSchema::Types::Null do
 
     let(:field) {
       {
@@ -321,7 +321,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::Null.new(field) }
+    let(:type) { TableSchema::Types::Null.new(field) }
 
     it 'casts simple values' do
       value = 'null'
@@ -351,12 +351,12 @@ describe JsonTableSchema::Types do
 
     it 'raises for non null values' do
       value = 'nothing'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidCast)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
     end
 
   end
 
-  describe JsonTableSchema::Types::Object do
+  describe TableSchema::Types::Object do
 
     let(:field) {
       {
@@ -369,7 +369,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::Object.new(field) }
+    let(:type) { TableSchema::Types::Object.new(field) }
 
     it 'casts a hash' do
       value = {'key' => 'value'}
@@ -383,17 +383,17 @@ describe JsonTableSchema::Types do
 
     it 'raises when value is not a hash' do
       value = ['boo', 'ya']
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidObjectType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidObjectType)
     end
 
     it 'raises when value is not JSON' do
       value = 'fdsfdsfsdfdsfdsfdsfds'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidObjectType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidObjectType)
     end
 
   end
 
-  describe JsonTableSchema::Types::Array do
+  describe TableSchema::Types::Array do
 
     let(:field) {
       {
@@ -406,7 +406,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::Array.new(field) }
+    let(:type) { TableSchema::Types::Array.new(field) }
 
     it 'casts an array' do
       value = ['boo', 'ya']
@@ -420,17 +420,17 @@ describe JsonTableSchema::Types do
 
     it 'raises when value is not an array' do
       value = '{"key": "value"}'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidArrayType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidArrayType)
     end
 
     it 'raises when value is not JSON' do
       value = 'fdsfdsfsdfdsfdsfdsfds'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidArrayType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidArrayType)
     end
 
   end
 
-  describe JsonTableSchema::Types::Date do
+  describe TableSchema::Types::Date do
 
     let(:field) {
       {
@@ -443,7 +443,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::Date.new(field) }
+    let(:type) { TableSchema::Types::Date.new(field) }
 
     it 'casts a standard ISO8601 date string' do
       value = '2019-01-01'
@@ -452,7 +452,7 @@ describe JsonTableSchema::Types do
 
     it 'returns an error for a non ISO8601 date string by default' do
       value = '29/11/2015'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateType)
     end
 
     it 'casts any parseable date' do
@@ -464,7 +464,7 @@ describe JsonTableSchema::Types do
     it 'raises an error for any when date is unparsable' do
       value = '10th Jan nineteen sixty nine'
       field['format'] = 'any'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateType)
     end
 
     it 'casts with a specified date format' do
@@ -482,13 +482,13 @@ describe JsonTableSchema::Types do
     it 'raises an error for an invalid fmt' do
       value = '2014/12/19'
       field['format'] = 'fmt:DD/MM/YYYY'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateType)
     end
 
     it 'raises an error for a valid fmt and invalid value' do
       value = '2014/12/19'
       field['format'] = 'fmt:%m/%d/%y'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateType)
     end
 
     it 'works with an already cast value' do
@@ -501,7 +501,7 @@ describe JsonTableSchema::Types do
 
   end
 
-  describe JsonTableSchema::Types::Time do
+  describe TableSchema::Types::Time do
 
     let(:field) {
       {
@@ -514,7 +514,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::Time.new(field) }
+    let(:type) { TableSchema::Types::Time.new(field) }
 
     it 'casts a standard ISO8601 time string' do
       value = '06:00:00'
@@ -523,7 +523,7 @@ describe JsonTableSchema::Types do
 
     it 'raises an error when the string is not iso8601' do
       value = '3 am'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidTimeType)
     end
 
     it 'parses a generic time string' do
@@ -535,19 +535,19 @@ describe JsonTableSchema::Types do
     it 'raises when a time string is invalid' do
       value = 'Flava Flav'
       field['format'] = 'any'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidTimeType)
     end
 
     it 'raises an error when type format is incorrect' do
       value = 3.00
       self.field['format'] = 'fmt:any'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidTimeType)
 
       value = {}
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidTimeType)
 
       value = []
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidTimeType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidTimeType)
     end
 
     it 'works with an already cast value' do
@@ -560,7 +560,7 @@ describe JsonTableSchema::Types do
 
   end
 
-  describe JsonTableSchema::Types::DateTime do
+  describe TableSchema::Types::DateTime do
 
     let(:field) {
       {
@@ -573,7 +573,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::DateTime.new(field) }
+    let(:type) { TableSchema::Types::DateTime.new(field) }
 
     it 'casts a standard ISO8601 date string' do
       value = '2019-01-01T02:00:00Z'
@@ -594,19 +594,19 @@ describe JsonTableSchema::Types do
 
     it 'fails with a non iso datetime by default' do
       value = 'Mon 1st Jan 2014 9 am'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateTimeType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateTimeType)
     end
 
     it 'raises an exception for an unparsable datetime' do
       value = 'the land before time'
       field['format'] = 'any'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateTimeType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateTimeType)
     end
 
     it 'raises if the date format is invalid' do
       value = '21/11/06 16:30'
       field['format'] = 'fmt:notavalidformat'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidDateTimeType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateTimeType)
     end
 
     it 'works fine with an already cast value' do
@@ -619,7 +619,7 @@ describe JsonTableSchema::Types do
 
   end
 
-  describe JsonTableSchema::Types::GeoJSON do
+  describe TableSchema::Types::GeoJSON do
 
     let(:field) {
       {
@@ -632,11 +632,11 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::GeoJSON.new(field) }
+    let(:type) { TableSchema::Types::GeoJSON.new(field) }
 
     it 'raises with invalid GeoJSON' do
       value = {'coordinates' => [0, 0, 0], 'type' =>'Point'}
-        expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoJSONType)
+        expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoJSONType)
     end
 
     it 'handles a GeoJSON hash' do
@@ -659,7 +659,7 @@ describe JsonTableSchema::Types do
 
     it 'raises with an invalid JSON string' do
       value = 'notjson'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoJSONType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoJSONType)
     end
 
     it 'casts to none if string is blank' do
@@ -670,7 +670,7 @@ describe JsonTableSchema::Types do
 
   end
 
-  describe JsonTableSchema::Types::GeoPoint do
+  describe TableSchema::Types::GeoPoint do
 
     let(:field) {
       {
@@ -683,7 +683,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::GeoPoint.new(field) }
+    let(:type) { TableSchema::Types::GeoPoint.new(field) }
 
     it 'handles a simple point string' do
       value = '10.0, 21.00'
@@ -692,27 +692,27 @@ describe JsonTableSchema::Types do
 
     it 'raises an error for points outside of the longitude range' do
       value = '310.0, 921.00'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
     end
 
     it 'raises an error for points outside of the latitude range' do
       value = '10.0, 921.00'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
     end
 
     it 'raises for something that is not a geopoint' do
       value = 'this is not a geopoint'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
     end
 
     it 'raises for non decimal values' do
       value = 'blah, blah'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
     end
 
     it 'raises for wrong length of points' do
       value = '10.0, 21.00, 1'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
     end
 
     it 'handles an array' do
@@ -732,11 +732,11 @@ describe JsonTableSchema::Types do
     it 'raises for an invalid array' do
       field['format'] = 'array'
       value = '1,2'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
       value = '["a", "b"]'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
       value = '1,2'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
     end
 
     it 'handles an object' do
@@ -756,14 +756,14 @@ describe JsonTableSchema::Types do
     it 'raises for an invalid object' do
       field['format'] = 'object'
       value = '{"blah": "10.0", "latitude": "21.00"}'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
       value = '{"longitude": "a", "latitude": "21.00"}'
-      expect { type.cast(value) }.to raise_error(JsonTableSchema::InvalidGeoPointType)
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
     end
 
   end
 
-  describe JsonTableSchema::Types::Any do
+  describe TableSchema::Types::Any do
 
     let(:field) {
       {
@@ -776,7 +776,7 @@ describe JsonTableSchema::Types do
       }
     }
 
-    let(:type) { JsonTableSchema::Types::Any.new(field) }
+    let(:type) { TableSchema::Types::Any.new(field) }
 
     it 'returns the value' do
       ['1', 2, Time.now].each do |value|
@@ -791,23 +791,23 @@ describe JsonTableSchema::Types do
 
     let(:none_string_types) {
       {
-        'number' => JsonTableSchema::Types::Number,
-        'integer' => JsonTableSchema::Types::Integer,
-        'boolean' => JsonTableSchema::Types::Boolean,
-        'array' => JsonTableSchema::Types::Array,
-        'object' => JsonTableSchema::Types::Object,
-        'date' => JsonTableSchema::Types::Date,
-        'time' => JsonTableSchema::Types::Time,
-        'datetime' => JsonTableSchema::Types::DateTime,
-        'geopoint' => JsonTableSchema::Types::GeoPoint,
-        'geojson' => JsonTableSchema::Types::GeoJSON,
-        #'any' => JsonTableSchema::Types::Any
+        'number' => TableSchema::Types::Number,
+        'integer' => TableSchema::Types::Integer,
+        'boolean' => TableSchema::Types::Boolean,
+        'array' => TableSchema::Types::Array,
+        'object' => TableSchema::Types::Object,
+        'date' => TableSchema::Types::Date,
+        'time' => TableSchema::Types::Time,
+        'datetime' => TableSchema::Types::DateTime,
+        'geopoint' => TableSchema::Types::GeoPoint,
+        'geojson' => TableSchema::Types::GeoJSON,
+        #'any' => TableSchema::Types::Any
       }
     }
 
     let(:string_types) {
       {
-        'string' => JsonTableSchema::Types::String,
+        'string' => TableSchema::Types::String,
       }
     }
 
@@ -826,12 +826,12 @@ describe JsonTableSchema::Types do
       none_string_types.each do |name, value|
         field['type'] = name
         type = value.new(field)
-        expect { type.cast('null') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('none') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('nil') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('nan') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('-') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('null') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('none') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('nil') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('nan') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('-') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('') }.to raise_error(TableSchema::ConstraintError)
       end
     end
 
@@ -839,12 +839,12 @@ describe JsonTableSchema::Types do
       string_types.each do |name, value|
         field['type'] = name
         type = value.new(field)
-        expect { type.cast('null') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('none') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('nil') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('nan') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('-') }.to raise_error(JsonTableSchema::ConstraintError)
-        expect { type.cast('') }.to raise_error(JsonTableSchema::ConstraintError)
+        expect { type.cast('null') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('none') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('nil') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('nan') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('-') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('') }.to raise_error(TableSchema::ConstraintError)
       end
     end
 

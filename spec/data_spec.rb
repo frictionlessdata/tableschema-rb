@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Data do
+describe TableSchema::Data do
   let(:schema_hash) {
     {
       "fields" => [
@@ -44,7 +44,7 @@ describe JsonTableSchema::Data do
     }
   }
 
-  let(:schema) { JsonTableSchema::Schema.new(schema_hash) }
+  let(:schema) { TableSchema::Schema.new(schema_hash) }
 
   context 'cast_row' do
 
@@ -61,7 +61,7 @@ describe JsonTableSchema::Data do
     it 'raises an error for a row with too few items' do
       row = ['string', '10.0', '1', 'string']
       expect { schema.cast_row(row) }.to raise_error(
-        JsonTableSchema::ConversionError,
+        TableSchema::ConversionError,
         'The number of items to convert (4) does not match the number of headers in the schema (5)'
       )
     end
@@ -69,7 +69,7 @@ describe JsonTableSchema::Data do
     it 'raises an error for a row with too many items' do
       row = ['string', '10.0', '1', 'string', 1, 2]
       expect { schema.cast_row(row) }.to raise_error(
-        JsonTableSchema::ConversionError,
+        TableSchema::ConversionError,
         'The number of items to convert (6) does not match the number of headers in the schema (5)'
       )
     end
@@ -77,7 +77,7 @@ describe JsonTableSchema::Data do
     it 'raises an error if a column has the wrong type' do
       row = ['string', 'notdecimal', '10.6', 'string', 'string']
       expect { schema.cast_row(row) }.to raise_error(
-        JsonTableSchema::InvalidCast,
+        TableSchema::InvalidCast,
         'notdecimal is not a number'
       )
     end
@@ -85,7 +85,7 @@ describe JsonTableSchema::Data do
     it 'raises multiple errors if fail_fast is set to false' do
       row = ['string', 'notdecimal', '10.6', 'string', 'string']
       expect { schema.cast_row(row, false) }.to raise_error(
-        JsonTableSchema::MultipleInvalid,
+        TableSchema::MultipleInvalid,
         'There were errors parsing the data'
       )
       expect(schema.errors.count).to eq(2)
@@ -126,7 +126,7 @@ describe JsonTableSchema::Data do
       ]
 
       expect { schema.cast_rows(rows) }.to raise_error(
-        JsonTableSchema::InvalidCast,
+        TableSchema::InvalidCast,
         'not is not a number'
       )
     end
@@ -141,7 +141,7 @@ describe JsonTableSchema::Data do
       ]
 
       expect { schema.cast_rows(rows, false) }.to raise_error(
-        JsonTableSchema::MultipleInvalid,
+        TableSchema::MultipleInvalid,
         'There were errors parsing the data'
       )
       expect(schema.errors.count).to eq(3)
@@ -157,7 +157,7 @@ describe JsonTableSchema::Data do
       ]
 
       expect { schema.cast_rows(rows, false) }.to raise_error(
-        JsonTableSchema::MultipleInvalid,
+        TableSchema::MultipleInvalid,
         'There were errors parsing the data'
       )
       expect(schema.errors.count).to eq(2)
@@ -173,7 +173,7 @@ describe JsonTableSchema::Data do
       ]
 
       expect { schema.cast_rows(rows) }.to raise_error(
-        JsonTableSchema::ConversionError,
+        TableSchema::ConversionError,
         'The number of items to convert (4) does not match the number of headers in the schema (5)'
       )
     end

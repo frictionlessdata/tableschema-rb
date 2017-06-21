@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Model do
+describe TableSchema::Model do
 
   let(:descriptor) {
     {
@@ -59,31 +59,31 @@ describe JsonTableSchema::Model do
   }
 
   it "returns headers" do
-    s = JsonTableSchema::Schema.new(descriptor)
+    s = TableSchema::Schema.new(descriptor)
     expect(s.headers.count).to eq(5)
   end
 
   it "returns required headers" do
-    s = JsonTableSchema::Schema.new(descriptor)
+    s = TableSchema::Schema.new(descriptor)
     expect(s.required_headers.count).to eq(2)
   end
 
   context "check for field presence" do
 
     it "returns true" do
-      s = JsonTableSchema::Schema.new(descriptor)
+      s = TableSchema::Schema.new(descriptor)
       expect(s.has_field?('name')).to be true
     end
 
     it "returns false" do
-      s = JsonTableSchema::Schema.new(descriptor)
+      s = TableSchema::Schema.new(descriptor)
       expect(s.has_field?('religion')).to be false
     end
 
   end
 
   it "gets fields by type" do
-    s = JsonTableSchema::Schema.new(descriptor)
+    s = TableSchema::Schema.new(descriptor)
 
     expect(s.get_fields_by_type('string').count).to eq(3)
     expect(s.get_fields_by_type('number').count).to eq(1)
@@ -93,12 +93,12 @@ describe JsonTableSchema::Model do
   context 'get type' do
 
     it 'gets the type of a field' do
-      s = JsonTableSchema::Schema.new(descriptor)
+      s = TableSchema::Schema.new(descriptor)
       expect(s.get_type('id')).to eq('string')
     end
 
     it 'gets a default type' do
-      s = JsonTableSchema::Schema.new(schema_min)
+      s = TableSchema::Schema.new(schema_min)
       expect(s.get_type('id')).to eq('string')
     end
 
@@ -107,12 +107,12 @@ describe JsonTableSchema::Model do
   context 'get constraints' do
 
     it 'gets the constraints for a field' do
-      s = JsonTableSchema::Schema.new(descriptor)
+      s = TableSchema::Schema.new(descriptor)
       expect(s.get_constraints('id')).to eq({"required" => true})
     end
 
     it 'returns an empty hash where there are no constraints' do
-      s = JsonTableSchema::Schema.new(schema_min)
+      s = TableSchema::Schema.new(schema_min)
       expect(s.get_constraints('id')).to eq({})
     end
 
@@ -127,19 +127,19 @@ describe JsonTableSchema::Model do
     }
 
     it 'with headers' do
-      s = JsonTableSchema::Schema.new(new_descriptor, case_insensitive_headers: true)
+      s = TableSchema::Schema.new(new_descriptor, case_insensitive_headers: true)
       expect(s.headers).to eq(['id', 'height', 'age', 'name', 'occupation'])
     end
 
     it 'with required' do
-      s = JsonTableSchema::Schema.new(new_descriptor, case_insensitive_headers: true)
+      s = TableSchema::Schema.new(new_descriptor, case_insensitive_headers: true)
       expect(s.required_headers).to eq(['id', 'name'])
     end
 
   end
 
   it 'sets defaults' do
-    s = JsonTableSchema::Schema.new(schema_min)
+    s = TableSchema::Schema.new(schema_min)
     expect(s.get_fields_by_type('string').count).to eq(2)
   end
 
@@ -151,7 +151,7 @@ describe JsonTableSchema::Model do
        ]
      }
 
-     s = JsonTableSchema::Schema.new(hash)
+     s = TableSchema::Schema.new(hash)
      expect(s.required_headers.count).to eq(1)
   end
 
@@ -159,18 +159,18 @@ describe JsonTableSchema::Model do
 
     it 'returns a single primary key as an array' do
       descriptor = load_descriptor('schema_valid_pk_string.json')
-      s = JsonTableSchema::Schema.new(descriptor)
+      s = TableSchema::Schema.new(descriptor)
       expect(s.primary_keys).to eq(['id'])
     end
 
     it 'returns the primary key as an array' do
       descriptor = load_descriptor('schema_valid_pk_array.json')
-      s = JsonTableSchema::Schema.new(descriptor)
+      s = TableSchema::Schema.new(descriptor)
       expect(s.primary_keys).to eq(['id', 'title'])
     end
 
     it 'returns an empty array if there is no primary key' do
-      s = JsonTableSchema::Schema.new(schema_min)
+      s = TableSchema::Schema.new(schema_min)
       expect(s.primary_keys).to eq([])
     end
 
@@ -180,7 +180,7 @@ describe JsonTableSchema::Model do
 
     it 'with a valid foreign key string' do
       descriptor = load_descriptor('schema_valid_fk_string.json')
-      schema = JsonTableSchema::Schema.new(descriptor)
+      schema = TableSchema::Schema.new(descriptor)
       expect(schema.foreign_keys).to eq([
         {
             "fields" => "state",
@@ -195,7 +195,7 @@ describe JsonTableSchema::Model do
 
     it 'with a valid foreign key self reference' do
       descriptor = load_descriptor('schema_valid_fk_string_self_referencing.json')
-      schema = JsonTableSchema::Schema.new(descriptor)
+      schema = TableSchema::Schema.new(descriptor)
       expect(schema.foreign_keys).to eq([
         {
             "fields" => "parent",
@@ -210,7 +210,7 @@ describe JsonTableSchema::Model do
 
     it 'with a valid foreign key array' do
       descriptor = load_descriptor('schema_valid_fk_array.json')
-      schema = JsonTableSchema::Schema.new(descriptor)
+      schema = TableSchema::Schema.new(descriptor)
       expect(schema.foreign_keys).to eq([
           {
               "fields" => ["id", "title"],
@@ -224,7 +224,7 @@ describe JsonTableSchema::Model do
     end
 
     it 'returns an empty array if there is no foreign key' do
-      s = JsonTableSchema::Schema.new(schema_min)
+      s = TableSchema::Schema.new(schema_min)
       expect(s.foreign_keys).to eq([])
     end
 

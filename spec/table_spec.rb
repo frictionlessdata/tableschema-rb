@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe JsonTableSchema::Table do
+describe TableSchema::Table do
 
   let(:csv) { File.join( File.dirname(__FILE__), "fixtures", "simple_data.csv") }
 
   let(:descriptor) { File.join( File.dirname(__FILE__), "fixtures", "schema_valid_simple.json") }
 
-  let(:table) { JsonTableSchema::Table.new(csv, descriptor) }
+  let(:table) { TableSchema::Table.new(csv, descriptor) }
 
   it 'loads a schema' do
     expect(table.schema).to eq({
@@ -43,7 +43,7 @@ describe JsonTableSchema::Table do
       ['6','poff']
     ]
 
-    table = JsonTableSchema::Table.new(csv, descriptor)
+    table = TableSchema::Table.new(csv, descriptor)
 
     expect(table.rows).to eq([
       [4,'piff'],
@@ -57,7 +57,7 @@ describe JsonTableSchema::Table do
     stub_request(:get, url)
                 .to_return(body: File.open(csv))
 
-    table = JsonTableSchema::Table.new(url, descriptor)
+    table = TableSchema::Table.new(url, descriptor)
     expect(table.rows).to eq([
       [1,'foo'],
       [2,'bar'],
@@ -81,10 +81,10 @@ describe JsonTableSchema::Table do
       ['alsonotnumber','poff']
     ]
 
-    table = JsonTableSchema::Table.new(csv, descriptor)
+    table = TableSchema::Table.new(csv, descriptor)
 
     expect { table.rows(fail_fast: true) }.to raise_error(
-      JsonTableSchema::InvalidCast,
+      TableSchema::InvalidCast,
       'notnumber is not a integer'
     )
   end
@@ -97,10 +97,10 @@ describe JsonTableSchema::Table do
       ['alsonotnumber','poff']
     ]
 
-    table = JsonTableSchema::Table.new(csv, descriptor)
+    table = TableSchema::Table.new(csv, descriptor)
 
     expect { table.rows(fail_fast: false) }.to raise_error(
-      JsonTableSchema::MultipleInvalid,
+      TableSchema::MultipleInvalid,
       'There were errors parsing the data'
     )
 
@@ -114,7 +114,7 @@ describe JsonTableSchema::Table do
   end
 
   it 'infers a schema' do
-    table = JsonTableSchema::Table.infer_schema(csv)
+    table = TableSchema::Table.infer_schema(csv)
     expect(table.schema).to eq({
       "fields" => [
         {

@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in jsontableschema.gemspec
+# Specify your gem's dependencies in tableschema.gemspec
 gemspec
