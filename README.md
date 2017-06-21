@@ -2,7 +2,7 @@
 formerly known as JSON Table Schema
 
 [![Travis](https://travis-ci.org/frictionlessdata/tableschema-rb.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-rb)
-[![Coveralls](http://img.shields.io/coveralls/frictionlessdata/jsontableschema-rb.svg?branch=master)](https://coveralls.io/r/frictionlessdata/jsontableschema-rb?branch=master)
+[![Coveralls](https://coveralls.io/repos/github/frictionlessdata/tableschema-rb/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-rb?branch=master)
 [![Gem Version](http://img.shields.io/gem/v/tableschema.svg)](https://rubygems.org/gems/tableschema)
 [![SemVer](https://img.shields.io/badge/versions-SemVer-brightgreen.svg)](http://semver.org/)
 [![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
