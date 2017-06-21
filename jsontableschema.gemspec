@@ -17,6 +17,10 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+  spec.post_install_message = <<-MESSAGE
+  WARNING:   The 'jsontableschema' gem has been deprecated and will be replaced by the gem 'tableschema'.
+             See: https://github.com/frictionlessdata/tableschema-rb
+  MESSAGE
 
   spec.add_development_dependency "bundler", "~> 1.11"
   spec.add_development_dependency "rake", "~> 10.0"
