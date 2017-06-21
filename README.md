@@ -3,7 +3,7 @@ formerly known as JSON Table Schema
 
 [![Travis](https://travis-ci.org/frictionlessdata/tableschema-rb.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-rb)
 [![Coveralls](http://img.shields.io/coveralls/frictionlessdata/jsontableschema-rb.svg?branch=master)](https://coveralls.io/r/frictionlessdata/jsontableschema-rb?branch=master)
-[![Gem Version](http://img.shields.io/gem/v/jsontableschema.svg)](https://rubygems.org/gems/jsontableschema)
+[![Gem Version](http://img.shields.io/gem/v/tableschema.svg)](https://rubygems.org/gems/tableschema)
 [![SemVer](https://img.shields.io/badge/versions-SemVer-brightgreen.svg)](http://semver.org/)
 [![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
 
@@ -74,7 +74,7 @@ schema = {
     ]
 } # Can also be a URL or a path
 
-csv = 'https://github.com/theodi/jsontableschema.rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
+csv = 'https://github.com/frictionlessdata/tableschema-rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
 
 table = TableSchema::Table.new(csv, schema)
 table.rows
@@ -86,7 +86,7 @@ table.rows
 If you don't have a schema for a CSV, and want to generate one, you can infer a schema like so:
 
 ```ruby
-csv = 'https://github.com/theodi/jsontableschema.rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
+csv = 'https://github.com/frictionlessdata/tableschema-rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
 
 table = TableSchema::Table.infer_schema(csv)
 table.schema
