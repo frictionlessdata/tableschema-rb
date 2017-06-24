@@ -1439,12 +1439,19 @@
                 "format": "uri"
               },
               "fields": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "minItems": 1,
-                "uniqueItems": true
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
               }
             }
           }

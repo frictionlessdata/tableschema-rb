@@ -4,7 +4,7 @@ module TableSchema
     attr_reader :messages
 
     def load_validator!
-      filepath = File.join(File.dirname(__FILE__), '..', '..', 'etc', 'schemas', 'json-table-schema.json')
+      filepath = File.join(File.dirname(__FILE__), '..', 'profiles', 'table-schema.json')
       @validator ||= JSON.parse(File.read filepath)
     end
 
@@ -28,22 +28,26 @@ module TableSchema
 
       def check_foreign_keys
         return if self['foreignKeys'].nil?
-        self['foreignKeys'].each do |keys|
-          foreign_key_fields(keys).each { |fk| check_field_value(fk, 'foreignKey.fields') }
-          add_error("A JSON Table Schema foreignKey.fields must contain the same number entries as foreignKey.reference.fields.") if field_count_mismatch?(keys)
+        self['foreignKeys'].each do |key|
+          foreign_key_fields(key).each { |fk| check_field_value(fk, 'foreignKey.fields') }
+          if field_count_mismatch?(key)
+            add_error("A JSON Table Schema foreignKey.fields must contain the same number entries as foreignKey.reference.fields.")
+          end
         end
       end
 
       def check_field_value(key, type)
-        add_error("The JSON Table Schema #{type} value `#{key}` is not found in any of the schema's field names") if headers.select { |f| key == f }.count == 0
+        if headers.select { |f| key == f }.count == 0
+          add_error("The JSON Table Schema #{type} value `#{key}` is not found in any of the schema's field names")
+        end
       end
 
-      def foreign_key_fields(keys)
-        [keys['fields']].flatten
+      def foreign_key_fields(key)
+        [key['fields']].flatten
       end
 
-      def field_count_mismatch?(keys)
-        keys['reference'] &&([keys['fields']].flatten.count != [keys['reference']['fields']].flatten.count)
+      def field_count_mismatch?(key)
+        key['reference'] && ([key['fields']].flatten.count != [key['reference']['fields']].flatten.count)
       end
 
       def add_error(error)

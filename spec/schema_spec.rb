@@ -7,14 +7,14 @@ describe TableSchema::Schema do
     it 'with a hash' do
       hash = load_descriptor('schema_valid_full.json')
       schema = TableSchema::Schema.new(hash)
-      expect(schema['fields'].count).to eq(15)
+      expect(schema['fields'].count).to eq(22)
       expect(schema['fields'].first.class).to eq(TableSchema::Field)
     end
 
     it 'with a file' do
       file = File.join( File.dirname(__FILE__), "fixtures", "schema_valid_full.json")
       schema = TableSchema::Schema.new(file)
-      expect(schema['fields'].count).to eq(15)
+      expect(schema['fields'].count).to eq(22)
     end
 
     it 'with a url' do
@@ -24,7 +24,7 @@ describe TableSchema::Schema do
                   .to_return(body: File.open(path))
 
       schema = TableSchema::Schema.new(url)
-      expect(schema['fields'].count).to eq(15)
+      expect(schema['fields'].count).to eq(22)
     end
 
     context 'raises an exception' do

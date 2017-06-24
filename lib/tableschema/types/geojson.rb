@@ -29,7 +29,7 @@ module TableSchema
       private
 
       def geojson_schema
-        path = File.join( File.dirname(__FILE__), "..", "..", "..", "etc", "schemas", "geojson.json" )
+        path = File.join( File.dirname(__FILE__), "..", "..", "profiles", "geojson.json" )
         @geojson_schema ||= JSON.parse File.read(path)
       end
 
