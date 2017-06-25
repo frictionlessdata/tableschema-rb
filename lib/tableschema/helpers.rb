@@ -36,7 +36,6 @@ module TableSchema
         'geojson' => 'GeoJSON',
         'geopoint' => 'GeoPoint',
         'integer' => 'Integer',
-        'null' => 'Null',
         'number' => 'Number',
         'object' => 'Object',
         'string' => 'String',

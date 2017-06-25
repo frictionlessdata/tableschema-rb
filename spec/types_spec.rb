@@ -308,54 +308,6 @@ describe TableSchema::Types do
 
   end
 
-  describe TableSchema::Types::Null do
-
-    let(:field) {
-      {
-        'name' => 'Name',
-        'type' => 'null',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
-        }
-      }
-    }
-
-    let(:type) { TableSchema::Types::Null.new(field) }
-
-    it 'casts simple values' do
-      value = 'null'
-      expect(type.cast(value)).to be nil
-
-      value = 'null'
-      expect(type.cast(value)).to be nil
-
-      value = 'none'
-      expect(type.cast(value)).to be nil
-
-      value = 'nil'
-      expect(type.cast(value)).to be nil
-
-      value = 'nan'
-      expect(type.cast(value)).to be nil
-
-      value = '-'
-      expect(type.cast(value)).to be nil
-
-      value = ''
-      expect(type.cast(value)).to be nil
-
-      value = nil
-      expect(type.cast(value)).to be nil
-    end
-
-    it 'raises for non null values' do
-      value = 'nothing'
-      expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
-    end
-
-  end
-
   describe TableSchema::Types::Object do
 
     let(:field) {
