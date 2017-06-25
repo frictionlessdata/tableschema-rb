@@ -128,7 +128,6 @@ module TableSchema
         'boolean',
         'number',
         'integer',
-        'null',
         'date',
         'time',
         'datetime',
