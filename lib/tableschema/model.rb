@@ -1,10 +1,7 @@
+require 'tableschema/defaults'
+
 module TableSchema
   module Model
-
-    DEFAULTS = {
-      'format' => 'default',
-      'type' => 'string'
-    }
 
     def headers
       fields.map { |f| transform(f['name']) }
@@ -22,6 +19,10 @@ module TableSchema
 
     def foreign_keys
       self['foreignKeys'] || []
+    end
+
+    def missing_values
+      self.fetch('missingValues', TableSchema::DEFAULTS['missing_values'])
     end
 
     def get_type(key)
@@ -60,13 +61,13 @@ module TableSchema
 
       def expand!
         (self['fields'] || []).each do |f|
-          f['type'] = DEFAULTS['type'] if f['type'] == nil
-          f['format'] = DEFAULTS['format'] if f['format'] == nil
+          f['type'] = TableSchema::DEFAULTS['type'] if f['type'] == nil
+          f['format'] = TableSchema::DEFAULTS['format'] if f['format'] == nil
         end
       end
 
       def load_fields!
-        self['fields'] = (self['fields'] || []).map { |f| TableSchema::Field.new(f) }
+        self['fields'] = (self['fields'] || []).map { |f| TableSchema::Field.new(f, missing_values) }
       end
 
   end

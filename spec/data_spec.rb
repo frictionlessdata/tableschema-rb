@@ -40,6 +40,11 @@ describe TableSchema::Data do
               }
           },
 
+      ],
+      "missingValues" => [
+        '-',
+        'null',
+        ''
       ]
     }
   }

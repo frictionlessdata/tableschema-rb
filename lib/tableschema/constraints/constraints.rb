@@ -21,7 +21,7 @@ module TableSchema
     def initialize(field, value)
       @field = field
       @value = value
-      @constraints = @field['constraints'] || {}
+      @constraints = ordered_constraints
     end
 
     def validate!
@@ -45,6 +45,12 @@ module TableSchema
             gsub(/([a-z\d])([A-Z])/,'\1_\2').
             tr("-", "_").
             downcase
+    end
+
+    def ordered_constraints
+      constraints = @field.fetch('constraints', {})
+      ordered_constraints = constraints.select{ |k,v| k == 'required'}
+      ordered_constraints.merge!(constraints)
     end
 
     def is_supported_type?(constraint)

@@ -26,7 +26,7 @@ describe TableSchema::Field do
   end
 
   it 'returns a format' do
-    expect(described_class.new(@descriptor_min).format).to eq('default')
+    expect(described_class.new(@descriptor_min).format).to eq(TableSchema::DEFAULTS['format'])
     expect(described_class.new(@descriptor_max).format).to eq('currency')
   end
 
