@@ -1,3 +1,6 @@
+require 'tableschema/defaults'
+require 'tableschema/field'
+
 module TableSchema
   class Infer
 
@@ -32,7 +35,7 @@ module TableSchema
         constraints['unique'] = (header == @primary_key)
         constraints.delete_if { |k,v| v == false } unless @explicit === true
         descriptor['constraints'] = constraints if constraints.count > 0
-        descriptor
+        TableSchema::Field.new(descriptor)
       end
     end
 
@@ -64,8 +67,8 @@ module TableSchema
     end
 
     def guess_type(col, index)
-      guessed_type = 'string'
-      guessed_format = 'default'
+      guessed_type = TableSchema::DEFAULTS['type']
+      guessed_format = TableSchema::DEFAULTS['format']
 
       available_types.reverse_each do |type|
         klass = get_class_for_type(type)
@@ -84,12 +87,12 @@ module TableSchema
     end
 
     def guess_format(converter, col)
-      guessed_format = 'default'
+      guessed_format = TableSchema::DEFAULTS['format']
       converter.class.instance_methods.grep(/cast_/).each do |method|
         begin
           format = method.to_s
           format.slice!('cast_')
-          next if format == 'default'
+          next if format == TableSchema::DEFAULTS['format']
           converter.send(method, col)
           guessed_format = format
           break

@@ -12,13 +12,13 @@ describe TableSchema::Infer do
     schema = inferer.schema
 
     expect(schema.get_field('id')['type']).to eq('integer')
-    expect(schema.get_field('id')['format']).to eq('default')
+    expect(schema.get_field('id')['format']).to eq(TableSchema::DEFAULTS['format'])
 
     expect(schema.get_field('age')['type']).to eq('integer')
-    expect(schema.get_field('age')['format']).to eq('default')
+    expect(schema.get_field('age')['format']).to eq(TableSchema::DEFAULTS['format'])
 
     expect(schema.get_field('name')['type']).to eq('string')
-    expect(schema.get_field('name')['format']).to eq('default')
+    expect(schema.get_field('name')['format']).to eq(TableSchema::DEFAULTS['format'])
   end
 
   it 'gets a format' do
@@ -55,13 +55,13 @@ describe TableSchema::Infer do
     schema = inferer.schema
 
     expect(schema.get_field('id')['type']).to eq('integer')
-    expect(schema.get_field('id')['format']).to eq('default')
+    expect(schema.get_field('id')['format']).to eq(TableSchema::DEFAULTS['format'])
 
     expect(schema.get_field('age')['type']).to eq('integer')
-    expect(schema.get_field('age')['format']).to eq('default')
+    expect(schema.get_field('age')['format']).to eq(TableSchema::DEFAULTS['format'])
 
     expect(schema.get_field('name')['type']).to eq('string')
-    expect(schema.get_field('name')['format']).to eq('default')
+    expect(schema.get_field('name')['format']).to eq(TableSchema::DEFAULTS['format'])
   end
 
   it 'infers a schema with a row limit' do
@@ -71,13 +71,13 @@ describe TableSchema::Infer do
     schema = inferer.schema
 
     expect(schema.get_field('id')['type']).to eq('integer')
-    expect(schema.get_field('id')['format']).to eq('default')
+    expect(schema.get_field('id')['format']).to eq(TableSchema::DEFAULTS['format'])
 
     expect(schema.get_field('age')['type']).to eq('integer')
-    expect(schema.get_field('age')['format']).to eq('default')
+    expect(schema.get_field('age')['format']).to eq(TableSchema::DEFAULTS['format'])
 
     expect(schema.get_field('name')['type']).to eq('string')
-    expect(schema.get_field('name')['format']).to eq('default')
+    expect(schema.get_field('name')['format']).to eq(TableSchema::DEFAULTS['format'])
   end
 
   it 'infers a schema with a primary key as a string' do

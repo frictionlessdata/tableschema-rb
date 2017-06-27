@@ -1,3 +1,5 @@
+require 'tableschema/defaults'
+
 module TableSchema
   module Types
     class Base
@@ -13,9 +15,9 @@ module TableSchema
       end
 
       def cast(value, skip_constraints = false)
+        value = nil if is_null?(value)
         TableSchema::Constraints.new(@field, value).validate! unless skip_constraints
-        return nil if is_null?(value)
-        send("cast_#{@format}", value)
+        send("cast_#{@format}", value) unless value.nil?
       rescue NoMethodError => e
         if e.message.start_with?('undefined method `cast_')
           raise(TableSchema::InvalidFormat.new("The format `#{@format}` is not supported by the type `#{@type}`"))
@@ -35,18 +37,15 @@ module TableSchema
         if (@field['format'] || '').start_with?('fmt:')
           @format, @format_string = *@field['format'].split(':', 2)
         else
-          @format = @field['format'] || 'default'
+          @format = @field['format'] || TableSchema::DEFAULTS['format']
         end
       end
 
       private
 
         def is_null?(value)
-          null_values.include?(value) && @required == false
-        end
-
-        def null_values
-          ['null', 'none', 'nil', 'nan', '-', '']
+          null_values = @field.missing_values.reject{|el| el == '' && @type == 'string'}
+          null_values.include?(value)
         end
 
     end

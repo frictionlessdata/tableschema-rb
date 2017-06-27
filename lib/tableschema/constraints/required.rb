@@ -12,17 +12,12 @@ module TableSchema
       private
 
       def is_empty?
-        null_values.include?(@value)
+        @value.nil? || @value == ''
       end
 
       def required
         @constraints['required'].to_s == 'true'
       end
-
-      def null_values
-        ['null', 'none', 'nil', 'nan', '-', '']
-      end
-
     end
   end
 end

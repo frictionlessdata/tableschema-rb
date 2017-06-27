@@ -5,14 +5,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::String do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'string',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::String.new(field) }
@@ -114,14 +114,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::Number do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'number',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::Number.new(field) }
@@ -232,14 +232,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::Integer do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'integer',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::Integer.new(field) }
@@ -264,14 +264,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::Boolean do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'boolean',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::Boolean.new(field) }
@@ -311,14 +311,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::Object do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'object',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::Object.new(field) }
@@ -348,14 +348,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::Array do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'array',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::Array.new(field) }
@@ -385,14 +385,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::Date do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'date',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::Date.new(field) }
@@ -456,14 +456,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::Time do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'time',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::Time.new(field) }
@@ -515,14 +515,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::DateTime do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'datetime',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::DateTime.new(field) }
@@ -574,14 +574,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::GeoJSON do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'geojson',
         'format' => 'default',
         'constraints' => {
           'required' => false
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::GeoJSON.new(field) }
@@ -625,14 +625,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::GeoPoint do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'geopoint',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::GeoPoint.new(field) }
@@ -718,14 +718,14 @@ describe TableSchema::Types do
   describe TableSchema::Types::Any do
 
     let(:field) {
-      {
+      TableSchema::Field.new({
         'name' => 'Name',
         'type' => 'any',
         'format' => 'default',
         'constraints' => {
           'required' => true
         }
-      }
+      })
     }
 
     let(:type) { TableSchema::Types::Any.new(field) }
@@ -739,9 +739,9 @@ describe TableSchema::Types do
 
   end
 
-  context 'null values' do
+  context 'missing values' do
 
-    let(:none_string_types) {
+    let(:non_string_types) {
       {
         'number' => TableSchema::Types::Number,
         'integer' => TableSchema::Types::Integer,
@@ -763,7 +763,7 @@ describe TableSchema::Types do
       }
     }
 
-    let(:field) {
+    let(:field_attrs) {
       {
         'name' => 'Name',
         'type' => 'string',
@@ -774,57 +774,72 @@ describe TableSchema::Types do
       }
     }
 
-    it 'raises for null values on required fields' do
-      none_string_types.each do |name, value|
-        field['type'] = name
-        type = value.new(field)
+    let (:missing_values) {
+      [
+        'null',
+        'NaN'
+      ]
+    }
+
+    it 'raises for missing_values on required fields' do
+      non_string_types.each do |name, type_class|
+        field_attrs['type'] = name
+        field = TableSchema::Field.new(field_attrs, missing_values)
+        type = type_class.new(field)
         expect { type.cast('null') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('none') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('nil') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('nan') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('-') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('NaN') }.to raise_error(TableSchema::ConstraintError)
       end
     end
 
     it 'raises for null value on required string fields' do
-      string_types.each do |name, value|
-        field['type'] = name
-        type = value.new(field)
+      string_types.each do |name, type_class|
+        field_attrs['type'] = name
+        field = TableSchema::Field.new(field_attrs, missing_values)
+        type = type_class.new(field)
         expect { type.cast('null') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('none') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('nil') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('nan') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('-') }.to raise_error(TableSchema::ConstraintError)
-        expect { type.cast('') }.to raise_error(TableSchema::ConstraintError)
+        expect { type.cast('NaN') }.to raise_error(TableSchema::ConstraintError)
       end
     end
 
     it 'returns nil for optional fields' do
-      field['constraints']['required'] = false
-      none_string_types.each do |name, value|
-        field['type'] = name
-        type = value.new(field)
+      field_attrs['constraints']['required'] = false
+      non_string_types.each do |name, type_class|
+        field_attrs['type'] = name
+        field = TableSchema::Field.new(field_attrs, missing_values)
+        type = type_class.new(field)
         expect(type.cast('null')).to eq(nil)
-        expect(type.cast('none')).to eq(nil)
-        expect(type.cast('nil')).to eq(nil)
-        expect(type.cast('nan')).to eq(nil)
-        expect(type.cast('-')).to eq(nil)
-        expect(type.cast('')).to eq(nil)
+        expect(type.cast('NaN')).to eq(nil)
       end
     end
 
     it 'returns nil for optional string types' do
-      field['constraints']['required'] = false
-      string_types.each do |name, value|
-        field['type'] = name
-        type = value.new(field)
+      field_attrs['constraints']['required'] = false
+      string_types.each do |name, type_class|
+        field_attrs['type'] = name
+        field = TableSchema::Field.new(field_attrs, missing_values)
+        type = type_class.new(field)
         expect(type.cast('null')).to eq(nil)
-        expect(type.cast('none')).to eq(nil)
-        expect(type.cast('nil')).to eq(nil)
-        expect(type.cast('nan')).to eq(nil)
-        expect(type.cast('-')).to eq(nil)
+        expect(type.cast('NaN')).to eq(nil)
+      end
+    end
+
+    it 'converts empty string to nil by default' do
+      field_attrs['constraints']['required'] = false
+      non_string_types.each do |name, type_class|
+        field_attrs['type'] = name
+        field = TableSchema::Field.new(field_attrs)
+        type = type_class.new(field)
         expect(type.cast('')).to eq(nil)
+      end
+    end
+
+    it 'doesn\'t convert empty string to nil for string types by default' do
+      field_attrs['constraints']['required'] = false
+      string_types.each do |name, type_class|
+        field_attrs['type'] = name
+        field = TableSchema::Field.new(field_attrs)
+        type = type_class.new(field)
+        expect(type.cast('')).to eq('')
       end
     end
 
