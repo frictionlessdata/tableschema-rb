@@ -4,74 +4,102 @@
             "name": "first_name",
             "title": "First Name",
             "type": "string",
-            "format": "",
-            "description": "The first name of the person"
+            "description": "The first name of the person",
+            "constraints": {
+                "required": true
+            }
         },
         {
             "name": "last_name",
             "title": "Last Name",
             "type": "string",
-            "format": "",
             "description": "The last name of the person"
         },
         {
             "name": "gender",
             "title": "Gender",
             "type": "string",
-            "format": "",
-            "description": "The gender of the person."
+            "description": "The gender of the person.",
+            "constraints": {
+                "emum": ["M", "F", "A"]
+            }
         },
         {
             "name": "age",
             "title": "Age",
             "type": "integer",
-            "description": "The age of this person."
+            "description": "The age of this person.",
+            "constraints": {
+                "minimum": "16"
+            }
+        },
+        {
+            "name": "country",
+            "type": "string",
+            "rdfType": "http://schema.org/Country"
+        },
+        {
+            "name": "hourly_rate",
+            "description": "Hourly rate in dollars",
+            "type": "number",
+            "currency": "$",
+            "groupChar": ",",
+            "decimalChar": "."
         },
         {
             "name": "period_employed",
-            "title": "Period Employed",
-            "type": "number",
-            "description": "The period of employment, in years (eg: 2.6 Y)."
+            "type": "duration",
+            "description": "The period of employment"
         },
         {
             "name": "employment_start",
             "title": "Employment Start",
             "type": "date",
-            "format": "",
             "description": "The date this person started employment."
         },
         {
             "name": "daily_start",
             "title": "Daily Start",
             "type": "time",
-            "format": "",
             "description": "Usual start time for this person."
         },
         {
             "name": "daily_end",
             "title": "Daily End",
             "type": "time",
-            "format": "",
             "description": "Usual end time for this person."
+        },
+        {
+            "name": "first_year",
+            "description": "First year of employment",
+            "type": "year"
+        },
+        {
+            "name": "first_month",
+            "description": "First month of employment",
+            "type": "yearmonth"
         },
         {
             "name": "is_management",
             "title": "Is Management",
             "type": "boolean",
-            "format": "",
             "description": "Is this person part of upper management."
         },
         {
             "name": "photo",
             "title": "Photo",
-            "type": "binary",
+            "type": "string",
+            "format": "binary",
             "description": "A photo of this person."
         },
         {
             "name": "interests",
             "title": "Interests",
             "type": "array",
-            "description": "Declared interests of this person (work-related)."
+            "description": "Declared interests of this person (work-related).",
+            "constraints": {
+                "minLength": 1
+            }
         },
         {
             "name": "home_location",
@@ -96,6 +124,21 @@
             "title": "Notes",
             "type": "any",
             "description": "Add any relevant notes for HR."
+        },
+        {
+            "name": "email",
+            "type": "string",
+            "format": "email"
+        },
+        {
+            "name": "cv",
+            "type": "string",
+            "format": "uri"
+        },
+        {
+            "name": "employer_id",
+            "type": "string",
+            "format": "uuid"
         }
     ],
     "primaryKey": [
@@ -108,7 +151,6 @@
         {
             "fields": "position_title",
             "reference": {
-                "datapackage": "",
                 "resource": "positions",
                 "fields": "name"
             }
