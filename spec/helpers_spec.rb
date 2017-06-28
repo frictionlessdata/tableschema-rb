@@ -4,17 +4,17 @@ describe TableSchema::Helpers do
 
   let(:schema_hash) {
     {
-    "fields" => [
+    fields: [
         {
-            "name" => "id",
-            "type" => "string",
-            "constraints" => {
-              "required" => true,
+            name: "id",
+            type: "string",
+            constraints: {
+              required: true,
             }
         },
         {
-            "name" => "height",
-            "type" => "number"
+            name: "height",
+            type: "number"
         }
       ]
     }
@@ -24,19 +24,19 @@ describe TableSchema::Helpers do
 
   it 'returns the right classes' do
     {
-      'any' => 'Any',
-      'array' => 'Array',
-      'base' => 'Base',
-      'boolean' => 'Boolean',
-      'date' => 'Date',
-      'datetime' => 'DateTime',
-      'geojson' => 'GeoJSON',
-      'geopoint' => 'GeoPoint',
-      'integer' => 'Integer',
-      'number' => 'Number',
-      'object' => 'Object',
-      'string' => 'String',
-      'time' => 'Time',
+      any: 'Any',
+      array: 'Array',
+      base: 'Base',
+      boolean: 'Boolean',
+      date: 'Date',
+      datetime: 'DateTime',
+      geojson: 'GeoJSON',
+      geopoint: 'GeoPoint',
+      integer: 'Integer',
+      number: 'Number',
+      object: 'Object',
+      string: 'String',
+      time: 'Time',
     }.each do |tipe, klass|
       expect(schema.get_class_for_type(tipe)).to eq("TableSchema::Types::#{klass}")
     end

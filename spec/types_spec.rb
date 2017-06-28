@@ -6,11 +6,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'string',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'string',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -28,7 +28,7 @@ describe TableSchema::Types do
     end
 
     it 'raises for an unsupported format' do
-      field['format'] = 'foo'
+      field[:format] = 'foo'
       value = 'foo'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidFormat)
     end
@@ -36,7 +36,7 @@ describe TableSchema::Types do
     context 'emails' do
 
       before(:each) do
-        field['format'] = 'email'
+        field[:format] = 'email'
       end
 
       it 'casts an email' do
@@ -63,7 +63,7 @@ describe TableSchema::Types do
     context 'uris' do
 
       before(:each) do
-        field['format'] = 'uri'
+        field[:format] = 'uri'
       end
 
       it 'casts a uri' do
@@ -81,7 +81,7 @@ describe TableSchema::Types do
     context 'uuid' do
 
       before(:each) do
-        field['format'] = 'uuid'
+        field[:format] = 'uuid'
       end
 
 
@@ -115,11 +115,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'number',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'number',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -134,7 +134,7 @@ describe TableSchema::Types do
     it 'casts when the value is already cast' do
       [1, 1.0, Float(1)].each do |value|
         ['default', 'currency'].each do |format|
-          field['format'] = format
+          field[:format] = format
           expect(type.cast(value)).to eq(Float(value))
         end
       end
@@ -157,7 +157,7 @@ describe TableSchema::Types do
         expect { type.cast(value) }.to_not raise_error
       end
 
-      field['groupChar'] = '#'
+      field[:groupChar] = '#'
 
       [
         '10#000.00',
@@ -168,7 +168,7 @@ describe TableSchema::Types do
         expect { type.cast(value) }.to_not raise_error
       end
 
-      field['decimalChar'] = '@'
+      field[:decimalChar] = '@'
 
       [
         '10#000@00',
@@ -184,7 +184,7 @@ describe TableSchema::Types do
     context 'currencies' do
 
       let(:currency_field) {
-        field['format'] = 'currency'
+        field[:format] = 'currency'
         field
       }
 
@@ -202,8 +202,8 @@ describe TableSchema::Types do
           expect { currency_type.cast(value) }.to_not raise_error
         end
 
-        field['decimalChar'] = ','
-        field['groupChar'] = ' '
+        field[:decimalChar] = ','
+        field[:groupChar] = ' '
 
         [
           '10 000,00',
@@ -233,11 +233,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'integer',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'integer',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -265,11 +265,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'boolean',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'boolean',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -312,11 +312,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'object',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'object',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -324,13 +324,13 @@ describe TableSchema::Types do
     let(:type) { TableSchema::Types::Object.new(field) }
 
     it 'casts a hash' do
-      value = {'key' => 'value'}
+      value = {key: 'value'}
       expect(type.cast(value)).to eq(value)
     end
 
     it 'casts JSON string' do
       value = '{"key": "value"}'
-      expect(type.cast(value)).to eq(JSON.parse(value))
+      expect(type.cast(value)).to eq(JSON.parse(value, symbolize_names: true))
     end
 
     it 'raises when value is not a hash' do
@@ -349,11 +349,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'array',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'array',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -386,11 +386,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'date',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'date',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -409,44 +409,44 @@ describe TableSchema::Types do
 
     it 'casts any parseable date' do
       value = '10th Jan 1969'
-      field['format'] = 'any'
+      field[:format] = 'any'
       expect(type.cast(value)).to eq(Date.new(1969,01,10))
     end
 
     it 'raises an error for any when date is unparsable' do
       value = '10th Jan nineteen sixty nine'
-      field['format'] = 'any'
+      field[:format] = 'any'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateType)
     end
 
     it 'casts with a specified date format' do
       value = '10/06/2014'
-      field['format'] = 'fmt:%d/%m/%Y'
+      field[:format] = 'fmt:%d/%m/%Y'
       expect(type.cast(value)).to eq(Date.new(2014,06,10))
     end
 
     it 'assumes the first day of the month' do
       value = '2014-06'
-      field['format'] = 'fmt:%Y-%m'
+      field[:format] = 'fmt:%Y-%m'
       expect(type.cast(value)).to eq(Date.new(2014,06,01))
     end
 
     it 'raises an error for an invalid fmt' do
       value = '2014/12/19'
-      field['format'] = 'fmt:DD/MM/YYYY'
+      field[:format] = 'fmt:DD/MM/YYYY'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateType)
     end
 
     it 'raises an error for a valid fmt and invalid value' do
       value = '2014/12/19'
-      field['format'] = 'fmt:%m/%d/%y'
+      field[:format] = 'fmt:%m/%d/%y'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateType)
     end
 
     it 'works with an already cast value' do
       value = Date.new(2014,06,01)
       ['default', 'any', 'fmt:%Y-%m-%d'].each do |f|
-        field['format'] = f
+        field[:format] = f
         expect(type.cast(value)).to eq(value)
       end
     end
@@ -457,11 +457,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'time',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'time',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -480,19 +480,19 @@ describe TableSchema::Types do
 
     it 'parses a generic time string' do
       value = '3:00 am'
-      field['format'] = 'any'
+      field[:format] = 'any'
       expect(type.cast(value)).to eq(Tod::TimeOfDay.new(3,0))
     end
 
     it 'raises when a time string is invalid' do
       value = 'Flava Flav'
-      field['format'] = 'any'
+      field[:format] = 'any'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidTimeType)
     end
 
     it 'raises an error when type format is incorrect' do
       value = 3.00
-      self.field['format'] = 'fmt:any'
+      self.field[:format] = 'fmt:any'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidTimeType)
 
       value = {}
@@ -505,7 +505,7 @@ describe TableSchema::Types do
     it 'works with an already cast value' do
       value = Tod::TimeOfDay.new(06,00)
       ['default', 'any', 'fmt:any'].each do |f|
-        field['format'] = f
+        field[:format] = f
         expect(type.cast(value)).to eq(value)
       end
     end
@@ -516,11 +516,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'datetime',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'datetime',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -534,13 +534,13 @@ describe TableSchema::Types do
 
     it 'guesses when fomat is any' do
       value = '10th Jan 1969 9am'
-      field['format'] = 'any'
+      field[:format] = 'any'
       expect(type.cast(value)).to eq(DateTime.new(1969,01,10,9,0,0))
     end
 
     it 'accepts a specified format' do
       value = '21/11/06 16:30'
-      field['format'] = 'fmt:%d/%m/%y %H:%M'
+      field[:format] = 'fmt:%d/%m/%y %H:%M'
       expect(type.cast(value)).to eq(DateTime.new(2006,11,21,16,30,00))
     end
 
@@ -551,20 +551,20 @@ describe TableSchema::Types do
 
     it 'raises an exception for an unparsable datetime' do
       value = 'the land before time'
-      field['format'] = 'any'
+      field[:format] = 'any'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateTimeType)
     end
 
     it 'raises if the date format is invalid' do
       value = '21/11/06 16:30'
-      field['format'] = 'fmt:notavalidformat'
+      field[:format] = 'fmt:notavalidformat'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidDateTimeType)
     end
 
     it 'works fine with an already cast value' do
       value = DateTime.new(2015, 1, 1, 12, 0, 0)
       ['default', 'any', 'fmt:any'].each do |format|
-        field['format'] = format
+        field[:format] = format
         expect(type.cast(value)).to eq(value)
       end
     end
@@ -575,11 +575,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'geojson',
-        'format' => 'default',
-        'constraints' => {
-          'required' => false
+        name: 'Name',
+        type: 'geojson',
+        format: 'default',
+        constraints: {
+          required: false
         }
       })
     }
@@ -587,17 +587,17 @@ describe TableSchema::Types do
     let(:type) { TableSchema::Types::GeoJSON.new(field) }
 
     it 'raises with invalid GeoJSON' do
-      value = {'coordinates' => [0, 0, 0], 'type' =>'Point'}
+      value = {coordinates: [0, 0, 0], type:'Point'}
         expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoJSONType)
     end
 
     it 'handles a GeoJSON hash' do
       value = {
-        "properties" => {
-          "Ã" => "Ã"
+        properties: {
+          Ã: "Ã"
         },
-        "type" => "Feature",
-        "geometry" => nil,
+        type: "Feature",
+        geometry: nil,
       }
 
       expect(type.cast(value)).to eq(value)
@@ -606,7 +606,7 @@ describe TableSchema::Types do
     it 'handles a GeoJSON string' do
       value = '{"geometry": null, "type": "Feature", "properties": {"\\u00c3": "\\u00c3"}}'
 
-      expect(type.cast(value)).to eq(JSON.parse value)
+      expect(type.cast(value)).to eq(JSON.parse(value, symbolize_names: true))
     end
 
     it 'raises with an invalid JSON string' do
@@ -626,11 +626,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'geopoint',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'geopoint',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -668,7 +668,7 @@ describe TableSchema::Types do
     end
 
     it 'handles an array' do
-      field['format'] = 'array'
+      field[:format] = 'array'
       value = [10.0, 21.00]
       expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
       value = ["10.0", "21.00"]
@@ -676,13 +676,13 @@ describe TableSchema::Types do
     end
 
     it 'handles an array as a JSON string' do
-      field['format'] = 'array'
+      field[:format] = 'array'
       value = '[10.0, 21.00]'
       expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
     end
 
     it 'raises for an invalid array' do
-      field['format'] = 'array'
+      field[:format] = 'array'
       value = '1,2'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
       value = '["a", "b"]'
@@ -692,21 +692,21 @@ describe TableSchema::Types do
     end
 
     it 'handles an object' do
-      field['format'] = 'object'
-      value = {"longitude" => 10.0, "latitude" => 21.00}
+      field[:format] = 'object'
+      value = {longitude: "10.0", latitude: "21.00"}
       expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
-      value = {"longitude" => "10.0", "latitude" => "21.00"}
+      value = {longitude: "10.0", latitude: "21.00"}
       expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
     end
 
     it 'handles an object as a JSON string' do
-      field['format'] = 'object'
+      field[:format] = 'object'
       value = '{"longitude": "10.0", "latitude": "21.00"}'
       expect(type.cast(value)).to eq([Float(10.0), Float(21.00)])
     end
 
     it 'raises for an invalid object' do
-      field['format'] = 'object'
+      field[:format] = 'object'
       value = '{"blah": "10.0", "latitude": "21.00"}'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoPointType)
       value = '{"longitude": "a", "latitude": "21.00"}'
@@ -719,11 +719,11 @@ describe TableSchema::Types do
 
     let(:field) {
       TableSchema::Field.new({
-        'name' => 'Name',
-        'type' => 'any',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true
+        name: 'Name',
+        type: 'any',
+        format: 'default',
+        constraints: {
+          required: true
         }
       })
     }
@@ -743,33 +743,33 @@ describe TableSchema::Types do
 
     let(:non_string_types) {
       {
-        'number' => TableSchema::Types::Number,
-        'integer' => TableSchema::Types::Integer,
-        'boolean' => TableSchema::Types::Boolean,
-        'array' => TableSchema::Types::Array,
-        'object' => TableSchema::Types::Object,
-        'date' => TableSchema::Types::Date,
-        'time' => TableSchema::Types::Time,
-        'datetime' => TableSchema::Types::DateTime,
-        'geopoint' => TableSchema::Types::GeoPoint,
-        'geojson' => TableSchema::Types::GeoJSON,
-        #'any' => TableSchema::Types::Any
+        number: TableSchema::Types::Number,
+        integer: TableSchema::Types::Integer,
+        boolean: TableSchema::Types::Boolean,
+        array: TableSchema::Types::Array,
+        object: TableSchema::Types::Object,
+        date: TableSchema::Types::Date,
+        time: TableSchema::Types::Time,
+        datetime: TableSchema::Types::DateTime,
+        geopoint: TableSchema::Types::GeoPoint,
+        geojson: TableSchema::Types::GeoJSON,
+        #any: TableSchema::Types::Any
       }
     }
 
     let(:string_types) {
       {
-        'string' => TableSchema::Types::String,
+        string: TableSchema::Types::String,
       }
     }
 
     let(:field_attrs) {
       {
-        'name' => 'Name',
-        'type' => 'string',
-        'format' => 'default',
-        'constraints' => {
-          'required' => true,
+        name: 'Name',
+        type: 'string',
+        format: 'default',
+        constraints: {
+          required: true,
         }
       }
     }
@@ -783,7 +783,7 @@ describe TableSchema::Types do
 
     it 'raises for missing_values on required fields' do
       non_string_types.each do |name, type_class|
-        field_attrs['type'] = name
+        field_attrs[:type] = name
         field = TableSchema::Field.new(field_attrs, missing_values)
         type = type_class.new(field)
         expect { type.cast('null') }.to raise_error(TableSchema::ConstraintError)
@@ -793,7 +793,7 @@ describe TableSchema::Types do
 
     it 'raises for null value on required string fields' do
       string_types.each do |name, type_class|
-        field_attrs['type'] = name
+        field_attrs[:type] = name
         field = TableSchema::Field.new(field_attrs, missing_values)
         type = type_class.new(field)
         expect { type.cast('null') }.to raise_error(TableSchema::ConstraintError)
@@ -802,9 +802,9 @@ describe TableSchema::Types do
     end
 
     it 'returns nil for optional fields' do
-      field_attrs['constraints']['required'] = false
+      field_attrs[:constraints][:required] = false
       non_string_types.each do |name, type_class|
-        field_attrs['type'] = name
+        field_attrs[:type] = name
         field = TableSchema::Field.new(field_attrs, missing_values)
         type = type_class.new(field)
         expect(type.cast('null')).to eq(nil)
@@ -813,9 +813,9 @@ describe TableSchema::Types do
     end
 
     it 'returns nil for optional string types' do
-      field_attrs['constraints']['required'] = false
+      field_attrs[:constraints][:required] = false
       string_types.each do |name, type_class|
-        field_attrs['type'] = name
+        field_attrs[:type] = name
         field = TableSchema::Field.new(field_attrs, missing_values)
         type = type_class.new(field)
         expect(type.cast('null')).to eq(nil)
@@ -824,9 +824,9 @@ describe TableSchema::Types do
     end
 
     it 'converts empty string to nil by default' do
-      field_attrs['constraints']['required'] = false
+      field_attrs[:constraints][:required] = false
       non_string_types.each do |name, type_class|
-        field_attrs['type'] = name
+        field_attrs[:type] = name
         field = TableSchema::Field.new(field_attrs)
         type = type_class.new(field)
         expect(type.cast('')).to eq(nil)
@@ -834,9 +834,9 @@ describe TableSchema::Types do
     end
 
     it 'doesn\'t convert empty string to nil for string types by default' do
-      field_attrs['constraints']['required'] = false
+      field_attrs[:constraints][:required] = false
       string_types.each do |name, type_class|
-        field_attrs['type'] = name
+        field_attrs[:type] = name.to_s
         field = TableSchema::Field.new(field_attrs)
         type = type_class.new(field)
         expect(type.cast('')).to eq('')

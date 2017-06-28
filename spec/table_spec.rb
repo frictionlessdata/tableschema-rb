@@ -10,18 +10,18 @@ describe TableSchema::Table do
 
   it 'loads a schema' do
     expect(table.schema).to eq({
-      "fields" => [
+      fields: [
         {
-          "name"=>"id",
-          "title"=>"Identifier",
-          "type"=>"integer",
-          "format"=>"default"
+          name: "id",
+          title: "Identifier",
+          type: "integer",
+          format: "default"
         },
         {
-          "name"=>"title",
-          "title"=>"Title",
-          "type"=>"string",
-          "format"=>"default"
+          name: "title",
+          title: "Title",
+          type: "string",
+          format: "default"
         }
       ]
     })
@@ -67,9 +67,9 @@ describe TableSchema::Table do
 
   it 'returns keyed rows' do
     expect(table.rows(keyed: true)).to eq([
-      { 'id' => 1, 'title' => 'foo'},
-      { 'id' => 2, 'title' => 'bar'},
-      { 'id' => 3, 'title' => 'baz'},
+      { id: 1, title: 'foo'},
+      { id: 2, title: 'bar'},
+      { id: 3, title: 'baz'},
     ])
   end
 
@@ -116,20 +116,20 @@ describe TableSchema::Table do
   it 'infers a schema' do
     table = TableSchema::Table.infer_schema(csv)
     expect(table.schema).to eq({
-      "fields" => [
+      fields: [
         {
-          "name"=>"id",
-          "title"=>"",
-          "description"=>"",
-          "type"=>"integer",
-          "format"=>"default"
+          name: "id",
+          title: "",
+          description: "",
+          type: "integer",
+          format: "default"
         },
         {
-          "name"=>"title",
-          "title"=>"",
-          "description"=>"",
-          "type"=>"string",
-          "format"=>"default"
+          name: "title",
+          title: "",
+          description: "",
+          type: "string",
+          format: "default"
         }
       ]
     })

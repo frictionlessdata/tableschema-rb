@@ -4,38 +4,38 @@ module TableSchema
   module Model
 
     def headers
-      fields.map { |f| transform(f['name']) }
+      fields.map { |f| transform(f[:name]) }
     rescue NoMethodError
       []
     end
 
     def fields
-      self['fields']
+      self[:fields]
     end
 
     def primary_keys
-      [self['primaryKey']].flatten.reject { |k| k.nil? }
+      [self[:primaryKey]].flatten.reject { |k| k.nil? }
     end
 
     def foreign_keys
-      self['foreignKeys'] || []
+      self[:foreignKeys] || []
     end
 
     def missing_values
-      self.fetch('missingValues', TableSchema::DEFAULTS['missing_values'])
+      self.fetch(:missingValues, TableSchema::DEFAULTS[:missing_values])
     end
 
     def get_type(key)
-      get_field(key)['type']
+      get_field(key)[:type]
     end
 
     def get_constraints(key)
-      get_field(key)['constraints'] || {}
+      get_field(key)[:constraints] || {}
     end
 
     def required_headers
-      fields.select { |f| f['constraints']!= nil && f['constraints']['required'] == true }
-            .map { |f| transform(f['name']) }
+      fields.select { |f| f[:constraints]!= nil && f[:constraints][:required] == true }
+            .map { |f| transform(f[:name]) }
     rescue NoMethodError
       []
     end
@@ -45,11 +45,11 @@ module TableSchema
     end
 
     def get_field(key)
-      fields.find { |f| f['name'] == key }
+      fields.find { |f| f[:name] == key }
     end
 
     def get_fields_by_type(type)
-      fields.select { |f| f['type'] == type }
+      fields.select { |f| f[:type] == type }
     end
 
     private
@@ -60,14 +60,14 @@ module TableSchema
       end
 
       def expand!
-        (self['fields'] || []).each do |f|
-          f['type'] = TableSchema::DEFAULTS['type'] if f['type'] == nil
-          f['format'] = TableSchema::DEFAULTS['format'] if f['format'] == nil
+        (self[:fields] || []).each do |f|
+          f[:type] = TableSchema::DEFAULTS[:type] if f[:type] == nil
+          f[:format] = TableSchema::DEFAULTS[:format] if f[:format] == nil
         end
       end
 
       def load_fields!
-        self['fields'] = (self['fields'] || []).map { |f| TableSchema::Field.new(f, missing_values) }
+        self[:fields] = (self[:fields] || []).map { |f| TableSchema::Field.new(f, missing_values) }
       end
 
   end

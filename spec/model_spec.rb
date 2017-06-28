@@ -4,40 +4,40 @@ describe TableSchema::Model do
 
   let(:descriptor) {
     {
-      "fields" => [
+      fields: [
           {
-              "name" => "id",
-              "type" => "string",
-              "constraints" => {
-                  "required" => true,
+              name: "id",
+              type: "string",
+              constraints: {
+                  required: true,
               }
           },
           {
-              "name" => "height",
-              "type" => "number",
-              "constraints" => {
-                  "required" => false,
+              name: "height",
+              type: "number",
+              constraints: {
+                  required: false,
               }
           },
           {
-              "name" => "age",
-              "type" => "integer",
-              "constraints" => {
-                  "required" => false,
+              name: "age",
+              type: "integer",
+              constraints: {
+                  required: false,
               }
           },
           {
-              "name" => "name",
-              "type" => "string",
-              "constraints" => {
-                  "required" => true,
+              name: "name",
+              type: "string",
+              constraints: {
+                  required: true,
               }
           },
           {
-              "name" => "occupation",
-              "type" => "string",
-              "constraints" => {
-                  "required" => false,
+              name: "occupation",
+              type: "string",
+              constraints: {
+                  required: false,
               }
           },
 
@@ -47,12 +47,12 @@ describe TableSchema::Model do
 
   let(:schema_min) {
     {
-      "fields" => [
+      fields: [
           {
-              "name" => "id"
+              name: "id"
           },
           {
-              "name" => "height"
+              name: "height"
           }
       ]
     }
@@ -108,7 +108,7 @@ describe TableSchema::Model do
 
     it 'gets the constraints for a field' do
       s = TableSchema::Schema.new(descriptor)
-      expect(s.get_constraints('id')).to eq({"required" => true})
+      expect(s.get_constraints('id')).to eq({required: true})
     end
 
     it 'returns an empty hash where there are no constraints' do
@@ -122,7 +122,7 @@ describe TableSchema::Model do
 
     let(:new_descriptor) {
       new_descriptor = descriptor.dup
-      new_descriptor['fields'].map { |f| f['name'].capitalize! }
+      new_descriptor[:fields].map { |f| f[:name].capitalize! }
       new_descriptor
     }
 
@@ -145,9 +145,9 @@ describe TableSchema::Model do
 
   it 'does not set fields as required by default' do
      hash = {
-       "fields" => [
-        {"name" => "id", "constraints" => {"required" => true}},
-        {"name" => "label"}
+       fields: [
+        {name: "id", constraints: {required: true}},
+        {name: "label"}
        ]
      }
 
@@ -183,11 +183,11 @@ describe TableSchema::Model do
       schema = TableSchema::Schema.new(descriptor)
       expect(schema.foreign_keys).to eq([
         {
-            "fields" => "state",
-            "reference" => {
-                "datapackage" => "http://data.okfn.org/data/mydatapackage/",
-                "resource" => "the-resource",
-                "fields" => "state_id"
+            fields: "state",
+            reference: {
+                datapackage: "http://data.okfn.org/data/mydatapackage/",
+                resource: "the-resource",
+                fields: "state_id"
             }
         }
       ])
@@ -198,11 +198,11 @@ describe TableSchema::Model do
       schema = TableSchema::Schema.new(descriptor)
       expect(schema.foreign_keys).to eq([
         {
-            "fields" => "parent",
-            "reference" => {
-                "datapackage" => "",
-                "resource" => "self",
-                "fields" => "id"
+            fields: "parent",
+            reference: {
+                datapackage: "",
+                resource: "self",
+                fields: "id"
             }
         }
       ])
@@ -213,11 +213,11 @@ describe TableSchema::Model do
       schema = TableSchema::Schema.new(descriptor)
       expect(schema.foreign_keys).to eq([
           {
-              "fields" => ["id", "title"],
-              "reference" => {
-                  "datapackage" => "http://data.okfn.org/data/mydatapackage/",
-                  "resource" => "the-resource",
-                  "fields" => ["fk_id", "title_id"]
+              fields: ["id", "title"],
+              reference: {
+                  datapackage: "http://data.okfn.org/data/mydatapackage/",
+                  resource: "the-resource",
+                  fields: ["fk_id", "title_id"]
               }
           }
       ])

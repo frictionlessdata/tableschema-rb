@@ -8,9 +8,9 @@ module TableSchema
 
       def initialize(field)
         @field = field
-        @constraints = field['constraints'] || {}
-        @required = ['true', true].include?(@constraints['required'])
-        @type = @field['type']
+        @constraints = field[:constraints] || {}
+        @required = ['true', true].include?(@constraints[:required])
+        @type = @field[:type]
         set_format
       end
 
@@ -34,18 +34,17 @@ module TableSchema
       end
 
       def set_format
-        if (@field['format'] || '').start_with?('fmt:')
-          @format, @format_string = *@field['format'].split(':', 2)
+        if (@field[:format] || '').start_with?('fmt:')
+          @format, @format_string = *@field[:format].split(':', 2)
         else
-          @format = @field['format'] || TableSchema::DEFAULTS['format']
+          @format = @field[:format] || TableSchema::DEFAULTS[:format]
         end
       end
 
       private
 
         def is_null?(value)
-          null_values = @field.missing_values.reject{|el| el == '' && @type == 'string'}
-          null_values.include?(value)
+          @field.missing_values.include?(value)
         end
 
     end

@@ -22,7 +22,7 @@ module TableSchema
 
       def cast_default(value)
         return value if value.is_a?(type)
-        parsed = JSON.parse(value)
+        parsed = JSON.parse(value, symbolize_names: true)
         if parsed.is_a?(Hash)
           return parsed
         else

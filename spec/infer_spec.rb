@@ -11,14 +11,14 @@ describe TableSchema::Infer do
     inferer = TableSchema::Infer.new(headers, data)
     schema = inferer.schema
 
-    expect(schema.get_field('id')['type']).to eq('integer')
-    expect(schema.get_field('id')['format']).to eq(TableSchema::DEFAULTS['format'])
+    expect(schema.get_field('id')[:type]).to eq('integer')
+    expect(schema.get_field('id')[:format]).to eq(TableSchema::DEFAULTS[:format])
 
-    expect(schema.get_field('age')['type']).to eq('integer')
-    expect(schema.get_field('age')['format']).to eq(TableSchema::DEFAULTS['format'])
+    expect(schema.get_field('age')[:type]).to eq('integer')
+    expect(schema.get_field('age')[:format]).to eq(TableSchema::DEFAULTS[:format])
 
-    expect(schema.get_field('name')['type']).to eq('string')
-    expect(schema.get_field('name')['format']).to eq(TableSchema::DEFAULTS['format'])
+    expect(schema.get_field('name')[:type]).to eq('string')
+    expect(schema.get_field('name')[:format]).to eq(TableSchema::DEFAULTS[:format])
   end
 
   it 'gets a format' do
@@ -38,14 +38,14 @@ describe TableSchema::Infer do
     inferer = TableSchema::Infer.new(headers, data)
     schema = inferer.schema
 
-    expect(schema.get_field('url')['type']).to eq('string')
-    expect(schema.get_field('url')['format']).to eq('uri')
+    expect(schema.get_field('url')[:type]).to eq('string')
+    expect(schema.get_field('url')[:format]).to eq('uri')
 
-    expect(schema.get_field('email')['type']).to eq('string')
-    expect(schema.get_field('email')['format']).to eq('email')
+    expect(schema.get_field('email')[:type]).to eq('string')
+    expect(schema.get_field('email')[:format]).to eq('email')
 
-    expect(schema.get_field('currency')['type']).to eq('number')
-    expect(schema.get_field('currency')['format']).to eq('currency')
+    expect(schema.get_field('currency')[:type]).to eq('number')
+    expect(schema.get_field('currency')[:format]).to eq('currency')
   end
 
   it 'infers a schema with international characters' do
@@ -54,14 +54,14 @@ describe TableSchema::Infer do
     inferer = TableSchema::Infer.new(headers, data)
     schema = inferer.schema
 
-    expect(schema.get_field('id')['type']).to eq('integer')
-    expect(schema.get_field('id')['format']).to eq(TableSchema::DEFAULTS['format'])
+    expect(schema.get_field('id')[:type]).to eq('integer')
+    expect(schema.get_field('id')[:format]).to eq(TableSchema::DEFAULTS[:format])
 
-    expect(schema.get_field('age')['type']).to eq('integer')
-    expect(schema.get_field('age')['format']).to eq(TableSchema::DEFAULTS['format'])
+    expect(schema.get_field('age')[:type]).to eq('integer')
+    expect(schema.get_field('age')[:format]).to eq(TableSchema::DEFAULTS[:format])
 
-    expect(schema.get_field('name')['type']).to eq('string')
-    expect(schema.get_field('name')['format']).to eq(TableSchema::DEFAULTS['format'])
+    expect(schema.get_field('name')[:type]).to eq('string')
+    expect(schema.get_field('name')[:format]).to eq(TableSchema::DEFAULTS[:format])
   end
 
   it 'infers a schema with a row limit' do
@@ -70,14 +70,14 @@ describe TableSchema::Infer do
     inferer = TableSchema::Infer.new(headers, data, row_limit: 4)
     schema = inferer.schema
 
-    expect(schema.get_field('id')['type']).to eq('integer')
-    expect(schema.get_field('id')['format']).to eq(TableSchema::DEFAULTS['format'])
+    expect(schema.get_field('id')[:type]).to eq('integer')
+    expect(schema.get_field('id')[:format]).to eq(TableSchema::DEFAULTS[:format])
 
-    expect(schema.get_field('age')['type']).to eq('integer')
-    expect(schema.get_field('age')['format']).to eq(TableSchema::DEFAULTS['format'])
+    expect(schema.get_field('age')[:type]).to eq('integer')
+    expect(schema.get_field('age')[:format]).to eq(TableSchema::DEFAULTS[:format])
 
-    expect(schema.get_field('name')['type']).to eq('string')
-    expect(schema.get_field('name')['format']).to eq(TableSchema::DEFAULTS['format'])
+    expect(schema.get_field('name')[:type]).to eq('string')
+    expect(schema.get_field('name')[:format]).to eq(TableSchema::DEFAULTS[:format])
   end
 
   it 'infers a schema with a primary key as a string' do
@@ -98,14 +98,14 @@ describe TableSchema::Infer do
     inferer = TableSchema::Infer.new(headers, data, explicit: true)
     schema = inferer.schema
 
-    expect(schema.get_field('id')['constraints']).to_not be_nil
+    expect(schema.get_field('id')[:constraints]).to_not be_nil
   end
 
   it 'lets us not be explicit' do
     inferer = TableSchema::Infer.new(headers, data, explicit: false)
     schema = inferer.schema
 
-    expect(schema.get_field('id')['constraints']).to be_nil
+    expect(schema.get_field('id')[:constraints]).to be_nil
   end
 
 end

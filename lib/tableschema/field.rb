@@ -6,26 +6,26 @@ module TableSchema
 
     attr_reader :type_class, :missing_values
 
-    def initialize(descriptor, missing_values=TableSchema::DEFAULTS['missing_values'])
-      self.merge! descriptor
+    def initialize(descriptor, missing_values=nil)
+      self.merge! deep_symbolize_keys(descriptor)
       @type_class = get_type
-      @missing_values = missing_values
+      @missing_values = missing_values || default_missing_values
     end
 
     def name
-      self['name']
+      self[:name]
     end
 
     def type
-      self['type'] || TableSchema::DEFAULTS['type']
+      self[:type] || TableSchema::DEFAULTS[:type]
     end
 
     def format
-      self['format'] || TableSchema::DEFAULTS['format']
+      self[:format] || TableSchema::DEFAULTS[:format]
     end
 
     def constraints
-      self['constraints'] || {}
+      self[:constraints] || {}
     end
 
     def cast_value(col)
@@ -35,6 +35,11 @@ module TableSchema
     end
 
     private
+
+      def default_missing_values
+        defaults = TableSchema::DEFAULTS[:missing_values]
+        self.type == 'string' ? defaults - [''] : defaults
+      end
 
       def get_type
         Object.const_get get_class_for_type(type)

@@ -16,25 +16,25 @@ module TableSchema
       @row_limit = opts[:row_limit]
 
       @schema = {
-        'fields' => fields
+        fields: fields
       }
-      @schema['primaryKey'] = @primary_key if @primary_key
+      @schema[:primaryKey] = @primary_key if @primary_key
       infer!
     end
 
     def fields
       @headers.map do |header|
         descriptor = {
-          'name' => header,
-          'title' => '',
-          'description' => '',
+          name: header,
+          title: '',
+          description: '',
         }
 
         constraints = {}
-        constraints['required'] = @explicit === true
-        constraints['unique'] = (header == @primary_key)
+        constraints[:required] = @explicit === true
+        constraints[:unique] = (header == @primary_key)
         constraints.delete_if { |k,v| v == false } unless @explicit === true
-        descriptor['constraints'] = constraints if constraints.count > 0
+        descriptor[:constraints] = constraints if constraints.count > 0
         TableSchema::Field.new(descriptor)
       end
     end
@@ -67,12 +67,12 @@ module TableSchema
     end
 
     def guess_type(col, index)
-      guessed_type = TableSchema::DEFAULTS['type']
-      guessed_format = TableSchema::DEFAULTS['format']
+      guessed_type = TableSchema::DEFAULTS[:type]
+      guessed_format = TableSchema::DEFAULTS[:format]
 
       available_types.reverse_each do |type|
         klass = get_class_for_type(type)
-        converter = Kernel.const_get(klass).new(@schema['fields'][index])
+        converter = Kernel.const_get(klass).new(@schema[:fields][index])
         if converter.test(col) === true
           guessed_type = type
           guessed_format = guess_format(converter, col)
@@ -81,18 +81,18 @@ module TableSchema
       end
 
       {
-        'type' => guessed_type,
-        'format' => guessed_format
+        type: guessed_type,
+        format: guessed_format
       }
     end
 
     def guess_format(converter, col)
-      guessed_format = TableSchema::DEFAULTS['format']
+      guessed_format = TableSchema::DEFAULTS[:format]
       converter.class.instance_methods.grep(/cast_/).each do |method|
         begin
           format = method.to_s
           format.slice!('cast_')
-          next if format == TableSchema::DEFAULTS['format']
+          next if format == TableSchema::DEFAULTS[:format]
           converter.send(method, col)
           guessed_format = format
           break
@@ -119,7 +119,7 @@ module TableSchema
           rv = sorted_counts[0][0]
         end
 
-        @schema['fields'][v].merge!(rv)
+        @schema[:fields][v].merge!(rv)
       end
 
     end
