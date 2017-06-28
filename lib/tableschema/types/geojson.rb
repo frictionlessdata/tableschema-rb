@@ -19,7 +19,7 @@ module TableSchema
       end
 
       def cast_default(value)
-        value = JSON.parse(value) if !value.is_a?(type)
+        value = JSON.parse(value, symbolize_names: true) if !value.is_a?(type)
         JSON::Validator.validate!(geojson_schema, value)
         value
       rescue JSON::Schema::ValidationError, JSON::ParserError
@@ -30,7 +30,7 @@ module TableSchema
 
       def geojson_schema
         path = File.join( File.dirname(__FILE__), "..", "..", "profiles", "geojson.json" )
-        @geojson_schema ||= JSON.parse File.read(path)
+        @geojson_schema ||= JSON.parse(File.read(path), symbolize_names: true)
       end
 
     end

@@ -3,12 +3,12 @@ require 'spec_helper'
 describe TableSchema::Field do
 
   before(:each) do
-    @descriptor_min = {'name' => 'id'}
+    @descriptor_min = {name: 'id'}
     @descriptor_max = {
-      'name' => 'amount',
-      'type' => 'number',
-      'format' => 'currency',
-      'constraints' => {'required' => true}
+      name: 'amount',
+      type: 'number',
+      format: 'currency',
+      constraints: {required: true}
     }
   end
 
@@ -26,13 +26,13 @@ describe TableSchema::Field do
   end
 
   it 'returns a format' do
-    expect(described_class.new(@descriptor_min).format).to eq(TableSchema::DEFAULTS['format'])
+    expect(described_class.new(@descriptor_min).format).to eq(TableSchema::DEFAULTS[:format])
     expect(described_class.new(@descriptor_max).format).to eq('currency')
   end
 
   it 'returns constraints' do
     expect(described_class.new(@descriptor_min).constraints).to eq({})
-    expect(described_class.new(@descriptor_max).constraints).to eq({'required' => true})
+    expect(described_class.new(@descriptor_max).constraints).to eq({required: true})
   end
 
   it 'returns the correct type class' do

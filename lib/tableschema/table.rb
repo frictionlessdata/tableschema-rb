@@ -36,7 +36,7 @@ module TableSchema
 
       def coverted_to_hash(headers, array)
         array.map do |row|
-          Hash[row.map.with_index { |col, i| [headers[i], col] }]
+          Hash[row.map.with_index { |col, i| [headers[i].to_sym, col] }]
         end
       end
 

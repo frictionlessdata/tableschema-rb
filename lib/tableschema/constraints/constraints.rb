@@ -27,11 +27,11 @@ module TableSchema
     def validate!
       result = true
       @constraints.each do |c|
-        constraint = c.first
+        constraint = c.first.to_s
         if is_supported_type?(constraint)
           result = self.send("check_#{underscore constraint}")
         else
-          raise(TableSchema::ConstraintNotSupported.new("The field type `#{@field['type']}` does not support the `#{constraint}` constraint"))
+          raise(TableSchema::ConstraintNotSupported.new("The field type `#{@field[:type]}` does not support the `#{constraint}` constraint"))
         end
       end
       result
@@ -48,13 +48,13 @@ module TableSchema
     end
 
     def ordered_constraints
-      constraints = @field.fetch('constraints', {})
-      ordered_constraints = constraints.select{ |k,v| k == 'required'}
+      constraints = @field.fetch(:constraints, {})
+      ordered_constraints = constraints.select{ |k,v| k == :required}
       ordered_constraints.merge!(constraints)
     end
 
     def is_supported_type?(constraint)
-      klass = get_class_for_type(@field['type'])
+      klass = get_class_for_type(@field[:type])
       Kernel.const_get(klass).supported_constraints.include?(constraint)
     end
 

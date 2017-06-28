@@ -24,14 +24,14 @@ module TableSchema
       end
 
       def cast_object(value)
-        value = JSON.parse(value) if value.is_a?(::String)
-        cast_array([value['longitude'], value['latitude']])
+        value = JSON.parse(value, symbolize_names: true) if value.is_a?(::String)
+        cast_array([value[:longitude], value[:latitude]])
       rescue JSON::ParserError
         raise TableSchema::InvalidGeoPointType.new("#{value} is not a valid geopoint")
       end
 
       def cast_array(value)
-        value = JSON.parse(value) if value.is_a?(::String)
+        value = JSON.parse(value, symbolize_names: true) if value.is_a?(::String)
         value = [Float(value[0]), Float(value[1])]
         check_latlng_range(value)
         value

@@ -5,7 +5,7 @@ module TableSchema
 
     def load_validator!
       filepath = File.join(File.dirname(__FILE__), '..', 'profiles', 'table-schema.json')
-      @validator ||= JSON.parse(File.read filepath)
+      @validator ||= JSON.parse(File.read(filepath), symbolize_names: true)
     end
 
     def valid?
@@ -22,13 +22,13 @@ module TableSchema
     private
 
       def check_primary_keys
-        return if self['primaryKey'].nil?
+        return if self[:primaryKey].nil?
         primary_keys.each { |pk| check_field_value(pk, 'primaryKey') }
       end
 
       def check_foreign_keys
-        return if self['foreignKeys'].nil?
-        self['foreignKeys'].each do |key|
+        return if self[:foreignKeys].nil?
+        self[:foreignKeys].each do |key|
           foreign_key_fields(key).each { |fk| check_field_value(fk, 'foreignKey.fields') }
           if field_count_mismatch?(key)
             add_error("A JSON Table Schema foreignKey.fields must contain the same number entries as foreignKey.reference.fields.")
@@ -43,11 +43,11 @@ module TableSchema
       end
 
       def foreign_key_fields(key)
-        [key['fields']].flatten
+        [key[:fields]].flatten
       end
 
       def field_count_mismatch?(key)
-        key['reference'] && ([key['fields']].flatten.count != [key['reference']['fields']].flatten.count)
+        key[:reference] && ([key[:fields]].flatten.count != [key[:reference][:fields]].flatten.count)
       end
 
       def add_error(error)

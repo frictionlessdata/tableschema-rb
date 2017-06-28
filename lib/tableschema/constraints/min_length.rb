@@ -4,8 +4,8 @@ module TableSchema
 
       def check_min_length
         return if @value.nil?
-        if @value.length < @constraints['minLength'].to_i
-          raise TableSchema::ConstraintError.new("The field `#{@field['name']}` must have a minimum length of #{@constraints['minLength']}")
+        if @value.length < @constraints[:minLength].to_i
+          raise TableSchema::ConstraintError.new("The field `#{@field[:name]}` must have a minimum length of #{@constraints[:minLength]}")
         end
         true
       end

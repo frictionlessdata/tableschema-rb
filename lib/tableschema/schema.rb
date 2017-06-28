@@ -6,7 +6,7 @@ module TableSchema
     include TableSchema::Helpers
 
     def initialize(descriptor, opts = {})
-      self.merge! parse_schema(descriptor)
+      self.merge! deep_symbolize_keys(parse_schema(descriptor))
       @messages = []
       @opts = opts
       load_fields!
@@ -19,7 +19,7 @@ module TableSchema
         descriptor
       elsif descriptor.class == String
         begin
-          JSON.parse open(descriptor).read
+          JSON.parse(open(descriptor).read, symbolize_names: true)
         rescue Errno::ENOENT
           raise SchemaException.new("File not found at `#{descriptor}`")
         rescue OpenURI::HTTPError => e

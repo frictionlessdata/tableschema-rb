@@ -4,7 +4,7 @@ module TableSchema
 
       def check_required
         if required == true && is_empty?
-          raise TableSchema::ConstraintError.new("The field `#{@field['name']}` requires a value")
+          raise TableSchema::ConstraintError.new("The field `#{@field[:name]}` requires a value")
         end
         true
       end
@@ -16,7 +16,7 @@ module TableSchema
       end
 
       def required
-        @constraints['required'].to_s == 'true'
+        @constraints[:required].to_s == 'true'
       end
     end
   end

@@ -46,8 +46,8 @@ module TableSchema
       private
 
         def preprocess_value(value)
-          group_char = @field.fetch('groupChar', ',')
-          decimal_char = @field.fetch('decimalChar', '.')
+          group_char = @field.fetch(:groupChar, ',')
+          decimal_char = @field.fetch(:decimalChar, '.')
           percent_char = /%|‰|‱|％|﹪|٪/
           value.gsub(group_char, '')
                .gsub(decimal_char, '.')

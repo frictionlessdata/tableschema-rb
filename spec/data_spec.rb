@@ -3,45 +3,45 @@ require 'spec_helper'
 describe TableSchema::Data do
   let(:schema_hash) {
     {
-      "fields" => [
+      fields: [
           {
-              "name" => "id",
-              "type" => "string",
-              "constraints" => {
-                  "required" => true,
+              name: "id",
+              type: "string",
+              constraints: {
+                  required: true,
               }
           },
           {
-              "name" => "height",
-              "type" => "number",
-              "constraints" => {
-                  "required" => false,
+              name: "height",
+              type: "number",
+              constraints: {
+                  required: false,
               }
           },
           {
-              "name" => "age",
-              "type" => "integer",
-              "constraints" => {
-                  "required" => false,
+              name: "age",
+              type: "integer",
+              constraints: {
+                  required: false,
               }
           },
           {
-              "name" => "name",
-              "type" => "string",
-              "constraints" => {
-                  "required" => true,
+              name: "name",
+              type: "string",
+              constraints: {
+                  required: true,
               }
           },
           {
-              "name" => "occupation",
-              "type" => "string",
-              "constraints" => {
-                  "required" => false,
+              name: "occupation",
+              type: "string",
+              constraints: {
+                  required: false,
               }
           },
 
       ],
-      "missingValues" => [
+      missingValues: [
         '-',
         'null',
         ''
