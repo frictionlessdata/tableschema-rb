@@ -1,0 +1,20 @@
+AllCops:
+  DisabledByDefault: true
+  Exclude:
+    - 'lib/tableschema/exceptions.rb'
+
+Security:
+  Enabled: true
+
+Lint:
+  Enabled: true
+
+Style/HashSyntax:
+  Enabled: true
+  EnforcedStyle: ruby19_no_mixed_keys
+
+Style/MutableConstant:
+  Enabled: true
+
+Metrics/CyclomaticComplexity:
+  Severity: error

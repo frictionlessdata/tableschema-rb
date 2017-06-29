@@ -3,5 +3,5 @@ module TableSchema
     format: 'default',
     type: 'string',
     missing_values: ['']
-  }
+  }.freeze
 end

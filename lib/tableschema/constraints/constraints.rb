@@ -49,7 +49,7 @@ module TableSchema
 
     def ordered_constraints
       constraints = @field.fetch(:constraints, {})
-      ordered_constraints = constraints.select{ |k,v| k == :required}
+      ordered_constraints = constraints.select{ |key| key == :required}
       ordered_constraints.merge!(constraints)
     end
 
@@ -59,20 +59,36 @@ module TableSchema
     end
 
     def parse_constraint(constraint)
-      if @value.is_a?(::Integer) && constraint.is_a?(::String)
-        constraint.to_i
-      elsif @value.is_a?(::Tod::TimeOfDay)
-        Tod::TimeOfDay.parse(constraint)
-      elsif @value.is_a?(::DateTime)
-        DateTime.parse(constraint)
-      elsif @value.is_a?(::Date) && constraint.is_a?(::String)
-        Date.parse(constraint)
-      elsif @value.is_a?(::Float) && constraint.is_a?(Array)
+      if constraint.is_a?(Array)
+        parse_array(constraint)
+      else
+        parse_string(constraint)
+      end
+    end
+
+    def parse_array(constraint)
+      case @value
+      when ::Float
         constraint.map { |c| Float(c) }
-      elsif @value.is_a?(Boolean) && constraint.is_a?(Array)
+      when ::Boolean
         constraint.map { |c| convert_to_boolean(c) }
-      elsif @value.is_a?(Date) && constraint.is_a?(Array)
+      when ::Date
         constraint.map { |c| Date.parse(c) }
+      else
+        constraint
+      end
+    end
+
+    def parse_string(constraint)
+      case @value
+      when ::Integer
+        constraint.to_i
+      when ::Tod::TimeOfDay
+        Tod::TimeOfDay.parse(constraint)
+      when ::DateTime
+        DateTime.parse(constraint)
+      when ::Date
+        Date.parse(constraint)
       else
         constraint
       end
