@@ -4,7 +4,7 @@ require "open-uri"
 
 RSpec::Core::RakeTask.new(:spec)
 
-task :default => :spec
+task default: :spec
 
 task :update_profiles do
   open('https://specs.frictionlessdata.io/schemas/table-schema.json') do |remote_schema|

@@ -33,7 +33,7 @@ module TableSchema
         constraints = {}
         constraints[:required] = @explicit === true
         constraints[:unique] = (header == @primary_key)
-        constraints.delete_if { |k,v| v == false } unless @explicit === true
+        constraints.delete_if { |_,v| v == false } unless @explicit === true
         descriptor[:constraints] = constraints if constraints.count > 0
         TableSchema::Field.new(descriptor)
       end
@@ -41,8 +41,8 @@ module TableSchema
 
     def infer!
       type_matches = []
-      @rows.each_with_index do |row, i|
-        break if @row_limit && i > @row_limit
+      @rows.each_with_index do |row, index|
+        break if @row_limit && index > @row_limit
         row = row.fields if row.class == CSV::Row
 
         row_length = row.count
@@ -56,9 +56,9 @@ module TableSchema
           row = row.push(fill).flatten
         end
 
-        row.each_with_index do |col, i|
-          type_matches[i] ||= []
-          type_matches[i] << guess_type(col, i)
+        row.each_with_index do |col, idx|
+          type_matches[idx] ||= []
+          type_matches[idx] << guess_type(col, idx)
         end
 
       end
@@ -97,6 +97,7 @@ module TableSchema
           guessed_format = format
           break
         rescue TableSchema::Exception
+          next
         end
       end
       guessed_format

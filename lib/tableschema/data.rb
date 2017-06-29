@@ -6,11 +6,10 @@ module TableSchema
     def cast_rows(rows, fail_fast = true, limit = nil)
       @errors ||= []
       parsed_rows = []
-      rows.each_with_index do |r, i|
+      rows.each_with_index do |row, i|
         begin
           break if limit && (limit <= i)
-          r = r.fields if r.class == CSV::Row
-          parsed_rows << cast_row(r, fail_fast)
+          parsed_rows << cast_row(row, fail_fast)
         rescue MultipleInvalid, ConversionError => e
           raise e if fail_fast == true
           @errors << e if e.is_a?(ConversionError)
@@ -24,6 +23,7 @@ module TableSchema
 
     def cast_row(row, fail_fast = true)
       @errors ||= []
+      row = row.fields if row.class == CSV::Row
       raise_header_error(row) if row.count != fields.count
       fields.each_with_index do |field,i|
         row[i] = cast_column(field, row[i], fail_fast)
@@ -46,7 +46,7 @@ module TableSchema
 
     def cast_column(field, col, fail_fast)
       field.cast_value(col)
-    rescue Exception => e
+    rescue TableSchema::Exception => e
       if fail_fast == true
         raise e
       else

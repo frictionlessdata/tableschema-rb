@@ -774,7 +774,7 @@ describe TableSchema::Types do
       }
     }
 
-    let (:missing_values) {
+    let(:missing_values) {
       [
         'null',
         'NaN'

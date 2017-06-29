@@ -25,11 +25,14 @@ module TableSchema
       end
 
       def cast_default(value)
-        return value if value.class == type
-        return Float(value) if value.class == ::Fixnum
-
-        value = preprocess_value(value)
-        return Float(value)
+        case value
+        when type
+          value
+        when ::Integer
+          Float(value)
+        else
+          Float(preprocess_value(value))
+        end
       rescue ArgumentError
         raise TableSchema::InvalidCast.new("#{value} is not a #{name}")
       end
