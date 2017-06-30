@@ -4,6 +4,12 @@ describe TableSchema::Field do
 
   before(:each) do
     @descriptor_min = {name: 'id'}
+    @descriptor_min_processed = {
+      name: 'id',
+      type: 'string',
+      format: 'default',
+      constraints: {}
+    }
     @descriptor_max = {
       name: 'amount',
       type: 'number',
@@ -12,8 +18,8 @@ describe TableSchema::Field do
     }
   end
 
-  it 'returns the descriptor' do
-    expect(described_class.new(@descriptor_min)).to eq(@descriptor_min)
+  it 'returns the descriptor with defaults' do
+    expect(described_class.new(@descriptor_min)).to eq(@descriptor_min_processed)
   end
 
   it 'returns a name' do
@@ -36,23 +42,26 @@ describe TableSchema::Field do
   end
 
   it 'returns the correct type class' do
-    expect(described_class.new(@descriptor_min).type_class).to eq(TableSchema::Types::String)
-    expect(described_class.new(@descriptor_max).type_class).to eq(TableSchema::Types::Number)
+    expect(described_class.new(@descriptor_min).send(:type_class)).to eq(TableSchema::Types::String)
+    expect(described_class.new(@descriptor_max).send(:type_class)).to eq(TableSchema::Types::Number)
   end
 
-  it 'casts a value' do
-    expect(described_class.new(@descriptor_min).cast_value('string')).to eq('string')
-  end
-
-  it 'casts a single value' do
+  it 'cast_value casts valid value' do
     expect(described_class.new(@descriptor_max).cast_value('£10')).to eq(Float(10.0))
   end
 
-  it 'raises with an incorrect value' do
+  it 'cast_value raises with an incorrect value' do
     expect { described_class.new(@descriptor_max).cast_value('notdecimal') }.to raise_error(
       TableSchema::InvalidCast,
       'notdecimal is not a number'
     )
   end
 
+  it 'test_value returns true for valid value' do
+    expect(described_class.new(@descriptor_max).test_value('30.78')).to be true
+  end
+
+  it 'test_value returns false for invalid value' do
+    expect(described_class.new(@descriptor_min).test_value(100)).to be false
+  end
 end
