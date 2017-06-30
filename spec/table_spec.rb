@@ -15,13 +15,15 @@ describe TableSchema::Table do
           name: "id",
           title: "Identifier",
           type: "integer",
-          format: "default"
+          format: "default",
+          constraints: {}
         },
         {
           name: "title",
           title: "Title",
           type: "string",
-          format: "default"
+          format: "default",
+          constraints: {}
         }
       ]
     })
@@ -122,14 +124,16 @@ describe TableSchema::Table do
           title: "",
           description: "",
           type: "integer",
-          format: "default"
+          format: "default",
+          constraints: {}
         },
         {
           name: "title",
           title: "",
           description: "",
           type: "string",
-          format: "default"
+          format: "default",
+          constraints: {}
         }
       ]
     })

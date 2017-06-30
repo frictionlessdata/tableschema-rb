@@ -4,34 +4,29 @@ module TableSchema
   class Field < Hash
     include TableSchema::Helpers
 
-    attr_reader :type_class, :missing_values
+    attr_reader :name, :type, :format, :missing_values, :constraints
 
     def initialize(descriptor, missing_values=nil)
       self.merge! deep_symbolize_keys(descriptor)
-      @type_class = get_type
+      @name = self[:name]
+      @type = self[:type] = self.fetch(:type, TableSchema::DEFAULTS[:type])
+      @format = self[:format] = self.fetch(:format, TableSchema::DEFAULTS[:format])
+      @constraints = self[:constraints] = self.fetch(:constraints, {})
       @missing_values = missing_values || default_missing_values
     end
 
-    def name
-      self[:name]
-    end
-
-    def type
-      self[:type] || TableSchema::DEFAULTS[:type]
-    end
-
-    def format
-      self[:format] || TableSchema::DEFAULTS[:format]
-    end
-
-    def constraints
-      self[:constraints] || {}
+    def descriptor
+      self.to_h
     end
 
     def cast_value(col)
-      klass = get_class_for_type(type)
-      converter = Kernel.const_get(klass).new(self)
+      converter = type_class.new(self)
       converter.cast(col)
+    end
+
+    def test_value(col)
+      converter = type_class.new(self)
+      converter.test(col)
     end
 
     private
@@ -41,7 +36,7 @@ module TableSchema
         self.type == 'string' ? defaults - [''] : defaults
       end
 
-      def get_type
+      def type_class
         Object.const_get get_class_for_type(type)
       end
 

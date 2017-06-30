@@ -105,7 +105,7 @@ describe TableSchema::Infer do
     inferer = TableSchema::Infer.new(headers, data, explicit: false)
     schema = inferer.schema
 
-    expect(schema.get_field('id')[:constraints]).to be_nil
+    expect(schema.get_field('id')[:constraints]).to be_empty
   end
 
 end
