@@ -1,6 +1,6 @@
 module TableSchema
   class Exception < ::Exception ; end
-  
+
   class SchemaException < Exception
     attr_reader :message
 
@@ -14,6 +14,7 @@ module TableSchema
   class InvalidEmail < Exception ; end
   class InvalidURI < Exception ; end
   class InvalidUUID < Exception ; end
+  class InvalidBinary < Exception ; end
   class InvalidObjectType < Exception ; end
   class InvalidArrayType < Exception ; end
   class InvalidDateType < Exception ; end
