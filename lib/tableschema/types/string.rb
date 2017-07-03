@@ -59,6 +59,13 @@ module TableSchema
         end
       end
 
+      def cast_binary(value)
+        value = cast_default(value)
+        Base64.strict_decode64(value)
+      rescue ArgumentError
+        raise TableSchema::InvalidBinary.new("#{value} is not a valid binary string")
+      end
+
     end
   end
 end

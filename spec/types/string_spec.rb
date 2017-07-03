@@ -5,9 +5,6 @@ describe TableSchema::Types::String do
       name: 'Name',
       type: 'string',
       format: 'default',
-      constraints: {
-        required: true
-      }
     })
   }
 
@@ -101,6 +98,27 @@ describe TableSchema::Types::String do
 
       value = 'X23e4567-e89b-12d3-a456-426655440000'
       expect { type.cast(value) }.to raise_error(TableSchema::InvalidUUID)
+    end
+
+  end
+
+  context 'binary' do
+
+    before(:each) do
+      field[:format] = 'binary'
+    end
+
+    it 'casts a binary string' do
+      value = "QmluYXJ5IFN0cmluZw=="
+      expect(type.cast(value)).to eq('Binary String')
+
+      value = ''
+      expect(type.cast(value)).to eq('')
+    end
+
+    it 'raises for invalid binary strings' do
+      value = "QmluYXJ5IFN0cmluZw==\n"
+      expect { type.cast(value) }.to raise_error(TableSchema::InvalidBinary)
     end
 
   end
