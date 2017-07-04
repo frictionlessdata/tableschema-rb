@@ -55,6 +55,7 @@ module TableSchema
         object: 'Object',
         string: 'String',
         time: 'Time',
+        year: 'Year',
       }
     end
 
