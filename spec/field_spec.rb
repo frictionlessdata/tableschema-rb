@@ -13,7 +13,8 @@ describe TableSchema::Field do
     @descriptor_max = {
       name: 'amount',
       type: 'number',
-      format: 'currency',
+      format: 'default',
+      currency: '£',
       constraints: {required: true}
     }
   end
@@ -33,7 +34,6 @@ describe TableSchema::Field do
 
   it 'returns a format' do
     expect(described_class.new(@descriptor_min).format).to eq(TableSchema::DEFAULTS[:format])
-    expect(described_class.new(@descriptor_max).format).to eq('currency')
   end
 
   it 'returns constraints' do

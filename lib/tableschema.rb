@@ -1,7 +1,6 @@
 require "json"
 require "json-schema"
 require "uuid"
-require "currencies"
 require "date"
 require "tod"
 require "tod/core_extensions"

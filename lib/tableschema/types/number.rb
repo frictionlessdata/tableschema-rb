@@ -20,9 +20,6 @@ module TableSchema
         ::Float
       end
 
-      def currency_symbols
-        ISO4217::Currency.currencies.to_a.map { |c| Regexp.escape(c.last.symbol) rescue nil }.delete_if { |s| s.nil? }
-      end
 
       def cast_default(value)
         case value
@@ -30,34 +27,48 @@ module TableSchema
           value
         when ::Integer
           Float(value)
-        else
-          Float(preprocess_value(value))
+        when ::String
+          process_string(value)
         end
       rescue ArgumentError
         raise TableSchema::InvalidCast.new("#{value} is not a #{name}")
       end
 
-      def cast_currency(value)
-        cast_default(value)
-      rescue TableSchema::InvalidCast
-        value = preprocess_value(value)
-        re = Regexp.new currency_symbols.join('|')
-        value.gsub!(re, '')
-        cast_default(value)
-      end
-
       private
 
-        def preprocess_value(value)
-          group_char = @field.fetch(:groupChar, ',')
-          decimal_char = @field.fetch(:decimalChar, '.')
-          percent_char = /%|‰|‱|％|﹪|٪/
-          value.gsub(group_char, '')
-               .gsub(decimal_char, '.')
-               .gsub(percent_char, '')
-               .gsub(Regexp.new(currency_symbols.join '|'), '')
+        def process_string(value)
+          case value
+          when 'NaN'
+            Float::NAN
+          when '-INF'
+            -Float::INFINITY
+          when 'INF'
+            Float::INFINITY
+          else
+            group_char = @field.fetch(:groupChar, TableSchema::DEFAULTS[:group_char])
+            decimal_char = @field.fetch(:decimalChar, TableSchema::DEFAULTS[:decimal_char])
+            formatted_value = value.gsub(group_char, '').gsub(decimal_char, '.')
+            if formatted_value.match(percent_chars)
+              process_percent(formatted_value)
+            elsif @field.fetch(:currency, nil)
+              process_currency(formatted_value)
+            else
+              Float(formatted_value)
+            end
+          end
         end
 
+        def process_percent(value)
+          Float(value.gsub(percent_chars, '')) / 100
+        end
+
+        def process_currency(value)
+          Float(value.gsub(@field[:currency], ''))
+        end
+
+        def percent_chars
+          /%|‰|‱|％|﹪|٪/
+        end
     end
   end
 end
