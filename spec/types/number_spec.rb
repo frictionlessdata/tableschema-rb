@@ -32,84 +32,60 @@ describe TableSchema::Types::Number do
     expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
   end
 
-  it 'casts with localized settings' do
-    [
-      '10,000.00',
-      '10,000,000.23',
-      '10.23',
-      '1,000',
-      '100%',
-      '1000‰'
-    ].each do |value|
-      expect { type.cast(value) }.to_not raise_error
-    end
-
-    field[:groupChar] = '#'
-
-    [
-      '10#000.00',
-      '10#000#000.23',
-      '10.23',
-      '1#000'
-    ].each do |value|
-      expect { type.cast(value) }.to_not raise_error
-    end
-
-    field[:decimalChar] = '@'
-
-    [
-      '10#000@00',
-      '10#000#000@23',
-      '10@23',
-      '1#000'
-    ].each do |value|
-      expect { type.cast(value) }.to_not raise_error
-    end
-
+  it 'converts when value is percent' do
+    value = '100%'
+    expect(type.cast(value)).to eq(Float(1))
   end
 
-  context 'currencies' do
+  it 'casts exponent before percent' do
+    value = '10E1%'
+    expect(type.cast(value)).to eq(Float(1))
+  end
 
-    let(:currency_field) {
-      field[:format] = 'currency'
-      field
-    }
+  it 'allows special strings' do
+    nan = 'NaN'
+    neg_infinity = '-INF'
+    infinity = 'INF'
 
-    let(:currency_type) {
-      TableSchema::Types::Number.new(currency_field)
-    }
+    expect(type.cast(nan).nan?).to eq(true)
+    expect(type.cast(neg_infinity).infinite?).to eq(-1)
+    expect(type.cast(infinity).infinite?).to eq(1)
+  end
 
-    it 'casts successfully' do
+  context 'custom settings' do
+    it 'casts according default char settings' do
       [
         '10,000.00',
-        '10,000,000.00',
-        '$10000.00',
-        '  10,000.00 €',
+        '10,000,000.23',
+        '10.23',
+        '1,000'
       ].each do |value|
-        expect { currency_type.cast(value) }.to_not raise_error
-      end
-
-      field[:decimalChar] = ','
-      field[:groupChar] = ' '
-
-      [
-        '10 000,00',
-        '10 000 000,00',
-        '10000,00 ₪',
-        '  10 000,00 £',
-      ].each do |value|
-        expect { currency_type.cast(value) }.to_not raise_error
+        expect { type.cast(value) }.to_not raise_error
       end
     end
 
-    it 'returns an error with a currency and a duff format' do
-      value1 = '10,000a.00'
-      value2 = '10+000.00'
-      value3 = '$10:000.00'
+    it 'casts according to custom groupChar and decimalChar' do
+      field[:groupChar] = '#'
+      field[:decimalChar] = '@'
+      [
+        '10#000@00',
+        '10#000#000@23',
+        '10@23',
+        '1#000'
+      ].each do |value|
+        expect { type.cast(value) }.to_not raise_error
+      end
+    end
 
-      expect { currency_type.cast(value1) }.to raise_error(TableSchema::InvalidCast)
-      expect { currency_type.cast(value2) }.to raise_error(TableSchema::InvalidCast)
-      expect { currency_type.cast(value3) }.to raise_error(TableSchema::InvalidCast)
+    it 'correctly casts value with currency' do
+      field[:currency] = '$'
+      [
+         '10,000.00',
+         '$10000.00',
+         '  10,000.00 $',
+       ].each do |value|
+         expect { type.cast(value) }.to_not raise_error
+       end
     end
 
   end

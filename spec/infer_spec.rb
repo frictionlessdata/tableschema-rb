@@ -25,14 +25,12 @@ describe TableSchema::Infer do
     headers = [
       'url',
       'email',
-      'currency',
-      'thing'
     ]
 
     data = [
-      ['http://example.com', 'me@example.org', '£1', 'thing'],
-      ['http://example.org', 'him@example.org', '$1', 'foo'],
-      ['http://example.co.uk/thing', 'them@example.com', '€5', 'thing']
+      ['http://example.com', 'me@example.org'],
+      ['http://example.org', 'him@example.org'],
+      ['http://example.co.uk/thing', 'them@example.com']
     ]
 
     inferer = TableSchema::Infer.new(headers, data)
@@ -43,9 +41,6 @@ describe TableSchema::Infer do
 
     expect(schema.get_field('email')[:type]).to eq('string')
     expect(schema.get_field('email')[:format]).to eq('email')
-
-    expect(schema.get_field('currency')[:type]).to eq('number')
-    expect(schema.get_field('currency')[:format]).to eq('currency')
   end
 
   it 'infers a schema with international characters' do
