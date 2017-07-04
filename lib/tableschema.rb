@@ -25,6 +25,7 @@ require "tableschema/types/number"
 require "tableschema/types/object"
 require "tableschema/types/string"
 require "tableschema/types/time"
+require "tableschema/types/year"
 require "tableschema/defaults"
 
 require "tableschema/field"

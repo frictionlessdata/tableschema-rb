@@ -37,6 +37,7 @@ describe TableSchema::Helpers do
       object: 'Object',
       string: 'String',
       time: 'Time',
+      year: 'Year',
     }.each do |tipe, klass|
       expect(schema.get_class_for_type(tipe)).to eq("TableSchema::Types::#{klass}")
     end
