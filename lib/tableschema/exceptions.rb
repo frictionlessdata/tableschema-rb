@@ -22,6 +22,7 @@ module TableSchema
   class InvalidDateTimeType < Exception ; end
   class InvalidYearType < Exception; end
   class InvalidYearMonthType < Exception; end
+  class InvalidDurationType < Exception; end
   class InvalidGeoJSONType < Exception ; end
   class InvalidGeoPointType < Exception ; end
   class ConstraintError < Exception ; end

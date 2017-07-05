@@ -16,7 +16,10 @@ describe TableSchema::Types do
         datetime: TableSchema::Types::DateTime,
         geopoint: TableSchema::Types::GeoPoint,
         geojson: TableSchema::Types::GeoJSON,
-        any: TableSchema::Types::Any
+        any: TableSchema::Types::Any,
+        year: TableSchema::Types::Year,
+        yearmonth: TableSchema::Types::YearMonth,
+        duration: TableSchema::Types::Duration,
       }
     }
 
