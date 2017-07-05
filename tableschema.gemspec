@@ -29,4 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "json-schema", "~> 2.6.0"
   spec.add_dependency "uuid", "~> 2.3.8"
   spec.add_dependency "tod", "~> 2.1.0"
+  spec.add_dependency "activesupport", "~> 5.1.0"
 end
