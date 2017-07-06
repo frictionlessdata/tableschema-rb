@@ -24,6 +24,7 @@ module TableSchema
   class InvalidYearMonthType < Exception; end
   class InvalidDurationType < Exception; end
   class InvalidGeoJSONType < Exception ; end
+  class InvalidTopoJSONType < Exception ; end
   class InvalidGeoPointType < Exception ; end
   class ConstraintError < Exception ; end
   class ConstraintNotSupported < Exception ; end
