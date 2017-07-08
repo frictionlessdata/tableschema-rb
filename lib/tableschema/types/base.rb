@@ -10,14 +10,13 @@ module TableSchema
         @field = field
         @constraints = field[:constraints] || {}
         @required = ['true', true].include?(@constraints[:required])
-        @type = @field[:type]
         set_format
       end
 
-      def cast(value, skip_constraints = false)
+      def cast(value, check_constraints: true)
         value = nil if is_null?(value)
-        TableSchema::Constraints.new(@field, value).validate! unless skip_constraints
         send("cast_#{@format}", value) unless value.nil?
+        TableSchema::Constraints.new(@field, value).validate! if check_constraints == true
       rescue NoMethodError => e
         if e.message.start_with?('undefined method `cast_')
           raise(TableSchema::InvalidFormat.new("The format `#{@format}` is not supported by the type `#{@type}`"))
@@ -26,8 +25,8 @@ module TableSchema
         end
       end
 
-      def test(value)
-        cast(value, true)
+      def test(value, check_constraints: true)
+        cast(value, check_constraints: check_constraints)
         true
       rescue TableSchema::Exception
         false

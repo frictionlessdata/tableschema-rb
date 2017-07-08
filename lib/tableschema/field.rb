@@ -19,14 +19,14 @@ module TableSchema
       self.to_h
     end
 
-    def cast_value(col)
+    def cast_value(col, check_constraints: true)
       converter = type_class.new(self)
-      converter.cast(col)
+      converter.cast(col, check_constraints: check_constraints)
     end
 
-    def test_value(col)
+    def test_value(col, check_constraints: true)
       converter = type_class.new(self)
-      converter.test(col)
+      converter.test(col, check_constraints: check_constraints)
     end
 
     private
