@@ -15,8 +15,9 @@ module TableSchema
 
       def cast(value, check_constraints: true)
         value = nil if is_null?(value)
-        send("cast_#{@format}", value) unless value.nil?
-        TableSchema::Constraints.new(@field, value).validate! if check_constraints == true
+        cast_value = send("cast_#{@format}", value) unless value.nil?
+        TableSchema::Constraints.new(@field, cast_value).validate! if check_constraints == true
+        cast_value
       rescue NoMethodError => e
         if e.message.start_with?('undefined method `cast_')
           raise(TableSchema::InvalidFormat.new("The format `#{@format}` is not supported by the type `#{@type}`"))

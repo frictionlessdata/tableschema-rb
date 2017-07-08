@@ -58,41 +58,5 @@ module TableSchema
       Kernel.const_get(klass).supported_constraints.include?(constraint)
     end
 
-    def parse_constraint(constraint)
-      if constraint.is_a?(Array)
-        parse_array(constraint)
-      else
-        parse_string(constraint)
-      end
-    end
-
-    def parse_array(constraint)
-      case @value
-      when ::Float
-        constraint.map { |c| Float(c) }
-      when ::Boolean
-        constraint.map { |c| convert_to_boolean(c) }
-      when ::Date
-        constraint.map { |c| Date.parse(c) }
-      else
-        constraint
-      end
-    end
-
-    def parse_string(constraint)
-      case @value
-      when ::Integer
-        constraint.to_i
-      when ::Tod::TimeOfDay
-        Tod::TimeOfDay.parse(constraint)
-      when ::DateTime
-        DateTime.parse(constraint)
-      when ::Date
-        Date.parse(constraint)
-      else
-        constraint
-      end
-    end
-
   end
 end
