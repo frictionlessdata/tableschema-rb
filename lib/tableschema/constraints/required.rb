@@ -3,7 +3,7 @@ module TableSchema
     module Required
 
       def check_required
-        if required == true && is_empty?
+        if parsed_required == true && value_is_empty?
           raise TableSchema::ConstraintError.new("The field `#{@field[:name]}` requires a value")
         end
         true
@@ -11,11 +11,11 @@ module TableSchema
 
       private
 
-      def is_empty?
+      def value_is_empty?
         @value.nil? || @value == ''
       end
 
-      def required
+      def parsed_required
         @constraints[:required].to_s == 'true'
       end
     end

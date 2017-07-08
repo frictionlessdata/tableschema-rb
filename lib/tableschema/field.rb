@@ -33,11 +33,11 @@ module TableSchema
 
       def default_missing_values
         defaults = TableSchema::DEFAULTS[:missing_values]
-        self.type == 'string' ? defaults - [''] : defaults
+        @type == 'string' ? defaults - [''] : defaults
       end
 
       def type_class
-        Object.const_get get_class_for_type(type)
+        Object.const_get get_class_for_type(@type)
       end
 
   end

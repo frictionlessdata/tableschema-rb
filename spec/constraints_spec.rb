@@ -2,21 +2,22 @@ require 'spec_helper'
 
 describe TableSchema::Constraints do
 
-  let(:field) {
+  let(:field_attrs) {
     {
       name: 'Name',
-      type: '',
       format: 'default',
       constraints: {}
     }
   }
+
+  let(:field) { TableSchema::Field.new(field_attrs)}
 
   let(:constraints) { TableSchema::Constraints.new(field, @value) }
 
   describe TableSchema::Constraints::Required do
 
     before(:each) do
-      field[:type] = 'string'
+      field_attrs[:type] = 'string'
     end
 
     it 'handles an empty constraints hash' do
@@ -31,24 +32,24 @@ describe TableSchema::Constraints do
 
     it 'handles a required true constraint with a value' do
       @value = 'string'
-      field[:constraints][:required] = true
+      field_attrs[:constraints][:required] = true
       expect(constraints.validate!).to eq(true)
     end
 
     it 'handles a required false constraint with no value' do
       @value = ''
-      field[:constraints][:required] = false
+      field_attrs[:constraints][:required] = false
       expect(constraints.validate!).to eq(true)
     end
     it 'handles a required false constraint with a value' do
       @value = 'string'
-      field[:constraints][:required] = false
+      field_attrs[:constraints][:required] = false
       expect(constraints.validate!).to eq(true)
     end
 
     it 'raises an error for a required true constraint with no value' do
       @value = ''
-      field[:constraints][:required] = true
+      field_attrs[:constraints][:required] = true
       expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError)
     end
 
@@ -59,8 +60,8 @@ describe TableSchema::Constraints do
     context 'with string type' do
 
       before(:each) do
-        field[:type] = 'string'
-        field[:constraints][:minLength] = 5
+        field_attrs[:type] = 'string'
+        field_attrs[:constraints][:minLength] = 5
       end
 
       it 'handles with a valid value' do
@@ -69,13 +70,13 @@ describe TableSchema::Constraints do
       end
 
       it 'handles when the value is equal' do
-        field[:constraints][:minLength] = 6
+        field_attrs[:constraints][:minLength] = 6
         @value = 'string'
         expect(constraints.validate!).to eq(true)
       end
 
       it 'handles with an invalid value' do
-        field[:constraints][:minLength] = 10
+        field_attrs[:constraints][:minLength] = 10
         @value = 'string'
         expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
       end
@@ -85,8 +86,8 @@ describe TableSchema::Constraints do
     context 'with array type' do
 
       before(:each) do
-        field[:type] = 'array'
-        field[:constraints][:minLength] = 2
+        field_attrs[:type] = 'array'
+        field_attrs[:constraints][:minLength] = 2
         @value = ['a', 'b', 'c']
       end
 
@@ -95,12 +96,12 @@ describe TableSchema::Constraints do
       end
 
       it 'handles when the value is equal' do
-        field[:constraints][:minLength] = 3
+        field_attrs[:constraints][:minLength] = 3
         expect(constraints.validate!).to eq(true)
       end
 
       it 'handles with an invalid value' do
-        field[:constraints][:minLength] = 10
+        field_attrs[:constraints][:minLength] = 10
         expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
       end
 
@@ -109,8 +110,8 @@ describe TableSchema::Constraints do
     context 'with object type' do
 
       before(:each) do
-        field[:type] = 'object'
-        field[:constraints][:minLength] = 2
+        field_attrs[:type] = 'object'
+        field_attrs[:constraints][:minLength] = 2
         @value = {a: 1, b: 2, c: 3}
       end
 
@@ -119,12 +120,12 @@ describe TableSchema::Constraints do
       end
 
       it 'handles when the value is equal' do
-        field[:constraints][:minLength] = 3
+        field_attrs[:constraints][:minLength] = 3
         expect(constraints.validate!).to eq(true)
       end
 
       it 'handles with an invalid value' do
-        field[:constraints][:minLength] = 10
+        field_attrs[:constraints][:minLength] = 10
         expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a minimum length of 10')
       end
 
@@ -132,8 +133,8 @@ describe TableSchema::Constraints do
 
     it 'raises for an unsupported type' do
       @value = 2
-      field[:constraints][:minLength] = 3
-      field[:type] = 'integer'
+      field_attrs[:constraints][:minLength] = 3
+      field_attrs[:type] = 'integer'
       expect { constraints.validate! }.to raise_error(TableSchema::ConstraintNotSupported, 'The field type `integer` does not support the `minLength` constraint')
     end
 
@@ -144,8 +145,8 @@ describe TableSchema::Constraints do
     context 'with string type' do
 
       before(:each) do
-        field[:type] = 'string'
-        field[:constraints][:maxLength] = 7
+        field_attrs[:type] = 'string'
+        field_attrs[:constraints][:maxLength] = 7
       end
 
       it 'handles with a valid value' do
@@ -154,13 +155,13 @@ describe TableSchema::Constraints do
       end
 
       it 'handles when the value is equal' do
-        field[:constraints][:maxLength] = 6
+        field_attrs[:constraints][:maxLength] = 6
         @value = 'string'
         expect(constraints.validate!).to eq(true)
       end
 
       it 'handles with an invalid value' do
-        field[:constraints][:maxLength] = 10
+        field_attrs[:constraints][:maxLength] = 10
         @value = 'stringggggggggggg'
         expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a maximum length of 10')
       end
@@ -170,8 +171,8 @@ describe TableSchema::Constraints do
     context 'with array type' do
 
       before(:each) do
-        field[:type] = 'array'
-        field[:constraints][:maxLength] = 4
+        field_attrs[:type] = 'array'
+        field_attrs[:constraints][:maxLength] = 4
         @value = ['a', 'b', 'c']
       end
 
@@ -180,12 +181,12 @@ describe TableSchema::Constraints do
       end
 
       it 'handles when the value is equal' do
-        field[:constraints][:maxLength] = 3
+        field_attrs[:constraints][:maxLength] = 3
         expect(constraints.validate!).to eq(true)
       end
 
       it 'handles with an invalid value' do
-        field[:constraints][:maxLength] = 2
+        field_attrs[:constraints][:maxLength] = 2
         expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a maximum length of 2')
       end
 
@@ -194,8 +195,8 @@ describe TableSchema::Constraints do
     context 'with object type' do
 
       before(:each) do
-        field[:type] = 'object'
-        field[:constraints][:maxLength] = 4
+        field_attrs[:type] = 'object'
+        field_attrs[:constraints][:maxLength] = 4
         @value = {a: 1, b: 2, c: 3}
       end
 
@@ -204,12 +205,12 @@ describe TableSchema::Constraints do
       end
 
       it 'handles when the value is equal' do
-        field[:constraints][:maxLength] = 3
+        field_attrs[:constraints][:maxLength] = 3
         expect(constraints.validate!).to eq(true)
       end
 
       it 'handles with an invalid value' do
-        field[:constraints][:maxLength] = 2
+        field_attrs[:constraints][:maxLength] = 2
         expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must have a maximum length of 2')
       end
 
@@ -217,8 +218,8 @@ describe TableSchema::Constraints do
 
     it 'raises for an unsupported type' do
       @value = 2
-      field[:constraints][:maxLength] = 3
-      field[:type] = 'integer'
+      field_attrs[:constraints][:maxLength] = 3
+      field_attrs[:type] = 'integer'
       expect { constraints.validate! }.to raise_error(TableSchema::ConstraintNotSupported, 'The field type `integer` does not support the `maxLength` constraint')
     end
 
@@ -229,8 +230,9 @@ describe TableSchema::Constraints do
     context 'with integer type' do
 
       before(:each) do
-        field[:type] = 'integer'
-        field[:constraints][:minimum] = 5
+        field_attrs[:type] = 'integer'
+        @min = 5
+        field_attrs[:constraints][:minimum] = @min
         @value = 20
       end
 
@@ -244,8 +246,8 @@ describe TableSchema::Constraints do
       end
 
       it 'handles with an invalid value' do
-        field[:constraints][:minimum] = 25
-        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be less than 25')
+        @value = 2
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be less than #{@min}")
       end
 
     end
@@ -253,8 +255,9 @@ describe TableSchema::Constraints do
     context 'with date type' do
 
       before(:each) do
-        field[:type] = 'date'
-        field[:constraints][:minimum] = '1978-05-28'
+        field_attrs[:type] = 'date'
+        @min = '1978-05-28'
+        field_attrs[:constraints][:minimum] = @min
         @value = Date.parse('1978-05-29')
       end
 
@@ -269,7 +272,7 @@ describe TableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Date.parse('1970-05-28')
-        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be less than 1978-05-28')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be less than #{@min}")
       end
 
     end
@@ -277,8 +280,9 @@ describe TableSchema::Constraints do
     context 'with datetime type' do
 
       before(:each) do
-        field[:type] = 'date'
-        field[:constraints][:minimum] = '1978-05-28T12:30:20Z'
+        field_attrs[:type] = 'datetime'
+        @min = '1978-05-28T12:30:20Z'
+        field_attrs[:constraints][:minimum] = @min
         @value = DateTime.parse('1978-05-29T12:30:20Z')
       end
 
@@ -293,7 +297,7 @@ describe TableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = DateTime.parse('1970-05-29T12:30:20Z')
-        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be less than 1978-05-28T12:30:20Z')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be less than #{@min}")
       end
 
     end
@@ -301,8 +305,9 @@ describe TableSchema::Constraints do
     context 'with time type' do
 
       before(:each) do
-        field[:type] = 'time'
-        field[:constraints][:minimum] = '11:30:00'
+        field_attrs[:type] = 'time'
+        @min = '11:30:00'
+        field_attrs[:constraints][:minimum] = @min
         @value = Tod::TimeOfDay.parse('12:30:20')
       end
 
@@ -317,15 +322,90 @@ describe TableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Tod::TimeOfDay.parse('07:00:00')
-        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be less than 11:30:00')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be less than #{@min}")
+      end
+
+    end
+
+    context 'with year type' do
+
+      before(:each) do
+        field_attrs[:type] = 'year'
+        @min = '1986'
+        field_attrs[:constraints][:minimum] = @min
+      end
+
+      it 'handles with a valid value' do
+        @value = 2017
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = 1986
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = 1975
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be less than #{@min}")
+      end
+
+    end
+
+    context 'with yearmonth type' do
+
+      before(:each) do
+        field_attrs[:type] = 'yearmonth'
+        @min = '1986-10'
+        field_attrs[:constraints][:minimum] = @min
+      end
+
+      it 'handles with a valid value' do
+        @value = '1986-11'
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = [1986, 10]
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = '1985-11'
+        expect { field.cast_value(@value) }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be less than #{@min}")
+      end
+
+    end
+
+    context 'with duration type' do
+
+      before(:each) do
+        field_attrs[:type] = 'duration'
+        @min = 'P3D'
+        field_attrs[:constraints][:minimum] = @min
+      end
+
+      it 'handles with a valid value' do
+        @value = 'P1Y5M'
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = 'P3D'
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = 'PT15H'
+        expect { field.cast_value(@value) }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be less than #{@min}")
       end
 
     end
 
     it 'raises for an unsupported type' do
       @value = 'sdsdasdsadsad'
-      field[:constraints][:minimum] = 3
-      field[:type] = 'string'
+      field_attrs[:constraints][:minimum] = 3
+      field_attrs[:type] = 'string'
       expect { constraints.validate! }.to raise_error(TableSchema::ConstraintNotSupported, 'The field type `string` does not support the `minimum` constraint')
     end
 
@@ -336,8 +416,9 @@ describe TableSchema::Constraints do
     context 'with integer type' do
 
       before(:each) do
-        field[:type] = 'integer'
-        field[:constraints][:maximum] = 5
+        field_attrs[:type] = 'integer'
+        @max = 5
+        field_attrs[:constraints][:maximum] = @max
         @value = 4
       end
 
@@ -351,8 +432,8 @@ describe TableSchema::Constraints do
       end
 
       it 'handles with an invalid value' do
-        field[:constraints][:maximum] = 2
-        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be more than 2')
+        @value = 12
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be more than #{@max}")
       end
 
     end
@@ -360,8 +441,9 @@ describe TableSchema::Constraints do
     context 'with date type' do
 
       before(:each) do
-        field[:type] = 'date'
-        field[:constraints][:maximum] = '1978-05-28'
+        field_attrs[:type] = 'date'
+        @max = '1978-05-28'
+        field_attrs[:constraints][:maximum] = @max
         @value = Date.parse('1978-05-27')
       end
 
@@ -376,7 +458,7 @@ describe TableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Date.parse('2016-05-28')
-        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be more than 1978-05-28')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be more than #{@max}")
       end
 
     end
@@ -384,8 +466,9 @@ describe TableSchema::Constraints do
     context 'with datetime type' do
 
       before(:each) do
-        field[:type] = 'date'
-        field[:constraints][:maximum] = '1978-05-28T12:30:20Z'
+        field_attrs[:type] = 'datetime'
+        @max = '1978-05-28T12:30:20Z'
+        field_attrs[:constraints][:maximum] = @max
         @value = DateTime.parse('1978-05-27T12:30:20Z')
       end
 
@@ -400,7 +483,7 @@ describe TableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = DateTime.parse('2016-05-29T12:30:20Z')
-        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be more than 1978-05-28T12:30:20Z')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be more than #{@max}")
       end
 
     end
@@ -408,8 +491,9 @@ describe TableSchema::Constraints do
     context 'with time type' do
 
       before(:each) do
-        field[:type] = 'time'
-        field[:constraints][:maximum] = '11:30:00'
+        field_attrs[:type] = 'time'
+        @max = '11:30:00'
+        field_attrs[:constraints][:maximum] = @max
         @value = Tod::TimeOfDay.parse('10:30:20')
       end
 
@@ -424,15 +508,90 @@ describe TableSchema::Constraints do
 
       it 'handles with an invalid value' do
         @value = Tod::TimeOfDay.parse('14:00:00')
-        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The field `Name` must not be more than 11:30:00')
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be more than #{@max}")
+      end
+
+    end
+
+    context 'with year type' do
+
+      before(:each) do
+        field_attrs[:type] = 'year'
+        @max = '1986'
+        field_attrs[:constraints][:maximum] = @max
+      end
+
+      it 'handles with a valid value' do
+        @value = 1975
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = 1986
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = 1998
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be more than #{@max}")
+      end
+
+    end
+
+    context 'with yearmonth type' do
+
+      before(:each) do
+        field_attrs[:type] = 'yearmonth'
+        @max = '1986-10'
+        field_attrs[:constraints][:maximum] = @max
+      end
+
+      it 'handles with a valid value' do
+        @value = '-1986-08'
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = [1986, 10]
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = '2017-11'
+        expect { field.cast_value(@value) }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be more than #{@max}")
+      end
+
+    end
+
+    context 'with duration type' do
+
+      before(:each) do
+        field_attrs[:type] = 'duration'
+        @max = 'P3D'
+        field_attrs[:constraints][:maximum] = @max
+      end
+
+      it 'handles with a valid value' do
+        @value = 'PT24H'
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an equal value' do
+        @value = 'P3D'
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = 'P1Y'
+        expect { field.cast_value(@value) }.to raise_error(TableSchema::ConstraintError, "The field `Name` must not be more than #{@max}")
       end
 
     end
 
     it 'raises for an unsupported type' do
       @value = 'sdsdasdsadsad'
-      field[:constraints][:maximum] = 3
-      field[:type] = 'string'
+      field_attrs[:constraints][:maximum] = 3
+      field_attrs[:type] = 'string'
       expect { constraints.validate! }.to raise_error(TableSchema::ConstraintNotSupported, 'The field type `string` does not support the `maximum` constraint')
     end
 
@@ -443,8 +602,8 @@ describe TableSchema::Constraints do
     context 'with string type' do
 
       before(:each) do
-        field[:type] = 'string'
-        field[:constraints][:enum] = ['alice', 'bob', 'chuck']
+        field_attrs[:type] = 'string'
+        field_attrs[:constraints][:enum] = ['alice', 'bob', 'chuck']
         @value = 'bob'
       end
 
@@ -467,8 +626,8 @@ describe TableSchema::Constraints do
     context 'with integer type' do
 
       before(:each) do
-        field[:type] = 'integer'
-        field[:constraints][:enum] = [1,2,3]
+        field_attrs[:type] = 'integer'
+        field_attrs[:constraints][:enum] = [1,2,3]
         @value = 2
       end
 
@@ -486,8 +645,8 @@ describe TableSchema::Constraints do
     context 'with number type' do
 
       before(:each) do
-        field[:type] = 'number'
-        field[:constraints][:enum] = ["1.0","2.0","3.0"]
+        field_attrs[:type] = 'number'
+        field_attrs[:constraints][:enum] = ["1.0","2.0","3.0"]
         @value = Float(3)
       end
 
@@ -505,8 +664,8 @@ describe TableSchema::Constraints do
     context 'with boolean type' do
 
       before(:each) do
-        field[:type] = 'boolean'
-        field[:constraints][:enum] = [true]
+        field_attrs[:type] = 'boolean'
+        field_attrs[:constraints][:enum] = [true]
         @value = true
       end
 
@@ -520,7 +679,7 @@ describe TableSchema::Constraints do
       end
 
       it 'handles when value is equivalent to possible values in enum array' do
-        field[:constraints][:enum] = ['yes', 'y', 't', '1', 1]
+        field_attrs[:constraints][:enum] = ['yes', 'y', 't', '1', 1]
         expect(constraints.validate!).to eq(true)
       end
 
@@ -529,8 +688,8 @@ describe TableSchema::Constraints do
     context 'with array type' do
 
       before(:each) do
-        field[:type] = 'array'
-        field[:constraints][:enum] = [
+        field_attrs[:type] = 'array'
+        field_attrs[:constraints][:enum] = [
           ['first','second','third'],
           ['fred','alice','bob']
         ]
@@ -556,8 +715,8 @@ describe TableSchema::Constraints do
     context 'with object type' do
 
       before(:each) do
-        field[:type] = 'object'
-        field[:constraints][:enum] =  [{a: 'first',
+        field_attrs[:type] = 'object'
+        field_attrs[:constraints][:enum] =  [{a: 'first',
                                           b: 'second',
                                           c: 'third'}]
         @value = {a: 'first', b: 'second', c: 'third'}
@@ -586,8 +745,8 @@ describe TableSchema::Constraints do
     context 'with date type' do
 
       before(:each) do
-        field[:type] = 'date'
-        field[:constraints][:enum] = ['2015-10-22']
+        field_attrs[:type] = 'date'
+        field_attrs[:constraints][:enum] = ['2015-10-22']
         @value = Date.parse('2015-10-22')
       end
 
@@ -602,6 +761,63 @@ describe TableSchema::Constraints do
 
     end
 
+    context 'with year type' do
+
+      before(:each) do
+        field_attrs[:type] = 'year'
+        field_attrs[:constraints][:enum] = ['2015', 2018]
+      end
+
+      it 'handles with a valid value' do
+        @value = 2015
+        expect(constraints.validate!).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = 2019
+        expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+    end
+
+    context 'with yearmonth type' do
+
+      before(:each) do
+        field_attrs[:type] = 'yearmonth'
+        field_attrs[:constraints][:enum] = ['2015-03', [2018, 11]]
+      end
+
+      it 'handles with a valid value' do
+        @value = '2015-03'
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = [2018, 12]
+        expect{ field.cast_value(@value) }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+    end
+
+    context 'with duration type' do
+
+      before(:each) do
+        field_attrs[:type] = 'duration'
+        field_attrs[:constraints][:enum] = ['P3DT6H']
+      end
+
+      it 'handles with a valid value' do
+        @value = 'P3DT6H'
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = 'P3DT8H'
+        expect { field.cast_value(@value) }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must be in the enum array')
+      end
+
+    end
+
   end
 
   describe TableSchema::Constraints::Pattern do
@@ -609,8 +825,8 @@ describe TableSchema::Constraints do
     context 'with string type' do
 
         before(:each) do
-          field[:type] = 'string'
-          field[:constraints][:pattern] = '[0-9]{3}-[0-9]{2}-[0-9]{4}'
+          field_attrs[:type] = 'string'
+          field_attrs[:constraints][:pattern] = '[0-9]{3}-[0-9]{2}-[0-9]{4}'
           @value = '078-05-1120'
         end
 
@@ -628,8 +844,8 @@ describe TableSchema::Constraints do
     context 'with integer type' do
 
         before(:each) do
-          field[:type] = 'integer'
-          field[:constraints][:pattern] = '[7-9]{3}'
+          field_attrs[:type] = 'integer'
+          field_attrs[:constraints][:pattern] = '[7-9]{3}'
           @value = 789
         end
 
@@ -647,8 +863,8 @@ describe TableSchema::Constraints do
     context 'with number type' do
 
         before(:each) do
-          field[:type] = 'number'
-          field[:constraints][:pattern] = '7.[0-9]{3}'
+          field_attrs[:type] = 'number'
+          field_attrs[:constraints][:pattern] = '7.[0-9]{3}'
           @value = 7.123
         end
 
@@ -666,8 +882,8 @@ describe TableSchema::Constraints do
     context 'with array type' do
 
         before(:each) do
-          field[:type] = 'array'
-          field[:constraints][:pattern] = '\[("[a-c]",?\s?)*\]'
+          field_attrs[:type] = 'array'
+          field_attrs[:constraints][:pattern] = '\[("[a-c]",?\s?)*\]'
           @value = ['a', 'b', 'c']
         end
 
@@ -685,8 +901,8 @@ describe TableSchema::Constraints do
     context 'with object type' do
 
         before(:each) do
-          field[:type] = 'object'
-          field[:constraints][:pattern] = '\{("[a-z]":[0-9],?\s?)*\}'
+          field_attrs[:type] = 'object'
+          field_attrs[:constraints][:pattern] = '\{("[a-z]":[0-9],?\s?)*\}'
           @value = {a: 1, b: 2, c: 3}
         end
 
@@ -704,8 +920,8 @@ describe TableSchema::Constraints do
     context 'with date type' do
 
         before(:each) do
-          field[:type] = 'date'
-          field[:constraints][:pattern] = '2015-[0-9]{2}-[0-9]{2}'
+          field_attrs[:type] = 'date'
+          field_attrs[:constraints][:pattern] = '2015-[0-9]{2}-[0-9]{2}'
           @value = '2015-01-23'
         end
 
@@ -717,6 +933,25 @@ describe TableSchema::Constraints do
           @value = '2013-01-23'
           expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
         end
+
+    end
+
+    context 'with yearmonth type' do
+
+      before(:each) do
+        field_attrs[:type] = 'yearmonth'
+        field_attrs[:constraints][:pattern] = '201[53]-[0-9]{2}'
+      end
+
+      it 'handles with valid value' do
+        @value = '2015-01'
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @value = '2016-12'
+        expect { field.cast_value(@value) }.to raise_error(TableSchema::ConstraintError, 'The value for the field `Name` must match the pattern')
+      end
 
     end
 

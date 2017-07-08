@@ -3,10 +3,20 @@ module TableSchema
     module Minimum
 
       def check_minimum
-        if @value < parse_constraint(@constraints[:minimum])
+        if @field.type == 'yearmonth'
+          valid = Date.new(@value[:year], @value[:month]) >= Date.new(parsed_minimum[:year], parsed_minimum[:month])
+        else
+          valid = @value >= parsed_minimum
+        end
+
+        unless valid
           raise TableSchema::ConstraintError.new("The field `#{@field[:name]}` must not be less than #{@constraints[:minimum]}")
         end
         true
+      end
+
+      def parsed_minimum
+        @field.cast_value(@constraints[:minimum], check_constraints: false)
       end
 
     end
