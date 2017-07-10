@@ -56,4 +56,103 @@ describe TableSchema::Schema do
 
   end
 
+  context 'cast_row' do
+    let(:schema_hash) {
+      {
+        fields: [
+            {
+                name: "id",
+                type: "string",
+                constraints: {
+                    required: true,
+                }
+            },
+            {
+                name: "height",
+                type: "number",
+                constraints: {
+                    required: false,
+                }
+            },
+            {
+                name: "age",
+                type: "integer",
+                constraints: {
+                    required: false,
+                }
+            },
+            {
+                name: "name",
+                type: "string",
+                constraints: {
+                    required: true,
+                }
+            },
+            {
+                name: "occupation",
+                type: "string",
+                constraints: {
+                    required: false,
+                }
+            },
+
+        ],
+        missingValues: [
+          '-',
+          'null',
+          ''
+        ]
+      }
+    }
+
+    let(:schema) { TableSchema::Schema.new(schema_hash) }
+
+    context 'cast_row' do
+
+      it 'converts a row' do
+        row = ['string', '10.0', '1', 'string', 'string']
+        expect(schema.cast_row(row)).to eq(['string', Float(10.0), 1, 'string', 'string'])
+      end
+
+      it 'converts a row with null values' do
+        row = ['string', '', '-', 'string', 'null']
+        expect(schema.cast_row(row)).to eq(['string', nil, nil, 'string', nil])
+      end
+
+      it 'raises an error for a row with too few items' do
+        row = ['string', '10.0', '1', 'string']
+        expect { schema.cast_row(row) }.to raise_error(
+          TableSchema::ConversionError,
+          'The number of items to convert (4) does not match the number of headers in the schema (5)'
+        )
+      end
+
+      it 'raises an error for a row with too many items' do
+        row = ['string', '10.0', '1', 'string', 1, 2]
+        expect { schema.cast_row(row) }.to raise_error(
+          TableSchema::ConversionError,
+          'The number of items to convert (6) does not match the number of headers in the schema (5)'
+        )
+      end
+
+      it 'raises an error if a column has the wrong type' do
+        row = ['string', 'notdecimal', '10.6', 'string', 'string']
+        expect { schema.cast_row(row) }.to raise_error(
+          TableSchema::InvalidCast,
+          'notdecimal is not a number'
+        )
+      end
+
+      it 'raises multiple errors if fail_fast is set to false' do
+        row = ['string', 'notdecimal', '10.6', 'string', 'string']
+        expect { schema.cast_row(row, fail_fast: false) }.to raise_error(
+          TableSchema::MultipleInvalid,
+          'There were errors parsing the data'
+        )
+        expect(schema.errors.count).to eq(2)
+      end
+
+    end
+
+  end
 end

@@ -9,6 +9,15 @@ module TableSchema
     end
   end
 
+  class MultipleInvalid < Exception
+    attr_reader :message, :errors
+
+    def initialize(message, errors=[])
+      @message = message
+      @errors = errors
+    end
+  end
+
   class InvalidFormat < Exception ; end
   class InvalidCast < Exception ; end
   class InvalidEmail < Exception ; end
@@ -29,5 +38,4 @@ module TableSchema
   class ConstraintError < Exception ; end
   class ConstraintNotSupported < Exception ; end
   class ConversionError < Exception ; end
-  class MultipleInvalid < Exception ; end
 end

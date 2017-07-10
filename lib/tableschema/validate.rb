@@ -14,7 +14,7 @@ module TableSchema
     end
 
     def validate
-      @messages = JSON::Validator.fully_validate(@validator, self)
+      @messages = Set.new(JSON::Validator.fully_validate(@validator, self))
       check_primary_keys
       check_foreign_keys
     end
