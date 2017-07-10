@@ -34,10 +34,8 @@ module TableSchema
     end
 
     def required_headers
-      fields.select { |f| f[:constraints]!= nil && f[:constraints][:required] == true }
+      fields.select { |f| f.fetch(:constraints, {}).fetch(:required, nil) == true }
             .map { |f| transform(f[:name]) }
-    rescue NoMethodError
-      []
     end
 
     def has_field?(key)
@@ -55,7 +53,7 @@ module TableSchema
     private
 
       def transform(name)
-        name.downcase! if @opts[:case_insensitive_headers]
+        name.downcase! if @case_insensitive_headers == true
         name
       end
 

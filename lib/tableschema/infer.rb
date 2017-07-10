@@ -8,12 +8,12 @@ module TableSchema
 
     attr_reader :schema
 
-    def initialize(headers, rows, opts = {})
+    def initialize(headers, rows, explicit: false, primary_key: nil, row_limit: nil)
       @headers = headers
       @rows = rows
-      @explicit = opts[:explicit]
-      @primary_key = opts[:primary_key]
-      @row_limit = opts[:row_limit]
+      @explicit = explicit
+      @primary_key = primary_key
+      @row_limit = row_limit
 
       @schema = {
         fields: fields

@@ -2,13 +2,15 @@ module TableSchema
   class Schema < Hash
     include TableSchema::Validate
     include TableSchema::Model
-    include TableSchema::Data
     include TableSchema::Helpers
 
-    def initialize(descriptor, opts = {})
+    attr_reader :errors
+
+    def initialize(descriptor, case_insensitive_headers: false)
       self.merge! deep_symbolize_keys(parse_schema(descriptor))
-      @messages = []
-      @opts = opts
+      @messages = Set.new()
+      @errors = Set.new()
+      @case_insensitive_headers = case_insensitive_headers
       load_fields!
       load_validator!
       expand!
@@ -30,6 +32,30 @@ module TableSchema
       else
         raise SchemaException.new("A schema must be a hash, path or URL")
       end
+    end
+
+    def cast_row(row, fail_fast: true)
+      errors = []
+      handle_error = lambda { |e| fail_fast == true ? raise(e) : errors.append(e) }
+      row = row.fields if row.class == CSV::Row
+      if row.count != self.fields.count
+        handle_error.call(TableSchema::ConversionError.new("The number of items to convert (#{row.count}) does not match the number of headers in the schema (#{self.fields.count})"))
+      end
+
+      self.fields.each_with_index do |field, i|
+        begin
+          row[i] = field.cast_value(row[i])
+        rescue TableSchema::Exception => e
+          handle_error.call(e)
+        end
+
+      end
+
+      unless errors.empty?
+        self.errors.merge(errors)
+        raise(TableSchema::MultipleInvalid.new("There were errors parsing the data", errors))
+      end
+      row
     end
 
   end
