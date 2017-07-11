@@ -122,7 +122,7 @@ schema.valid?
 #=> true
 ```
 
-If the schema is invalid, you can access the errors via the `messages` attribute
+If the schema is invalid, you can access the errors via the `errors` attribute
 
 ```ruby
 schema_hash = {
@@ -143,7 +143,7 @@ schema_hash = {
 
 schema.valid?
 #=> false
-schema.messages
+schema.errors
 #=> ["The JSON Table Schema primaryKey value `identifier` is not found in any of the schema's field names"]
 ```
 

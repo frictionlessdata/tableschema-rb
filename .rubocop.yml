@@ -17,4 +17,5 @@ Style/MutableConstant:
   Enabled: true
 
 Metrics/CyclomaticComplexity:
+  Max: 10
   Severity: error

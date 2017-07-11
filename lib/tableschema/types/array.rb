@@ -9,6 +9,7 @@ module TableSchema
       def self.supported_constraints
         [
           'required',
+          'unique',
           'pattern',
           'enum',
           'minLength',

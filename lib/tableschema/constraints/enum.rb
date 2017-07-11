@@ -10,7 +10,7 @@ module TableSchema
       end
 
       def parsed_enum
-        @constraints[:enum].map{ |value| @field.cast_value(value, check_constraints: false) }
+        @constraints[:enum].map{ |value| @field.cast_type(value) }
       end
 
     end

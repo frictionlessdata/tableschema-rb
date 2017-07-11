@@ -5,6 +5,7 @@ require "tableschema/constraints/minimum"
 require "tableschema/constraints/maximum"
 require "tableschema/constraints/enum"
 require "tableschema/constraints/pattern"
+require "tableschema/constraints/unique"
 
 module TableSchema
   class Constraints
@@ -17,10 +18,12 @@ module TableSchema
     include TableSchema::Constraints::Maximum
     include TableSchema::Constraints::Enum
     include TableSchema::Constraints::Pattern
+    include TableSchema::Constraints::Unique
 
-    def initialize(field, value)
+    def initialize(field, value, previous_values: nil)
       @field = field
       @value = value
+      @previous_values = previous_values || []
       @constraints = ordered_constraints
     end
 

@@ -16,7 +16,7 @@ module TableSchema
       end
 
       def parsed_maximum
-        @field.cast_value(@constraints[:maximum], check_constraints: false)
+        @field.cast_type(@constraints[:maximum])
       end
 
     end

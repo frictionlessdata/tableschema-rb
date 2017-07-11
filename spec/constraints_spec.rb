@@ -957,4 +957,212 @@ describe TableSchema::Constraints do
 
   end
 
+  describe TableSchema::Constraints::Unique do
+
+    let(:constraints) { TableSchema::Constraints.new(field, @value, previous_values: @previous_values) }
+
+    before(:each) do
+      field_attrs[:constraints][:unique] = true
+    end
+
+    context 'with string type' do
+
+        before(:each) do
+          field_attrs[:type] = 'string'
+          @value = 'string'
+        end
+
+        it 'handles a valid value' do
+          expect(constraints.validate!).to eq(true)
+        end
+
+        it 'handles an invalid value' do
+          @previous_values = [@value, 'anotherstring']
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+        end
+    end
+
+    context 'with integer type' do
+
+        before(:each) do
+          field_attrs[:type] = 'integer'
+          @value = 7
+        end
+
+        it 'handles with a valid value' do
+          expect(constraints.validate!).to eq(true)
+        end
+
+        it 'handles with an invalid value' do
+          @previous_values = [9, 0, @value, 14]
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+        end
+
+    end
+
+    context 'with number type' do
+
+        before(:each) do
+          field_attrs[:type] = 'number'
+          @value = 7.123
+        end
+
+        it 'handles with a valid value' do
+          expect(constraints.validate!).to eq(true)
+        end
+
+        it 'handles with an invalid value' do
+          @previous_values = [9.87, @value, 8.99]
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+        end
+
+    end
+
+    context 'with array type' do
+
+        before(:each) do
+          field_attrs[:type] = 'array'
+          @value = ['a', 'b', 'c']
+        end
+
+        it 'handles with a valid value' do
+          expect(constraints.validate!).to eq(true)
+        end
+
+        it 'handles with an invalid value' do
+          @previous_values = [['d', 'e', 'f'], @value]
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+        end
+
+    end
+
+    context 'with object type' do
+
+        before(:each) do
+          field_attrs[:type] = 'object'
+          @value = {a: 1, b: 2, c: 3}
+        end
+
+        it 'handles with a valid value' do
+          expect(constraints.validate!).to eq(true)
+        end
+
+        it 'handles with an invalid value' do
+          @previous_values =  [@value, {a: 'fred', b: 2, c: 3}]
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+        end
+
+    end
+
+    context 'with date type' do
+
+        before(:each) do
+          field_attrs[:type] = 'date'
+          @value = Date.parse('2015-01-23')
+        end
+
+        it 'handles with a valid value' do
+          expect(constraints.validate!).to eq(true)
+        end
+
+        it 'handles with an invalid value' do
+          @previous_values = [Date.parse('2013-01-20'), @value]
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+        end
+
+    end
+
+    context 'with datetime type' do
+
+        before(:each) do
+          field_attrs[:type] = 'datetime'
+          @value = DateTime.parse('1978-05-29T12:30:20Z')
+        end
+
+        it 'handles with a valid value' do
+          expect(constraints.validate!).to eq(true)
+        end
+
+        it 'handles with an invalid value' do
+          @previous_values = [DateTime.parse('1970-05-29T12:30:20Z'), @value]
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+        end
+
+    end
+
+    context 'with time type' do
+
+        before(:each) do
+          field_attrs[:type] = 'time'
+          @value = Tod::TimeOfDay.parse('12:30:20')
+        end
+
+        it 'handles with a valid value' do
+          expect(constraints.validate!).to eq(true)
+        end
+
+        it 'handles with an invalid value' do
+          @previous_values = [@value, Tod::TimeOfDay.parse('07:00:00')]
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+        end
+
+    end
+
+    context 'with year type' do
+
+        before(:each) do
+          field_attrs[:type] = 'year'
+          @value = '-1994'
+        end
+
+        it 'handles with a valid value' do
+          expect(constraints.validate!).to eq(true)
+        end
+
+        it 'handles with an invalid value' do
+          @previous_values = ['1994', @value]
+          expect { constraints.validate! }.to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+        end
+
+    end
+
+    context 'with yearmonth type' do
+
+      before(:each) do
+        field_attrs[:type] = 'yearmonth'
+        @value = '2016-10'
+      end
+
+      it 'handles with valid value' do
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @previous_values = ['2015-12', @value]
+        expect { field.cast_value(@value, previous_values: @previous_values) }
+          .to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+      end
+
+    end
+
+    context 'with duration type' do
+
+      before(:each) do
+        field_attrs[:type] = 'duration'
+        @value = 'P7DT3H'
+      end
+
+      it 'handles with valid value' do
+        expect(field.test_value(@value)).to eq(true)
+      end
+
+      it 'handles with an invalid value' do
+        @previous_values = ['P9Y', @value]
+        expect { field.cast_value(@value, previous_values: @previous_values) }
+          .to raise_error(TableSchema::ConstraintError, "The value for the field `Name` should be unique")
+      end
+
+    end
+
+  end
 end

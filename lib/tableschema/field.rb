@@ -19,14 +19,29 @@ module TableSchema
       self.to_h
     end
 
-    def cast_value(col, check_constraints: true)
-      converter = type_class.new(self)
-      converter.cast(col, check_constraints: check_constraints)
+    def cast_value(value, check_constraints: true, previous_values: nil)
+      cast_value = cast_type(value)
+      return cast_value if check_constraints == false
+      unless previous_values.nil?
+         previous_values.map! { |val| cast_type(val) }
+      end
+      TableSchema::Constraints.new(self, cast_value, previous_values: previous_values).validate!
+      cast_value
     end
 
-    def test_value(col, check_constraints: true)
-      converter = type_class.new(self)
-      converter.test(col, check_constraints: check_constraints)
+    def test_value(value, check_constraints: true, previous_values: nil)
+      cast_value(value, check_constraints: check_constraints, previous_values: previous_values)
+      true
+    rescue TableSchema::Exception
+      false
+    end
+
+    def cast_type(value)
+      if is_null?(value)
+        nil
+      else
+        type_class.new(self).cast(value)
+      end
     end
 
     private
@@ -38,6 +53,10 @@ module TableSchema
 
       def type_class
         Object.const_get get_class_for_type(@type)
+      end
+
+      def is_null?(value)
+        @missing_values.include?(value)
       end
 
   end
