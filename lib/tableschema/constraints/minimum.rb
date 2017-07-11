@@ -16,7 +16,7 @@ module TableSchema
       end
 
       def parsed_minimum
-        @field.cast_value(@constraints[:minimum], check_constraints: false)
+        @field.cast_type(@constraints[:minimum])
       end
 
     end

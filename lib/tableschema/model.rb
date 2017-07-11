@@ -38,6 +38,11 @@ module TableSchema
             .map { |f| transform(f[:name]) }
     end
 
+    def unique_headers
+      fields.select { |f| f.fetch(:constraints, {}).fetch(:unique, nil) == true }
+            .map { |f| transform(f[:name]) }
+    end
+
     def has_field?(key)
       get_field(key) != nil
     end

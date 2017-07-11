@@ -12,11 +12,9 @@ describe TableSchema::Types::GeoJSON do
     })
     }
 
-    let(:type) { TableSchema::Types::GeoJSON.new(field) }
-
     it 'raises with invalid GeoJSON' do
       value = {coordinates: [0, 0, 0], type:'Point'}
-        expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoJSONType)
+        expect { field.cast_type(value) }.to raise_error(TableSchema::InvalidGeoJSONType)
     end
 
     it 'handles a GeoJSON hash' do
@@ -28,24 +26,24 @@ describe TableSchema::Types::GeoJSON do
         geometry: nil,
       }
 
-      expect(type.cast(value)).to eq(value)
+      expect(field.cast_type(value)).to eq(value)
     end
 
     it 'handles a GeoJSON string' do
       value = '{"geometry": null, "type": "Feature", "properties": {"\\u00c3": "\\u00c3"}}'
 
-      expect(type.cast(value)).to eq(JSON.parse(value, symbolize_names: true))
+      expect(field.cast_type(value)).to eq(JSON.parse(value, symbolize_names: true))
     end
 
     it 'raises with an invalid JSON string' do
       value = 'notjson'
-      expect { type.cast(value) }.to raise_error(TableSchema::InvalidGeoJSONType)
+      expect { field.cast_type(value) }.to raise_error(TableSchema::InvalidGeoJSONType)
     end
 
     it 'casts to none if string is blank' do
       value = ''
       # Required is false so cast null value to nil
-      expect(type.cast(value)).to eq(nil)
+      expect(field.cast_type(value)).to eq(nil)
     end
 
   end
@@ -74,7 +72,7 @@ describe TableSchema::Types::GeoJSON do
           }
         ]
       }
-      expect { type.cast(value) }.to raise_error(TableSchema::InvalidTopoJSONType)
+      expect { field.cast_type(value) }.to raise_error(TableSchema::InvalidTopoJSONType)
     end
 
     let(:topohash) {
@@ -95,16 +93,16 @@ describe TableSchema::Types::GeoJSON do
     }
 
     it 'handles a TopoJSON hash' do
-      expect(type.cast(topohash)).to eq(topohash)
+      expect(field.cast_type(topohash)).to eq(topohash)
     end
 
     it 'handles a TopoJSON string' do
-      expect(type.cast(topohash.to_json)).to eq(topohash)
+      expect(field.cast_type(topohash.to_json)).to eq(topohash)
     end
 
     it 'raises with invalid TopoJSON string' do
       value = 'notaTopoJSON'
-      expect { type.cast(value) }.to raise_error(TableSchema::InvalidTopoJSONType)
+      expect { field.cast_type(value) }.to raise_error(TableSchema::InvalidTopoJSONType)
     end
 
   end

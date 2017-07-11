@@ -9,6 +9,7 @@ module TableSchema
       def self.supported_constraints
         [
           'required',
+          'geopoint',
           'pattern',
           'enum'
         ]

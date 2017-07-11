@@ -1,7 +1,7 @@
 module TableSchema
   module Validate
 
-    attr_reader :messages
+    attr_reader :errors
 
     def load_validator!
       filepath = File.join(File.dirname(__FILE__), '..', 'profiles', 'table-schema.json')
@@ -10,11 +10,11 @@ module TableSchema
 
     def valid?
       validate
-      @messages.count == 0
+      @errors.count == 0
     end
 
     def validate
-      @messages = Set.new(JSON::Validator.fully_validate(@validator, self))
+      @errors = Set.new(JSON::Validator.fully_validate(@validator, self))
       check_primary_keys
       check_foreign_keys
     end
@@ -51,7 +51,7 @@ module TableSchema
       end
 
       def add_error(error)
-        @messages << error
+        @errors << error
       end
 
   end

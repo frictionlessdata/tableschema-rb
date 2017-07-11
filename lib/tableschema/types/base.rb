@@ -5,19 +5,13 @@ module TableSchema
     class Base
       include TableSchema::Helpers
 
-
       def initialize(field)
         @field = field
-        @constraints = field[:constraints] || {}
-        @required = ['true', true].include?(@constraints[:required])
         set_format
       end
 
-      def cast(value, check_constraints: true)
-        value = nil if is_null?(value)
-        cast_value = send("cast_#{@format}", value) unless value.nil?
-        TableSchema::Constraints.new(@field, cast_value).validate! if check_constraints == true
-        cast_value
+      def cast(value)
+        send("cast_#{@format}", value)
       rescue NoMethodError => e
         if e.message.start_with?('undefined method `cast_')
           raise(TableSchema::InvalidFormat.new("The format `#{@format}` is not supported by the type `#{@type}`"))
@@ -26,12 +20,14 @@ module TableSchema
         end
       end
 
-      def test(value, check_constraints: true)
-        cast(value, check_constraints: check_constraints)
+      def test(value)
+        cast(value)
         true
       rescue TableSchema::Exception
         false
       end
+
+      private
 
       def set_format
         if (@field[:format] || '').start_with?('fmt:')
@@ -40,12 +36,6 @@ module TableSchema
           @format = @field[:format] || TableSchema::DEFAULTS[:format]
         end
       end
-
-      private
-
-        def is_null?(value)
-          @field.missing_values.include?(value)
-        end
 
     end
   end

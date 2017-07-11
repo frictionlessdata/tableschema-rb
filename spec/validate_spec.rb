@@ -74,7 +74,7 @@ describe TableSchema::Validate do
         descriptor = load_descriptor('schema_invalid_pk_no_fields.json')
         schema = TableSchema::Schema.new(descriptor)
         expect(schema.valid?).to eq(false)
-        expect(schema.messages.count).to eq(3)
+        expect(schema.errors.count).to eq(3)
       end
 
     end
