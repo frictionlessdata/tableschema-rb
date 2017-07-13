@@ -121,7 +121,7 @@ describe TableSchema::Table do
         'There were errors parsing the data'
       )
 
-      expect(table.errors.count).to eq(2)
+      expect(table.schema.errors.count).to eq(2)
     end
 
     it 'allows a limit to be set' do
@@ -142,7 +142,6 @@ describe TableSchema::Table do
     end
 
   end
-
 
   context 'read' do
 
@@ -193,124 +192,13 @@ describe TableSchema::Table do
         'There were errors parsing the data'
       )
 
-      expect(table.errors.count).to eq(2)
+      expect(table.schema.errors.count).to eq(2)
     end
 
     it 'allows a limit to be set' do
       expect(table.read(row_limit: 1)).to eq([
         [1,'foo']
       ])
-    end
-
-  end
-
-  context 'unique_columns' do
-
-    let(:schema) { TableSchema::Schema.new(descriptor) }
-
-    before(:each) {
-      schema.fields.first[:constraints][:unique] = true
-    }
-
-    it 'collects values for unique_columns' do
-      table = TableSchema::Table.new(csv, schema.to_h)
-
-      table.iter{|row| row}
-      expect(table.instance_variable_get(:@unique_columns)).to eq({
-         'id'=> [1, 2, 3]
-      })
-    end
-
-    it 'passes unique_columns to unique constraint' do
-      duplicated_csv = [
-        ['id', 'title'],
-        ['1', 'foo'],
-        ['2', 'bar'],
-        ['2', 'baz'],
-      ]
-      table = TableSchema::Table.new(duplicated_csv, schema.to_h)
-
-      expect{ table.iter{|row| row} }.to raise_error(TableSchema::ConstraintError, "The value for the field `id` should be unique")
-    end
-
-  end
-
-  context 'cast_row' do
-    let(:schema_hash) {
-      {
-        fields: [
-            {
-              name: "id",
-              type: "string",
-              constraints: {
-                required: true,
-              }
-            },
-            {
-              name: "height",
-              type: "number",
-              constraints: {
-                required: false,
-              }
-            },
-            {
-              name: "age",
-              type: "integer",
-            },
-        ],
-        missingValues: [
-          'null',
-        ]
-      }
-    }
-
-    let(:csv_array) {
-      [['string', '10.0', '1']]
-    }
-
-    let(:table) { TableSchema::Table.new(csv_array, schema_hash) }
-
-    it 'converts row values' do
-      row = csv_array.first
-      expect(table.cast_row(row)).to eq(['string', Float(10.0), 1])
-    end
-
-    it 'converts a row with null values' do
-      row = ['string', 'null', '5']
-      expect(table.cast_row(row)).to eq(['string', nil, 5])
-    end
-
-    it 'raises an error for a row with too few items' do
-      row = ['string', '10.0']
-      expect { table.cast_row(row) }.to raise_error(
-        TableSchema::ConversionError,
-        "The number of items to convert (#{row.count}) does not match the number of headers in the schema (#{schema_hash[:fields].count})"
-      )
-    end
-
-    it 'raises an error for a row with too many items' do
-      row = ['string', '10.0', '1', 'string']
-      expect { table.cast_row(row) }.to raise_error(
-        TableSchema::ConversionError,
-        "The number of items to convert (#{row.count}) does not match the number of headers in the schema (#{schema_hash[:fields].count})"
-      )
-    end
-
-    it 'raises an error if a column has the wrong type' do
-      row = ['string', 'notdecimal', '10.6']
-      expect { table.cast_row(row) }.to raise_error(
-        TableSchema::InvalidCast,
-        'notdecimal is not a number'
-      )
-    end
-
-    it 'raises multiple errors if fail_fast is set to false' do
-      row = ['string', 'notdecimal', '10.6']
-      expect { table.cast_row(row, fail_fast: false) }.to raise_error(
-        TableSchema::MultipleInvalid,
-        'There were errors parsing the data'
-      )
-      expect(table.errors.count).to eq(2)
     end
 
   end

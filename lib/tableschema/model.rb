@@ -34,12 +34,12 @@ module TableSchema
     end
 
     def required_headers
-      fields.select { |f| f.fetch(:constraints, {}).fetch(:required, nil) == true }
+      fields.select { |f| f.fetch(:constraints, {}).fetch(:required, nil).to_s == 'true' }
             .map { |f| transform(f[:name]) }
     end
 
     def unique_headers
-      fields.select { |f| f.fetch(:constraints, {}).fetch(:unique, nil) == true }
+      fields.select { |f| f.fetch(:constraints, {}).fetch(:unique, nil).to_s == 'true' }
             .map { |f| transform(f[:name]) }
     end
 
