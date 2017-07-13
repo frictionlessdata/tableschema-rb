@@ -31,15 +31,16 @@ module TableSchema
         break if row_limit && (row_limit <= i)
         begin
           if cast == true
-            cast_values = cast_row(row, fail_fast: fail_fast, row_number: i)
+            cast_values = @schema.cast_row(row, fail_fast: fail_fast)
             row = CSV::Row.new(@headers, cast_values)
+            check_unique_fields(row, i)
           end
           if keyed == true
             yield row.to_h
           else
             yield row.fields
           end
-          collect_unique_fields(row)
+          collect_unique_fields(row, i)
         rescue TableSchema::Exception => e
           raise e if fail_fast == true
           has_errors = true
@@ -58,32 +59,15 @@ module TableSchema
       iterator.to_a
     end
 
-    def cast_row(row, fail_fast: true, row_number: 0)
-      errors = []
-      handle_error = lambda { |e| fail_fast == true ? raise(e) : errors.append(e) }
-      row = row.fields if row.class == CSV::Row
-      if row.count != @schema.fields.count
-        handle_error.call(TableSchema::ConversionError.new("The number of items to convert (#{row.count}) does not match the number of headers in the schema (#{@schema.fields.count})"))
-      end
-
-      @schema.fields.each_with_index do |field, i|
-        begin
-          if @unique_columns.keys.include?(field[:name])
-            previous_values = @unique_columns[field[:name]][0..row_number-1]
-            row[i] = field.cast_value(row[i], previous_values: previous_values)
-          else
-            row[i] = field.cast_value(row[i])
-          end
-        rescue TableSchema::Exception => e
-          handle_error.call(e)
+    def check_unique_fields(row, row_number)
+      @unique_columns.each do |col_name, values|
+        row_value = row[col_name]
+        previous_values = values[0..row_number-1]
+        previous_values.map!{|value| @schema.get_field(col_name).cast_type(value)}
+        if previous_values.include?(row_value)
+          raise TableSchema::ConstraintError.new("The values for the field `#{col_name}` should be unique but value `#{row_value}` is repeated")
         end
       end
-
-      unless errors.empty?
-        @errors.merge(errors)
-        raise(TableSchema::MultipleInvalid.new("There were errors parsing the data", errors))
-      end
-      row
     end
 
     private
@@ -111,10 +95,8 @@ module TableSchema
         end
       end
 
-      def collect_unique_fields(row)
-        unless @unique_columns.empty?
-          @schema.unique_headers.each { |h| @unique_columns[h] << row[h] }
-        end
+      def collect_unique_fields(row, row_number)
+        @unique_columns.each { |col_name, values| values[row_number] = row[col_name] }
       end
 
   end

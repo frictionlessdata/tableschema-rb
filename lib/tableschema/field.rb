@@ -19,18 +19,15 @@ module TableSchema
       self.to_h
     end
 
-    def cast_value(value, check_constraints: true, previous_values: nil)
+    def cast_value(value, check_constraints: true)
       cast_value = cast_type(value)
       return cast_value if check_constraints == false
-      unless previous_values.nil?
-         previous_values.map! { |val| cast_type(val) }
-      end
-      TableSchema::Constraints.new(self, cast_value, previous_values: previous_values).validate!
+      TableSchema::Constraints.new(self, cast_value).validate!
       cast_value
     end
 
-    def test_value(value, check_constraints: true, previous_values: nil)
-      cast_value(value, check_constraints: check_constraints, previous_values: previous_values)
+    def test_value(value, check_constraints: true)
+      cast_value(value, check_constraints: check_constraints)
       true
     rescue TableSchema::Exception
       false

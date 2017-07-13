@@ -33,5 +33,28 @@ module TableSchema
       end
     end
 
+    def cast_row(row, fail_fast: true)
+      errors = []
+      handle_error = lambda { |e| fail_fast == true ? raise(e) : errors.append(e) }
+      row = row.fields if row.class == CSV::Row
+      if row.count != self.fields.count
+        handle_error.call(TableSchema::ConversionError.new("The number of items to convert (#{row.count}) does not match the number of headers in the schema (#{self.fields.count})"))
+      end
+
+      self.fields.each_with_index do |field, i|
+        begin
+          row[i] = field.cast_value(row[i])
+        rescue TableSchema::Exception => e
+          handle_error.call(e)
+        end
+      end
+
+      unless errors.empty?
+        self.errors.merge(errors)
+        raise(TableSchema::MultipleInvalid.new("There were errors parsing the data", errors))
+      end
+      row
+    end
+
   end
 end

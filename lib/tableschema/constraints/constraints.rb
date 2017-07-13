@@ -20,10 +20,9 @@ module TableSchema
     include TableSchema::Constraints::Pattern
     include TableSchema::Constraints::Unique
 
-    def initialize(field, value, previous_values: nil)
+    def initialize(field, value)
       @field = field
       @value = value
-      @previous_values = previous_values || []
       @constraints = ordered_constraints
     end
 

@@ -3,17 +3,10 @@ module TableSchema
     module Unique
 
       def check_unique
-        if @previous_values.include?(@value)
-          raise TableSchema::ConstraintError.new("The value for the field `#{@field[:name]}` should be unique")
-        end
+        # This check is done in Table because it needs the previous values in the column
         true
       end
 
-      private
-
-      def parsed_unique
-        @constraints[:unique].to_s == 'true'
-      end
     end
   end
 end
