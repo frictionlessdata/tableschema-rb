@@ -16,11 +16,6 @@ module TableSchema
       initialize_unique_colums
     end
 
-    def parse_csv(csv)
-      csv = csv.is_a?(Array) ? StringIO.new(array_to_csv csv) : open(csv)
-      CSV.new(csv, @csv_options)
-    end
-
     def iter(row_limit: nil, cast: true, keyed: false, fail_fast: true)
       has_errors = false
       unless block_given?
@@ -59,6 +54,48 @@ module TableSchema
       iterator.to_a
     end
 
+    def save(target)
+      File.open(target, "w") do |file|
+        file << @headers
+        self.iter{ |row| file << row }
+      end
+      true
+    end
+
+    private
+
+    def parse_csv(csv)
+      csv = csv.is_a?(Array) ? StringIO.new(array_to_csv csv) : open(csv)
+      CSV.new(csv, @csv_options)
+    end
+
+    def array_to_csv(array)
+      array.map { |row| row.to_csv(row_sep: nil) }.join("\r\n")
+    end
+
+    def infer_schema
+      inferer = TableSchema::Infer.new(@headers, @csv)
+      @csv.rewind
+      inferer.schema
+    end
+
+    def initialize_headers
+      headers = @csv.first.to_h.keys
+      @csv.rewind
+      headers
+    end
+
+    def initialize_unique_colums
+      @unique_columns = {}
+      unless @schema.unique_headers.empty?
+        @schema.unique_headers.each{ |header| @unique_columns[header] = [] }
+      end
+    end
+
+    def collect_unique_fields(row, row_number)
+      @unique_columns.each { |col_name, values| values[row_number] = row[col_name] }
+    end
+
     def check_unique_fields(row, row_number)
       @unique_columns.each do |col_name, values|
         row_value = row[col_name]
@@ -69,35 +106,6 @@ module TableSchema
         end
       end
     end
-
-    private
-
-      def array_to_csv(array)
-        array.map { |row| row.to_csv(row_sep: nil) }.join("\r\n")
-      end
-
-      def infer_schema
-        inferer = TableSchema::Infer.new(@headers, @csv)
-        @csv.rewind
-        inferer.schema
-      end
-
-      def initialize_headers
-        headers = @csv.first.to_h.keys
-        @csv.rewind
-        headers
-      end
-
-      def initialize_unique_colums
-        @unique_columns = {}
-        unless @schema.unique_headers.empty?
-          @schema.unique_headers.each{ |header| @unique_columns[header] = []}
-        end
-      end
-
-      def collect_unique_fields(row, row_number)
-        @unique_columns.each { |col_name, values| values[row_number] = row[col_name] }
-      end
 
   end
 end

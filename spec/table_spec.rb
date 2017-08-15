@@ -227,4 +227,12 @@ describe TableSchema::Table do
     })
   end
 
+  it 'saves a file' do
+    output_file = StringIO.new("id,title/n1,foo/n2,bar/n,3,baz")
+    filename = 'output.csv'
+    allow(File).to receive(:open).with(filename,'w').and_yield(output_file)
+
+    expect(table.save(filename)).to be true
+  end
+
 end
