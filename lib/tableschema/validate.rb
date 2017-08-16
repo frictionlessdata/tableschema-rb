@@ -5,11 +5,11 @@ module TableSchema
 
     def load_validator!
       filepath = File.join(File.dirname(__FILE__), '..', 'profiles', 'table-schema.json')
-      @validator ||= JSON.parse(File.read(filepath), symbolize_names: true)
+      @profile ||= JSON.parse(File.read(filepath), symbolize_names: true)
     end
 
     def validate
-      @errors = Set.new(JSON::Validator.fully_validate(@validator, self))
+      @errors = Set.new(JSON::Validator.fully_validate(@profile, self))
       check_primary_keys
       check_foreign_keys
       @errors.empty?
