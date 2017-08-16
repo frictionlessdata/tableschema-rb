@@ -1,0 +1,16 @@
+{
+    "fields": [
+      {
+          "name": "state"
+      }
+    ],
+    "foreignKeys": [
+      {
+          "fields": "state",
+          "reference": {
+            "resource": "",
+            "fields": "not_state"
+          }
+      }
+    ]
+}
