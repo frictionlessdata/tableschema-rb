@@ -155,6 +155,47 @@ describe TableSchema::Model do
      expect(s.required_headers.count).to eq(1)
   end
 
+  context 'add field' do
+
+    it 'adds a field if it passes validation' do
+      s = TableSchema::Schema.new(descriptor)
+      field = { name: 'phone' }
+
+      expect(s.add_field(field)).to eq(field)
+      expect(s.fields.last).to eq(field)
+    end
+
+    it 'doesn\'t add field if it fails validation' do
+      s = TableSchema::Schema.new(descriptor)
+      field = { title: 'Name is mandatory' }
+      initial_fields = s.fields
+
+      expect(s.add_field(field)).to eq(nil)
+      expect(s.fields).to eq(initial_fields)
+    end
+
+  end
+
+  context 'remove field' do
+
+    it 'removes field by name' do
+      s = TableSchema::Schema.new(descriptor)
+      initial_fields_size = s.fields.size
+      field = {
+          name: "age",
+          type: "integer",
+          constraints: {
+              required: false,
+          },
+          format: "default",
+      }
+
+      expect(s.remove_field('age')).to eq(field)
+      expect(s.fields.size).to eq(initial_fields_size - 1)
+    end
+
+  end
+
   context 'primary key' do
 
     it 'returns a single primary key as an array' do

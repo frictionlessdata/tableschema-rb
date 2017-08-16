@@ -27,6 +27,12 @@ describe TableSchema::Schema do
       expect(schema[:fields].count).to eq(22)
     end
 
+    it 'populates errors if schema is invalid and strict is false' do
+      descriptor = load_descriptor('schema_invalid_pk_string.json')
+      s = TableSchema::Schema.new(descriptor)
+      expect(s.errors).to_not be_empty
+    end
+
     context 'raises an exception' do
 
       it 'when the schema is an incorrect type' do
@@ -50,6 +56,11 @@ describe TableSchema::Schema do
                     .to_return(body: 'definitely,not,JSON')
 
         expect { TableSchema::Schema.new(url) }.to raise_error(TableSchema::SchemaException, 'File at `http://www.example.com/schema.json` is not valid JSON')
+      end
+
+      it 'when the schema is invalid and strict is true' do
+        descriptor = load_descriptor('schema_invalid_pk_string.json')
+        expect{ TableSchema::Schema.new(descriptor, strict: true) }.to raise_error(TableSchema::SchemaException)
       end
 
     end
@@ -149,6 +160,29 @@ describe TableSchema::Schema do
         expect(schema.errors.count).to eq(2)
       end
 
+    end
+
+    context 'save' do
+
+      it 'writes the file given as target' do
+        schema = {
+          fields: [
+            {
+              name: 'id',
+              type: 'string',
+              format: 'default',
+              constraints: {}
+            },
+          ]
+        }
+        buffer = StringIO.new
+        filename = 'my_schema.json'
+        allow(File).to receive(:open).with(filename,'w').and_yield(buffer)
+
+        s = TableSchema::Schema.new(schema)
+        expect(s.save(filename)).to be true
+        expect(buffer.string).to eq(JSON.pretty_generate(schema))
+      end
     end
 
   end

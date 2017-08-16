@@ -6,13 +6,19 @@ module TableSchema
 
     attr_reader :errors
 
-    def initialize(descriptor, case_insensitive_headers: false)
+    def initialize(descriptor, case_insensitive_headers: false, strict: false)
       self.merge! deep_symbolize_keys(parse_schema(descriptor))
-      @errors = Set.new()
       @case_insensitive_headers = case_insensitive_headers
+      @strict = strict
       load_fields!
       load_validator!
       expand!
+      @strict == true ? validate! : validate
+      self
+    end
+
+    def descriptor
+      self.to_h
     end
 
     def parse_schema(descriptor)
@@ -54,6 +60,11 @@ module TableSchema
         raise(TableSchema::MultipleInvalid.new("There were errors parsing the data", errors))
       end
       row
+    end
+
+    def save(target)
+      File.open(target, "w") { |file| file << JSON.pretty_generate(self.descriptor) }
+      true
     end
 
   end

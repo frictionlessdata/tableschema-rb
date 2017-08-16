@@ -9,6 +9,8 @@ module TableSchema
       []
     end
 
+    alias :field_names :headers
+
     def fields
       self[:fields]
     end
@@ -25,12 +27,12 @@ module TableSchema
       self.fetch(:missingValues, TableSchema::DEFAULTS[:missing_values])
     end
 
-    def get_type(key)
-      get_field(key)[:type]
+    def get_type(field_name)
+      get_field(field_name)[:type]
     end
 
-    def get_constraints(key)
-      get_field(key)[:constraints] || {}
+    def get_constraints(field_name)
+      get_field(field_name)[:constraints] || {}
     end
 
     def required_headers
@@ -43,35 +45,50 @@ module TableSchema
             .map { |f| transform(f[:name]) }
     end
 
-    def has_field?(key)
-      get_field(key) != nil
+    def has_field?(field_name)
+      get_field(field_name) != nil
     end
 
-    def get_field(key)
-      fields.find { |f| f[:name] == key }
+    def get_field(field_name)
+      fields.find { |f| f[:name] == field_name }
     end
 
     def get_fields_by_type(type)
       fields.select { |f| f[:type] == type }
     end
 
+    def add_field(descriptor)
+      fields.push(descriptor)
+      validate!
+      descriptor
+    rescue TableSchema::SchemaException
+      fields.pop
+      nil
+    end
+
+    def remove_field(field_name)
+      field = get_field(field_name)
+      fields.reject!{ |f| f.name == field_name }
+      field
+    end
+
     private
 
-      def transform(name)
-        name.downcase! if @case_insensitive_headers == true
-        name
-      end
+    def transform(name)
+      name.downcase! if @case_insensitive_headers == true
+      name
+    end
 
-      def expand!
-        (self[:fields] || []).each do |f|
-          f[:type] = TableSchema::DEFAULTS[:type] if f[:type] == nil
-          f[:format] = TableSchema::DEFAULTS[:format] if f[:format] == nil
-        end
+    def expand!
+      (self[:fields] || []).each do |f|
+        f[:type] = TableSchema::DEFAULTS[:type] if f[:type] == nil
+        f[:format] = TableSchema::DEFAULTS[:format] if f[:format] == nil
       end
+    end
 
-      def load_fields!
-        self[:fields] = (self[:fields] || []).map { |f| TableSchema::Field.new(f, missing_values) }
-      end
+    def load_fields!
+      self[:fields] = (self[:fields] || []).map { |f| TableSchema::Field.new(f, missing_values) }
+    end
 
   end
 end
