@@ -55,9 +55,9 @@ module TableSchema
     end
 
     def save(target)
-      File.open(target, "w") do |file|
-        file << @headers
-        self.iter{ |row| file << row }
+      CSV.open(target, "wb", @csv_options) do |csv|
+        csv << @headers
+        self.iter{ |row| csv << row }
       end
       true
     end
