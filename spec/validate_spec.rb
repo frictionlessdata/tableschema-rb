@@ -116,12 +116,6 @@ describe TableSchema::Validate do
         expect(schema.validate).to eq(false)
       end
 
-      it 'with a foreign key with no reference' do
-        descriptor = load_descriptor('schema_invalid_fk_no_reference.json')
-        schema = TableSchema::Schema.new(descriptor)
-        expect(schema.validate).to eq(false)
-      end
-
       it 'with an invalid foreign key array' do
         descriptor = load_descriptor('schema_invalid_fk_array.json')
         schema = TableSchema::Schema.new(descriptor)
@@ -146,6 +140,11 @@ describe TableSchema::Validate do
         expect(schema.validate).to eq(false)
       end
 
+      it 'where the resource is empty and the fields miss from headers' do
+        descriptor = load_descriptor('schema_invalid_fk_no_resource.json')
+        schema = TableSchema::Schema.new(descriptor)
+        expect(schema.validate).to eq(false)
+      end
     end
 
   end
