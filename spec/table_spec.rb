@@ -90,38 +90,19 @@ describe TableSchema::Table do
       ])
     end
 
-    it 'raises the first error by default' do
+    it 'lets errors bubble up' do
       csv = [
         ['id','title'],
         ['notnumber','piff'],
         ['5','paff'],
-        ['alsonotnumber','poff']
       ]
 
       table = TableSchema::Table.new(csv, descriptor)
 
-      expect { table.iter(fail_fast: true) {|row| row} }.to raise_error(
+      expect { table.iter{|row| row} }.to raise_error(
         TableSchema::InvalidCast,
         'notnumber is not a integer'
       )
-    end
-
-    it 'collects errors if fail_fast is set to false' do
-      csv = [
-        ['id','title'],
-        ['notnumber','piff'],
-        ['5','paff'],
-        ['alsonotnumber','poff']
-      ]
-
-      table = TableSchema::Table.new(csv, descriptor)
-
-      expect { table.iter(fail_fast: false) {|row| row} }.to raise_error(
-        TableSchema::MultipleInvalid,
-        'There were errors parsing the data'
-      )
-
-      expect(table.schema.errors.count).to eq(2)
     end
 
     it 'allows a limit to be set' do
@@ -158,46 +139,6 @@ describe TableSchema::Table do
         { 'id'=> 1, 'title'=> 'foo'},
         { 'id'=> 2, 'title'=> 'bar'},
         { 'id'=> 3, 'title'=> 'baz'},
-      ])
-    end
-
-    it 'raises the first error by default' do
-      csv = [
-        ['id','title'],
-        ['notnumber','piff'],
-        ['5','paff'],
-        ['alsonotnumber','poff']
-      ]
-
-      table = TableSchema::Table.new(csv, descriptor)
-
-      expect { table.read(fail_fast: true) }.to raise_error(
-        TableSchema::InvalidCast,
-        'notnumber is not a integer'
-      )
-    end
-
-    it 'collects errors if fail_fast is set to false' do
-      csv = [
-        ['id','title'],
-        ['notnumber','piff'],
-        ['5','paff'],
-        ['alsonotnumber','poff']
-      ]
-
-      table = TableSchema::Table.new(csv, descriptor)
-
-      expect { table.read(fail_fast: false) }.to raise_error(
-        TableSchema::MultipleInvalid,
-        'There were errors parsing the data'
-      )
-
-      expect(table.schema.errors.count).to eq(2)
-    end
-
-    it 'allows a limit to be set' do
-      expect(table.read(row_limit: 1)).to eq([
-        [1,'foo']
       ])
     end
 
