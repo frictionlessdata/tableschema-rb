@@ -174,6 +174,13 @@ describe TableSchema::Model do
       expect(s.fields).to eq(initial_fields)
     end
 
+    it 'raises error if updated schema is invalid and strict is true' do
+      s = TableSchema::Schema.new(descriptor, strict: true)
+      field = { title: 'Name is mandatory' }
+
+      expect{ s.add_field(field) }.to raise_error(TableSchema::SchemaException)
+    end
+
   end
 
   context 'remove field' do
