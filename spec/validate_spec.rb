@@ -33,6 +33,28 @@ describe TableSchema::Validate do
 
     end
 
+    it 'updates errors at each validation' do
+      schema_hash = {
+        fields: [
+          {
+            name: 'id',
+            title: 'Identifier',
+            type: 'integer'
+          },
+          {
+            name: 'title',
+            title: 'Title',
+            type: 'nonexistent'
+          },
+        ],
+      }
+      schema = TableSchema::Schema.new(schema_hash)
+      expect(schema.errors).to_not be_empty
+
+      schema.remove_field('title')
+      expect(schema.errors).to be_empty
+    end
+
   end
 
   context 'primary keys' do
