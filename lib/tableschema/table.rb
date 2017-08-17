@@ -1,7 +1,7 @@
 module TableSchema
   class Table
 
-    attr_reader :schema, :headers, :errors
+    attr_reader :schema, :headers
 
     def self.infer_schema(csv, csv_options: {})
       TableSchema::Table.new(csv, nil, csv_options)
@@ -11,46 +11,35 @@ module TableSchema
       @csv_options = csv_options.merge(headers: true)
       @csv = parse_csv(csv)
       @headers = initialize_headers
-      @errors = Set.new()
       @schema = descriptor.nil? ? infer_schema : TableSchema::Schema.new(descriptor)
       initialize_unique_colums
     end
 
-    def iter(row_limit: nil, cast: true, keyed: false, fail_fast: true)
-      has_errors = false
+    def iter(row_limit: nil, cast: true, keyed: false)
       unless block_given?
-        return enum_for(:iter, row_limit: row_limit, cast: cast, keyed: keyed, fail_fast: fail_fast)
+        return enum_for(:iter, row_limit: row_limit, cast: cast, keyed: keyed)
       end
 
       @csv.each_with_index do |row, i|
         break if row_limit && (row_limit <= i)
-        begin
-          if cast == true
-            cast_values = @schema.cast_row(row, fail_fast: fail_fast)
-            row = CSV::Row.new(@headers, cast_values)
-            check_unique_fields(row, i)
-          end
-          if keyed == true
-            yield row.to_h
-          else
-            yield row.fields
-          end
-          collect_unique_fields(row, i)
-        rescue TableSchema::Exception => e
-          raise e if fail_fast == true
-          has_errors = true
-          next
+        if cast == true
+          cast_values = @schema.cast_row(row)
+          row = CSV::Row.new(@headers, cast_values)
+          check_unique_fields(row, i)
         end
+        if keyed == true
+          yield row.to_h
+        else
+          yield row.fields
+        end
+        collect_unique_fields(row, i)
       end
 
       @csv.rewind
-      if has_errors == true
-        raise(TableSchema::MultipleInvalid.new("There were errors parsing the data", self.schema.errors))
-      end
     end
 
-    def read(row_limit: nil, cast: true, keyed: false, fail_fast: true)
-      iterator = self.iter(row_limit: row_limit, cast: cast, keyed: keyed, fail_fast: fail_fast)
+    def read(row_limit: nil, cast: true, keyed: false)
+      iterator = self.iter(row_limit: row_limit, cast: cast, keyed: keyed)
       iterator.to_a
     end
 
