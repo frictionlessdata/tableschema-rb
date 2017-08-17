@@ -153,11 +153,11 @@ describe TableSchema::Schema do
 
       it 'raises multiple errors if fail_fast is set to false' do
         row = ['string', 'notdecimal', '10.6', 'string', 'string']
-        expect { schema.cast_row(row, fail_fast: false) }.to raise_error(
-          TableSchema::MultipleInvalid,
-          'There were errors parsing the data'
-        )
-        expect(schema.errors.count).to eq(2)
+        expect { schema.cast_row(row, fail_fast: false) }.to raise_exception do |exception|
+          expect(exception).to be_a TableSchema::MultipleInvalid
+          expect(exception.message).to eq('There were errors parsing the data')
+          expect(exception.errors.count).to eq(2)
+        end
       end
 
     end
