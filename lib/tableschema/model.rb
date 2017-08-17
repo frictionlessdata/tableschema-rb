@@ -58,17 +58,18 @@ module TableSchema
     end
 
     def add_field(descriptor)
-      fields.push(descriptor)
+      self[:fields].push(descriptor)
       validate!
       descriptor
-    rescue TableSchema::SchemaException
-      fields.pop
+    rescue TableSchema::SchemaException => e
+      self[:fields].pop
+      raise e if @strict
       nil
     end
 
     def remove_field(field_name)
       field = get_field(field_name)
-      fields.reject!{ |f| f.name == field_name }
+      self[:fields].reject!{ |f| f.name == field_name }
       field
     end
 
