@@ -33,24 +33,25 @@ Since version 0.3 the library was renamed `tableschema` and has a gem with the s
 The gem `jsontableschema` is no longer maintained. Here are the steps to transition your code to `tableschema`:
 
 1. Replace
-   ```ruby
-   gem 'jsontableschema'
-   ```
-  with
 
-  ```ruby
-  gem 'tableschema', '0.3.0'
-  ```
+    ```ruby
+    gem 'jsontableschema'
+    ```
+    with
+
+    ```ruby
+    gem 'tableschema', '0.3.0'
+    ```
 
 2. Replace module name `JsonTableSchema` with module name `TableSchema`. For example:
 
-  ```ruby
-  JsonTableSchema::Table.infer_schema(csv)
-  ```
-  with
-  ```ruby
-  TableSchema::Table.infer_schema(csv)
-  ```
+    ```ruby
+    JsonTableSchema::Table.infer_schema(csv)
+    ```
+    with
+    ```ruby
+    TableSchema::Table.infer_schema(csv)
+    ```
 
 ## Usage
 
@@ -60,26 +61,39 @@ Validate and cast data from a CSV as described by a schema.
 
 ```ruby
 schema = {
-    "fields": [
+    fields: [
         {
-            "name" => "id",
-            "title" => "Identifier",
-            "type" => "integer"
+            name: 'id',
+            title: 'Identifier',
+            type: 'integer'
         },
         {
-            "name" => "title",
-            "title" => "Title",
-            "type" => "string"
+            name: 'title',
+            title: 'Title',
+            type: 'string'
         }
     ]
-} # Can also be a URL or a path
+}
 
-csv = 'https://github.com/frictionlessdata/tableschema-rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
+csv = 'https://github.com/frictionlessdata/tableschema-rb/raw/master/spec/fixtures/simple_data.csv'
 
 table = TableSchema::Table.new(csv, schema)
-table.rows
+
+# Iterate through rows
+table.iter{ |row| print row }
+# [1, "foo"]
+# [2, "bar"]
+# [3, "baz"]
+
+# Read the entire CSV in memory
+table.read
 #=> [[1,'foo'],[2,'bar'],[3,'baz']]
 ```
+
+Both `iter` and `read` take the optional parameters:
+- `row_limit`: integer, default `nil` - stop at this many rows
+- `cast`: boolean, default `true` - cast values for each row
+- `keyed`: boolean, default: `false` - return the rows as Hashes with headers as keys
 
 ### Infer a schema
 
@@ -90,95 +104,69 @@ csv = 'https://github.com/frictionlessdata/tableschema-rb/raw/master/spec/fixtur
 
 table = TableSchema::Table.infer_schema(csv)
 table.schema
-#=> {"fields"=>[{"name"=>"id", "title"=>"", "description"=>"", "type"=>"string", "format"=>"default"}, {"name"=>"title", "title"=>"", "description"=>"", "type"=>"string", "format"=>"default"}]}
+#=> {:fields=>[{:name=>"id", :title=>"", :description=>"", :type=>"integer", :format=>"default", :constraints=>{}}, {:name=>"title", :title=>"", :description=>"", :type=>"string", :format=>"default", :constraints=>{}}]}
 ```
 
-### Validate a schema
+### Build a Schema
 
-To validate that a schema meets the JSON Table Schema spec, you can pass a schema to the initializer like so:
+You can also build a schema from scratch or modify an existing one:
+
+```ruby
+schema = TableSchema::Schema.new({
+  fields: [],
+})
+
+# Add a field
+schema.add_field({
+  name: 'id',
+  type: 'string',
+  constraints: {
+    required: true,
+  }
+})
+
+# Remove a field
+schema.remove_field('id')
+```
+
+`add_field` will ignore the updates if the updated version of the the schema fails [validation](#validate-a-schema).
+If you wish to prevent an invalid schema from being created or updated by raising validation errors, you can pass the `strict: true` argument to the Schema initializer:
+
+```ruby
+schema = TableSchema::Schema.new(schema_hash, strict: true)
+```
+
+There are multiple methods to inspect a schema:
 
 ```ruby
 schema_hash = {
-  "fields" => [
-      {
-          "name" => "id"
+  fields: [
+    {
+      name: 'id',
+      type: 'string',
+      constraints: {
+        required: true,
       },
-      {
-          "name" => "height"
-      }
+    },
+    {
+      name: 'height',
+      type: 'number',
+    },
+    {
+      name: 'state',
+    },
+  ],
+  primaryKey: 'id',
+  foreignKeys: [
+    {
+      fields: 'state',
+      reference: {
+          resource: 'the-resource',
+          fields: 'state_id',
+      },
+    },
   ]
 }
-
-schema = TableSchema::Schema.new(schema_hash)
-schema.valid?
-#=> true
-```
-
-You can also pass a file path or URL to the initializer:
-
-```ruby
-schema = TableSchema::Schema.new('http://example.org/schema.json')
-schema.valid?
-#=> true
-```
-
-If the schema is invalid, you can access the errors via the `errors` attribute
-
-```ruby
-schema_hash = {
-  "fields" => [
-    {
-      "name"=>"id",
-      "title"=>"Identifier",
-      "type"=>"integer"
-   },
-   {
-     "name"=>"title",
-     "title"=>"Title",
-     "type"=>"string"
-    }
-  ],
- "primaryKey"=>"identifier"
-}
-
-schema.valid?
-#=> false
-schema.errors
-#=> ["The JSON Table Schema primaryKey value `identifier` is not found in any of the schema's field names"]
-```
-
-## Schema Model
-
-You can also access the schema via a Ruby model, with some useful methods for interaction:
-
-```ruby
-schema_hash = {
-  "fields" => [
-      {
-          "name" => "id",
-          "type" => "string",
-          "constraints" => {
-            "required" => true,
-          }
-      },
-      {
-          "name" => "height",
-          "type" => "number"
-      }
-  ],
-  "primaryKey" => "id",
-  "foreignKeys" => [
-    {
-        "fields" => "state",
-        "reference" => {
-            "datapackage" => "http://data.okfn.org/data/mydatapackage/",
-            "resource" => "the-resource",
-            "fields" => "state_id"
-        }
-    }
-  ]
-}
-
 schema = TableSchema::Schema.new(schema_hash)
 
 schema.headers
@@ -186,78 +174,125 @@ schema.headers
 schema.required_headers
 #=> ["id"]
 schema.fields
-#=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"number", "format"=>"default"}]
+#=> [{:name=>"id", :type=>"string", :constraints=>{:required=>true}, :format=>"default"}, {:name=>"height", :type=>"number", :format=>"default", :constraints=>{}}]
 schema.primary_keys
 #=> ["id"]
 schema.foreign_keys
-#=> [{"fields" => "state", "reference" => { "datapackage" => "http://data.okfn.org/data/mydatapackage/", "resource" => "the-resource", "fields" => "state_id" } } ]
+# => [{:fields=>"state", :reference=>{:resource=>"the-resource", :fields=>"state_id"}}]
 schema.get_field('id')
-#=> {"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}
+# => {:name=>"id", :type=>"string", :constraints=>{:required=>true}, :format=>"default"}
 schema.has_field?('foo')
 #=> false
 schema.get_type('id')
 #=> 'string'
 schema.get_fields_by_type('string')
-#=> [{"name"=>"id", "constraints"=>{"required"=>true}, "type"=>"string", "format"=>"default"}, {"name"=>"height", "type"=>"string", "format"=>"default"}]
+# => [{:name=>"id", :type=>"string", :constraints=>{:required=>true}, :format=>"default"}, {:name=>"state", :type=>"string", :format=>"default", :constraints=>{}}]
 schema.get_constraints('id')
-#=> {"required" => true}
-schema.cast_row(['string', '10.0'])
-#=> ['string', 10.0]
-schema.cast([['foo', '12.0'],['bar', '10.0']])
-#=> [['foo', 12.0],['bar', 10.0]]
+# => {:required=>true}
 ```
 
-When casting a row (using `cast_row`), or a number of rows (using `cast`), by default the converter will fail on the first error it finds. If you pass `false` as the second argument, the errors will be collected into a `errors` attribute for you to review later. For example:
+#### Cast row
+
+To check if a given set of values complies with the schema, you can use `cast_row`:
+
+```
+schema.cast_row(['string', '10.0', 'State'])
+#=> ['string', 10.0, 'State']
+```
+
+By default the converter will fail on the first error it finds. However, by passing `fail_fast: false` as the second argument the errors will be collected into an `exception.errors` attribute for you to review later. For example:
+
+```ruby
+row = [3, 'nan', 'State']
+
+schema.cast_row(row)
+#=> TableSchema::InvalidCast: 3 is not a string
+begin
+  schema.cast_row(row, fail_fast: false)
+rescue TableSchema::MultipleInvalid => exception
+  exception.errors
+end
+#=> #<Set: {#<TableSchema::InvalidCast: 3 is not a string>,
+            #<TableSchema::InvalidCast: nan is not a number>}>
+```
+
+### Validate a schema
+
+To make sure a schema complies with [Table Schema spec](https://specs.frictionlessdata.io/table-schema), we validate each custom schema against the
+official [Table Schema schema](https://specs.frictionlessdata.io/schemas/table-schema.json):
 
 ```ruby
 schema_hash = {
-  "fields" => [
-      {
-          "name" => "id",
-          "type" => "string",
-          "constraints" => {
-            "required" => true,
-          }
-      },
-      {
-          "name" => "height",
-          "type" => "number"
-      }
+  fields: [
+      { name: 'id' },
   ]
+}
+schema = TableSchema::Schema.new(schema_hash)
+schema.validate
+#=> true
+```
+
+If the schema is invalid, you can access the errors via the `errors` attribute
+
+```ruby
+schema_hash = {
+  fields: [
+    {
+      name: 'id',
+      title: 'Identifier',
+      type: 'integer'
+    },
+    {
+      name: 'title',
+      title: 'Title',
+      type: 'string'
+    }
+  ],
+  primaryKey: 'identifier'
 }
 
 schema = TableSchema::Schema.new(schema_hash)
-
-rows = [
-  ['foo', 'notanumber'],
-  ['bar', 'notanumber'],
-  ['wrong column count']
-]
-
-schema.cast(rows)
-#=> TableSchema::InvalidCast: notanumber is not a number
-schema.cast(rows, false)
-#=> TableSchema::MultipleInvalid
+schema.validate
+#=> false
 schema.errors
-#=> [#<TableSchema::InvalidCast: notanumber is not a number>, #<TableSchema::InvalidCast: notanumber is not a number>, #<TableSchema::ConversionError: The number of items to convert (1) does not match the number of headers in the schema (2)>]
+#=> #<Set: {"The TableSchema primaryKey value `identifier` is not found in any of the schema's field names"}>
+
+# Raise error if validation fails
+schema.validate!
+#=> TableSchema::SchemaException: The TableSchema primaryKey value `identifier` is not found in any of the schema's field names
 ```
 
 ## Field
 
+Data values can be cast to native Ruby objects with a Field instance. This allows formats and constraints to be defined for the field in the [field descriptor](https://specs.frictionlessdata.io/table-schema/#field-descriptors):
+
 ```ruby
 # Init field
-field = TableSchema::Field.new({'type': 'number'})
+field = TableSchema::Field.new({
+  name: 'over_1700',
+  type: 'number',
+  constraints: {
+    minimum: '1700',
+  },
+})
 
 # Cast a value
 field.cast_value('12345')
 #=> 12345.0
 ```
 
-Data values can be cast to native Ruby objects with a Field instance. Type instances can be initialized with f[ield descriptors](http://dataprotocols.org/json-table-schema/#field-descriptors). This allows formats and constraints to be defined.
+Casting a value will check the value is of the expected `type`, is in the correct `format`, and complies with any `constraints` imposed in the descriptor.
 
-Casting a value will check the value is of the expected type, is in the correct format, and complies with any constraints imposed by a schema. E.g. a date value (in ISO 8601 format) can be cast with a DateType instance. Values that can't be cast will raise an `InvalidCast` exception.
+Value that can't be cast will raise an `InvalidCast` exception.
 
 Casting a value that doesn't meet the constraints will raise a `ConstraintError` exception.
+
+```ruby
+field.cast_value('nan')
+#=> TableSchema::InvalidCast: nan is not a number
+field.cast_value('1200')
+#=> TableSchema::ConstraintError: The field `over_1700` must not be less than 1700
+```
 
 ## Development
 
