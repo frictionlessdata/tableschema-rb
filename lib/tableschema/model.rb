@@ -70,6 +70,7 @@ module TableSchema
     def remove_field(field_name)
       field = get_field(field_name)
       self[:fields].reject!{ |f| f.name == field_name }
+      validate
       field
     end
 
