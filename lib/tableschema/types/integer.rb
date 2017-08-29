@@ -25,6 +25,10 @@ module TableSchema
         if value.is_a?(type)
           value
         else
+          bare_number = @field.fetch(:bareNumber, TableSchema::DEFAULTS[:bare_number])
+          if !bare_number
+            value = value.gsub(/((^\D*)|(\D*$))/, '')
+          end
           Integer(value)
         end
       rescue ArgumentError
