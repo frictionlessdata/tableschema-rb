@@ -107,7 +107,7 @@ describe TableSchema::Table do
 
     it 'allows a limit to be set' do
       rows = []
-      table.iter(row_limit: 1){ |row| rows << row }
+      table.iter(limit: 1){ |row| rows << row }
       expect(rows).to eq([
         [1,'foo']
       ])
@@ -145,7 +145,8 @@ describe TableSchema::Table do
   end
 
   it 'infers a schema' do
-    table = TableSchema::Table.infer_schema(csv)
+    table = TableSchema::Table.new(csv, nil)
+    table.infer()
     expect(table.schema).to eq({
       fields: [
         {

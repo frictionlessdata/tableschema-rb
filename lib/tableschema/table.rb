@@ -1,27 +1,26 @@
 module TableSchema
   class Table
 
-    attr_reader :schema, :headers
-
-    def self.infer_schema(csv, csv_options: {})
-      TableSchema::Table.new(csv, nil, csv_options)
-    end
+    attr_reader :headers, :schema
 
     def initialize(csv, descriptor, csv_options: {})
       @csv_options = csv_options.merge(headers: true)
+      @descriptor = descriptor
       @csv = parse_csv(csv)
       @headers = initialize_headers
-      @schema = descriptor.nil? ? infer_schema : TableSchema::Schema.new(descriptor)
-      initialize_unique_colums
+      if !descriptor.nil?
+        @schema = TableSchema::Schema.new(@descriptor)
+        initialize_unique_colums
+      end
     end
 
-    def iter(row_limit: nil, cast: true, keyed: false)
+    def iter(keyed: false, cast: true, limit: nil)
       unless block_given?
-        return enum_for(:iter, row_limit: row_limit, cast: cast, keyed: keyed)
+        return enum_for(:iter, limit: limit, cast: cast, keyed: keyed)
       end
 
       @csv.each_with_index do |row, i|
-        break if row_limit && (row_limit <= i)
+        break if limit && (limit <= i)
         if cast == true
           cast_values = @schema.cast_row(row)
           row = CSV::Row.new(@headers, cast_values)
@@ -38,9 +37,19 @@ module TableSchema
       @csv.rewind
     end
 
-    def read(row_limit: nil, cast: true, keyed: false)
-      iterator = self.iter(row_limit: row_limit, cast: cast, keyed: keyed)
+    def read(keyed: false, cast: true, limit: nil)
+      iterator = self.iter(keyed: keyed, cast: cast, limit: limit)
       iterator.to_a
+    end
+
+    def infer()
+      if !@schema
+        inferer = TableSchema::Infer.new(@headers, @csv)
+        @schema = inferer.schema
+        initialize_unique_colums
+        @csv.rewind
+      end
+      @schema.descriptor
     end
 
     def save(target)
@@ -60,12 +69,6 @@ module TableSchema
 
     def array_to_csv(array)
       array.map { |row| row.to_csv(row_sep: nil) }.join("\r\n")
-    end
-
-    def infer_schema
-      inferer = TableSchema::Infer.new(@headers, @csv)
-      @csv.rewind
-      inferer.schema
     end
 
     def initialize_headers

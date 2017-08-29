@@ -46,11 +46,11 @@ The gem `jsontableschema` is no longer maintained. Here are the steps to transit
 2. Replace module name `JsonTableSchema` with module name `TableSchema`. For example:
 
     ```ruby
-    JsonTableSchema::Table.infer_schema(csv)
+    JsonTableSchema::Table.new(source, schema)
     ```
     with
     ```ruby
-    TableSchema::Table.infer_schema(csv)
+    TableSchema::Table.new(source, schema)
     ```
 
 ## Usage
@@ -91,9 +91,9 @@ table.read
 ```
 
 Both `iter` and `read` take the optional parameters:
-- `row_limit`: integer, default `nil` - stop at this many rows
-- `cast`: boolean, default `true` - cast values for each row
 - `keyed`: boolean, default: `false` - return the rows as Hashes with headers as keys
+- `cast`: boolean, default `true` - cast values for each row
+- `limit`: integer, default `nil` - stop at this many rows
 
 ### Infer a schema
 
@@ -102,7 +102,8 @@ If you don't have a schema for a CSV, and want to generate one, you can infer a 
 ```ruby
 csv = 'https://github.com/frictionlessdata/tableschema-rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
 
-table = TableSchema::Table.infer_schema(csv)
+table = TableSchema::Table.new(csv, nil)
+table.infer()
 table.schema
 #=> {:fields=>[{:name=>"id", :title=>"", :description=>"", :type=>"integer", :format=>"default", :constraints=>{}}, {:name=>"title", :title=>"", :description=>"", :type=>"string", :format=>"default", :constraints=>{}}]}
 ```
