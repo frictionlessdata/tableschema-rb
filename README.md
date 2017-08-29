@@ -1,5 +1,4 @@
-# Table Schema
-formerly known as JSON Table Schema
+# tableschema-rb
 
 [![Travis](https://travis-ci.org/frictionlessdata/tableschema-rb.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-rb)
 [![Coveralls](https://coveralls.io/repos/github/frictionlessdata/tableschema-rb/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-rb?branch=master)
