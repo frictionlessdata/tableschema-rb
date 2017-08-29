@@ -57,7 +57,6 @@ describe TableSchema::Types::Boolean do
     let(:type) { TableSchema::Types::Boolean.new(field) }
 
     it 'casts truthy values' do
-      p field.descriptor
       ['Y', 'Yes', true].each do |value|
         expect(type.cast(value)).to be true
       end

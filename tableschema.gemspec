@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "coveralls", "~> 0.8.13"
   spec.add_development_dependency "rubocop", "~> 0.49.1"
 
-  spec.add_dependency "json-schema", "~> 2.6.0"
+  spec.add_dependency "json-schema", "~> 2.8.0"
   spec.add_dependency "uuid", "~> 2.3.8"
   spec.add_dependency "tod", "~> 2.1.0"
   spec.add_dependency "activesupport", "~> 5.1.0"
