@@ -208,18 +208,18 @@ describe TableSchema::Model do
     it 'returns a single primary key as an array' do
       descriptor = load_descriptor('schema_valid_pk_string.json')
       s = TableSchema::Schema.new(descriptor)
-      expect(s.primary_keys).to eq(['id'])
+      expect(s.primary_key).to eq(['id'])
     end
 
     it 'returns the primary key as an array' do
       descriptor = load_descriptor('schema_valid_pk_array.json')
       s = TableSchema::Schema.new(descriptor)
-      expect(s.primary_keys).to eq(['id', 'title'])
+      expect(s.primary_key).to eq(['id', 'title'])
     end
 
     it 'returns an empty array if there is no primary key' do
       s = TableSchema::Schema.new(schema_min)
-      expect(s.primary_keys).to eq([])
+      expect(s.primary_key).to eq([])
     end
 
   end

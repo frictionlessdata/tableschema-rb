@@ -6,7 +6,7 @@ module TableSchema
 
     attr_reader :errors
 
-    def initialize(descriptor, case_insensitive_headers: false, strict: false)
+    def initialize(descriptor, strict: false, case_insensitive_headers: false)
       self.merge! deep_symbolize_keys(parse_schema(descriptor))
       @case_insensitive_headers = case_insensitive_headers
       @strict = strict
@@ -19,24 +19,6 @@ module TableSchema
 
     def descriptor
       self.to_h
-    end
-
-    def parse_schema(descriptor)
-      if descriptor.class == Hash
-        descriptor
-      elsif descriptor.class == String
-        begin
-          JSON.parse(open(descriptor).read, symbolize_names: true)
-        rescue Errno::ENOENT
-          raise SchemaException.new("File not found at `#{descriptor}`")
-        rescue OpenURI::HTTPError => e
-          raise SchemaException.new("URL `#{descriptor}` returned #{e.message}")
-        rescue JSON::ParserError
-          raise SchemaException.new("File at `#{descriptor}` is not valid JSON")
-        end
-      else
-        raise SchemaException.new("A schema must be a hash, path or URL")
-      end
     end
 
     def cast_row(row, fail_fast: true)
@@ -64,6 +46,26 @@ module TableSchema
     def save(target)
       File.open(target, "w") { |file| file << JSON.pretty_generate(self.descriptor) }
       true
+    end
+
+    private
+
+    def parse_schema(descriptor)
+      if descriptor.class == Hash
+        descriptor
+      elsif descriptor.class == String
+        begin
+          JSON.parse(open(descriptor).read, symbolize_names: true)
+        rescue Errno::ENOENT
+          raise SchemaException.new("File not found at `#{descriptor}`")
+        rescue OpenURI::HTTPError => e
+          raise SchemaException.new("URL `#{descriptor}` returned #{e.message}")
+        rescue JSON::ParserError
+          raise SchemaException.new("File at `#{descriptor}` is not valid JSON")
+        end
+      else
+        raise SchemaException.new("A schema must be a hash, path or URL")
+      end
     end
 
   end

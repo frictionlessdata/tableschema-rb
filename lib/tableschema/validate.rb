@@ -10,7 +10,7 @@ module TableSchema
 
     def validate
       @errors = Set.new(JSON::Validator.fully_validate(@profile, self))
-      check_primary_keys
+      check_primary_key
       check_foreign_keys
       @errors.empty?
     end
@@ -23,9 +23,9 @@ module TableSchema
 
     private
 
-    def check_primary_keys
+    def check_primary_key
       return if self[:primaryKey].nil?
-      primary_keys.each { |pk| check_field_value(pk, 'primaryKey') }
+      primary_key.each { |pk| check_field_value(pk, 'primaryKey') }
     end
 
     def check_foreign_keys

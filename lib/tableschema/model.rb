@@ -3,25 +3,48 @@ require 'tableschema/defaults'
 module TableSchema
   module Model
 
-    def headers
-      fields.map { |f| transform(f[:name]) }
-    rescue NoMethodError
-      []
-    end
-
-    alias :field_names :headers
-
-    def fields
-      self[:fields]
-    end
-
-    def primary_keys
+    def primary_key
       [self[:primaryKey]].flatten.reject { |k| k.nil? }
     end
 
     def foreign_keys
       self[:foreignKeys] || []
     end
+
+    def fields
+      self[:fields]
+    end
+
+    def field_names
+      fields.map { |f| transform(f[:name]) }
+    rescue NoMethodError
+      []
+    end
+
+    def get_field(field_name)
+      fields.find { |f| f[:name] == field_name }
+    end
+
+    def add_field(descriptor)
+      self[:fields].push(descriptor)
+      validate!
+      descriptor
+    rescue TableSchema::SchemaException => e
+      self[:fields].pop
+      raise e if @strict
+      nil
+    end
+
+    def remove_field(field_name)
+      field = get_field(field_name)
+      self[:fields].reject!{ |f| f.name == field_name }
+      validate
+      field
+    end
+
+    # Deprecated
+
+    alias :headers :field_names
 
     def missing_values
       self.fetch(:missingValues, TableSchema::DEFAULTS[:missing_values])
@@ -49,29 +72,8 @@ module TableSchema
       get_field(field_name) != nil
     end
 
-    def get_field(field_name)
-      fields.find { |f| f[:name] == field_name }
-    end
-
     def get_fields_by_type(type)
       fields.select { |f| f[:type] == type }
-    end
-
-    def add_field(descriptor)
-      self[:fields].push(descriptor)
-      validate!
-      descriptor
-    rescue TableSchema::SchemaException => e
-      self[:fields].pop
-      raise e if @strict
-      nil
-    end
-
-    def remove_field(field_name)
-      field = get_field(field_name)
-      self[:fields].reject!{ |f| f.name == field_name }
-      validate
-      field
     end
 
     private

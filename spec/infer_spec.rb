@@ -79,14 +79,14 @@ describe TableSchema::Infer do
     inferer = TableSchema::Infer.new(headers, data, primary_key: 'id')
     schema = inferer.schema
 
-    expect(schema.primary_keys).to eq(['id'])
+    expect(schema.primary_key).to eq(['id'])
   end
 
   it 'infers a schema with a primary key as an array' do
     inferer = TableSchema::Infer.new(headers, data, primary_key: ['id', 'age'])
     schema = inferer.schema
 
-    expect(schema.primary_keys).to eq(['id', 'age'])
+    expect(schema.primary_key).to eq(['id', 'age'])
   end
 
   it 'lets us be explicit' do

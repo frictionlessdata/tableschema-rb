@@ -169,26 +169,16 @@ schema_hash = {
 }
 schema = TableSchema::Schema.new(schema_hash)
 
-schema.headers
+schema.field_names
 #=> ["id", "height"]
-schema.required_headers
-#=> ["id"]
 schema.fields
 #=> [{:name=>"id", :type=>"string", :constraints=>{:required=>true}, :format=>"default"}, {:name=>"height", :type=>"number", :format=>"default", :constraints=>{}}]
-schema.primary_keys
+schema.primary_key
 #=> ["id"]
 schema.foreign_keys
 # => [{:fields=>"state", :reference=>{:resource=>"the-resource", :fields=>"state_id"}}]
 schema.get_field('id')
 # => {:name=>"id", :type=>"string", :constraints=>{:required=>true}, :format=>"default"}
-schema.has_field?('foo')
-#=> false
-schema.get_type('id')
-#=> 'string'
-schema.get_fields_by_type('string')
-# => [{:name=>"id", :type=>"string", :constraints=>{:required=>true}, :format=>"default"}, {:name=>"state", :type=>"string", :format=>"default", :constraints=>{}}]
-schema.get_constraints('id')
-# => {:required=>true}
 ```
 
 #### Cast row
