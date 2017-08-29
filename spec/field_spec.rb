@@ -14,7 +14,7 @@ describe TableSchema::Field do
       name: 'amount',
       type: 'number',
       format: 'default',
-      currency: '£',
+      bareNumber: false,
       constraints: {required: true}
     }
   end

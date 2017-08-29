@@ -48,27 +48,15 @@ module TableSchema
           else
             group_char = @field.fetch(:groupChar, TableSchema::DEFAULTS[:group_char])
             decimal_char = @field.fetch(:decimalChar, TableSchema::DEFAULTS[:decimal_char])
-            formatted_value = value.gsub(group_char, '').gsub(decimal_char, '.')
-            if formatted_value.match(percent_chars)
-              process_percent(formatted_value)
-            elsif @field.fetch(:currency, nil)
-              process_currency(formatted_value)
-            else
-              Float(formatted_value)
+            bare_number = @field.fetch(:bareNumber, TableSchema::DEFAULTS[:bare_number])
+            formatted_value = value
+            formatted_value = formatted_value.gsub(group_char, '')
+            formatted_value = formatted_value.gsub(decimal_char, '.')
+            if !bare_number
+              formatted_value = formatted_value.gsub(/((^\D*)|(\D*$))/, '')
             end
+            Float(formatted_value)
           end
-        end
-
-        def process_percent(value)
-          Float(value.gsub(percent_chars, '')) / 100
-        end
-
-        def process_currency(value)
-          Float(value.gsub(@field[:currency], ''))
-        end
-
-        def percent_chars
-          /%|‰|‱|％|﹪|٪/
         end
     end
   end

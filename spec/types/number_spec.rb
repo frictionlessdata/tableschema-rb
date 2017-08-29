@@ -20,10 +20,7 @@ describe TableSchema::Types::Number do
 
   it 'casts when the value is already cast' do
     [1, 1.0, Float(1)].each do |value|
-      ['default', 'currency'].each do |format|
-        field[:format] = format
-        expect(type.cast(value)).to eq(Float(value))
-      end
+      expect(type.cast(value)).to eq(Float(value))
     end
   end
 
@@ -32,14 +29,9 @@ describe TableSchema::Types::Number do
     expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
   end
 
-  it 'converts when value is percent' do
-    value = '100%'
-    expect(type.cast(value)).to eq(Float(1))
-  end
-
-  it 'casts exponent before percent' do
-    value = '10E1%'
-    expect(type.cast(value)).to eq(Float(1))
+  it 'casts exponent' do
+    value = '10E1'
+    expect(type.cast(value)).to eq(Float(100))
   end
 
   it 'allows special strings' do
@@ -53,6 +45,7 @@ describe TableSchema::Types::Number do
   end
 
   context 'custom settings' do
+
     it 'casts according default char settings' do
       [
         '10,000.00',
@@ -77,15 +70,16 @@ describe TableSchema::Types::Number do
       end
     end
 
-    it 'correctly casts value with currency' do
-      field[:currency] = '$'
+    it 'casts if bareNumber is false' do
+      field[:bareNumber] = false
       [
-         '10,000.00',
-         '$10000.00',
-         '  10,000.00 $',
-       ].each do |value|
-         expect { type.cast(value) }.to_not raise_error
-       end
+        '$100M',
+        '  100 $',
+        '100%',
+      ].each do |value|
+        expect(type.cast(value)).to eq(Float(100))
+      end
+
     end
 
   end
