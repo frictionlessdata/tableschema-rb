@@ -41,6 +41,11 @@ describe TableSchema::Field do
     expect(described_class.new(@descriptor_max).constraints).to eq({required: true})
   end
 
+  it 'returns required' do
+    expect(described_class.new(@descriptor_min).required).to eq(false)
+    expect(described_class.new(@descriptor_max).required).to eq(true)
+  end
+
   it 'returns the correct type class' do
     expect(described_class.new(@descriptor_min).send(:type_class)).to eq(TableSchema::Types::String)
     expect(described_class.new(@descriptor_max).send(:type_class)).to eq(TableSchema::Types::Number)
