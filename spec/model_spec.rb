@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe TableSchema::Model do
+describe TableSchema::Schema do
 
   let(:descriptor) {
     {

@@ -32,8 +32,6 @@ require "tableschema/types/duration"
 require "tableschema/defaults"
 
 require "tableschema/field"
-require "tableschema/validate"
-require "tableschema/model"
 require "tableschema/schema"
 require "tableschema/table"
 require "tableschema/infer"

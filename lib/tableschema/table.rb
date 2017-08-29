@@ -1,6 +1,8 @@
 module TableSchema
   class Table
 
+    # Public
+
     attr_reader :headers, :schema
 
     def initialize(csv, descriptor, csv_options: {})
@@ -59,6 +61,8 @@ module TableSchema
       end
       true
     end
+
+    # Private
 
     private
 

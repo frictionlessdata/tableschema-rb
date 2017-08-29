@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe TableSchema::Validate do
+describe TableSchema::Schema do
 
   context 'simple validation' do
 

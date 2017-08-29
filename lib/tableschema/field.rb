@@ -4,6 +4,8 @@ module TableSchema
   class Field < Hash
     include TableSchema::Helpers
 
+    # Public
+
     attr_reader :name, :type, :format, :required, :constraints
 
     def initialize(descriptor, missing_values=nil)
@@ -41,6 +43,8 @@ module TableSchema
         type_class.new(self).cast(value)
       end
     end
+
+    # Private
 
     private
 
