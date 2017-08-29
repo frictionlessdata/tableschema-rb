@@ -25,9 +25,17 @@ module TableSchema
       end
 
       def cast_default(value)
-        value = convert_to_boolean(value)
-        raise TableSchema::InvalidCast.new("#{value} is not a #{name}") if value.nil?
-        value
+        true_values = @field.fetch(:trueValues, TableSchema::DEFAULTS[:true_values])
+        false_values = @field.fetch(:falseValues, TableSchema::DEFAULTS[:false_values])
+        if [true, false].include?(value)
+          return value
+        elsif true_values.include?(value)
+          return true
+        elsif false_values.include?(value)
+          return false
+        else
+          raise TableSchema::InvalidCast.new("#{value} is not a #{name}")
+        end
       end
 
     end

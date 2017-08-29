@@ -94,7 +94,7 @@ describe TableSchema::Constraints::Enum do
     end
 
     it 'handles when value is equivalent to possible values in enum array' do
-      field_attrs[:constraints][:enum] = ['yes', 'y', 't', '1', 1]
+      field_attrs[:constraints][:enum] = ['true', 'True', 'TRUE', '1']
       expect(constraints.validate!).to eq(true)
     end
 
