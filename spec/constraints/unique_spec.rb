@@ -27,7 +27,7 @@ require 'spec_helper'
 
     let(:csv) { [['id', 'height']].concat(@rows) }
 
-    let(:table) { TableSchema::Table.new(csv, schema.to_h) }
+    let(:table) { TableSchema::Table.new(csv, schema: schema.to_h) }
 
     context 'with string type' do
 

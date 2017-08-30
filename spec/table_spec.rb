@@ -6,7 +6,7 @@ describe TableSchema::Table do
 
   let(:descriptor) { File.join( File.dirname(__FILE__), "fixtures", "schema_valid_simple.json") }
 
-  let(:table) { TableSchema::Table.new(csv, descriptor) }
+  let(:table) { TableSchema::Table.new(csv, schema: descriptor) }
 
   it 'loads a schema' do
     expect(table.schema).to eq({
@@ -45,7 +45,7 @@ describe TableSchema::Table do
       ['6','poff']
     ]
 
-    table = TableSchema::Table.new(csv, descriptor)
+    table = TableSchema::Table.new(csv, schema: descriptor)
 
     expect(table.instance_variable_get(:@csv).map(&:fields)).to eq([
       ['4','piff'],
@@ -59,7 +59,7 @@ describe TableSchema::Table do
     stub_request(:get, url)
                 .to_return(body: File.open(csv))
 
-    table = TableSchema::Table.new(url, descriptor)
+    table = TableSchema::Table.new(url, schema: descriptor)
     expect(table.instance_variable_get(:@csv).map(&:fields)).to eq([
       ['1','foo'],
       ['2','bar'],
@@ -97,7 +97,7 @@ describe TableSchema::Table do
         ['5','paff'],
       ]
 
-      table = TableSchema::Table.new(csv, descriptor)
+      table = TableSchema::Table.new(csv, schema: descriptor)
 
       expect { table.iter{|row| row} }.to raise_error(
         TableSchema::InvalidCast,
@@ -114,7 +114,7 @@ describe TableSchema::Table do
     end
 
     it 'returns an iterator without a block' do
-      table = TableSchema::Table.new(csv, descriptor)
+      table = TableSchema::Table.new(csv, schema: descriptor)
       iter = table.iter(keyed: true)
 
       expect(iter.take(1)).to eq([
@@ -145,7 +145,7 @@ describe TableSchema::Table do
   end
 
   it 'infers a schema' do
-    table = TableSchema::Table.new(csv, nil)
+    table = TableSchema::Table.new(csv)
     table.infer()
     expect(table.schema).to eq({
       fields: [
