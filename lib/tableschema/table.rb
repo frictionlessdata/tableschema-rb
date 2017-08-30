@@ -5,12 +5,12 @@ module TableSchema
 
     attr_reader :headers, :schema
 
-    def initialize(csv, descriptor, csv_options: {})
+    def initialize(source, schema: nil, csv_options: {})
       @csv_options = csv_options.merge(headers: true)
-      @descriptor = descriptor
-      @csv = parse_csv(csv)
+      @csv = parse_csv(source)
+      @descriptor = schema
       @headers = initialize_headers
-      if !descriptor.nil?
+      if !@descriptor.nil?
         @schema = TableSchema::Schema.new(@descriptor)
         initialize_unique_colums
       end
