@@ -22,7 +22,7 @@ module TableSchema
       end
 
       def cast_default(value)
-        if value.is_a?(type)
+        if value.nil? || value.is_a?(type)
           value
         else
           bare_number = @field.fetch(:bareNumber, TableSchema::DEFAULTS[:bare_number])

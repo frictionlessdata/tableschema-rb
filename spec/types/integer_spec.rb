@@ -18,6 +18,11 @@ describe TableSchema::Types::Integer do
     expect(type.cast(value)).to eq(1)
   end
 
+  it 'casts nil values in integer columns' do
+    value = nil
+    expect(type.cast(value)).to be nil
+  end
+
   it 'raises when the value is not an integer' do
     value = 'string1'
     expect { type.cast(value) }.to raise_error(TableSchema::InvalidCast)
