@@ -4,7 +4,8 @@
 [![Coveralls](https://coveralls.io/repos/github/frictionlessdata/tableschema-rb/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-rb?branch=master)
 [![Gem Version](http://img.shields.io/gem/v/tableschema.svg)](https://rubygems.org/gems/tableschema)
 [![SemVer](https://img.shields.io/badge/versions-SemVer-brightgreen.svg)](http://semver.org/)
-[![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
+[![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/tableschema-rb)
+[![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
 
 A utility library for working with [Table Schema](https://specs.frictionlessdata.io/table-schema/) in Ruby.
 
