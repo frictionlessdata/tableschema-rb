@@ -30,7 +30,6 @@ jobs:
         run: |
           gem install bundler -v 1.11.2
           bundle
-          gem install rubocop
       - name: Test software
         run: rake spec
       - name: Report coverage
