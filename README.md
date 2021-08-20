@@ -1,9 +1,8 @@
 # tableschema-rb
 
-[![Travis](https://travis-ci.org/frictionlessdata/tableschema-rb.svg?branch=master)](https://travis-ci.org/frictionlessdata/tableschema-rb)
-[![Coveralls](https://coveralls.io/repos/github/frictionlessdata/tableschema-rb/badge.svg?branch=master)](https://coveralls.io/github/frictionlessdata/tableschema-rb?branch=master)
-[![Gem Version](http://img.shields.io/gem/v/tableschema.svg)](https://rubygems.org/gems/tableschema)
-[![SemVer](https://img.shields.io/badge/versions-SemVer-brightgreen.svg)](http://semver.org/)
+[![Build](https://img.shields.io/github/workflow/status/frictionlessdata/tableschema-rb/general/main)](https://github.com/frictionlessdata/tableschema-rb/actions)
+[![Coverage](https://img.shields.io/codecov/c/github/frictionlessdata/tableschema-rb/main)](https://codecov.io/gh/frictionlessdata/tableschema-rb)
+[![Release](http://img.shields.io/gem/v/tableschema.svg)](https://rubygems.org/gems/tableschema)
 [![Codebase](https://img.shields.io/badge/codebase-github-brightgreen)](https://github.com/frictionlessdata/tableschema-rb)
 [![Support](https://img.shields.io/badge/support-discord-brightgreen)](https://discordapp.com/invite/Sewv6av)
 

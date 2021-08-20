@@ -1,0 +1,61 @@
+name: general
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*.*.*
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  # Test
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: [2.4]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+      - name: Install dependencies
+        run: |
+          gem install bundler -v 1.11.2
+          bundle
+          gem install rubocop
+      - name: Test software
+        run: rake spec
+      - name: Report coverage
+        uses: codecov/codecov-action@v1
+
+  # Release
+
+  release:
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.4
+      - name: Release Gem
+        uses: cadwallion/publish-rubygems-action@1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
+          RELEASE_COMMAND: rake release
+      - name: Release to GitHub
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
