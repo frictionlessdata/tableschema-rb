@@ -74,7 +74,7 @@ schema = {
     ]
 }
 
-source = 'https://github.com/frictionlessdata/tableschema-rb/raw/master/spec/fixtures/simple_data.csv'
+source = 'https://github.com/frictionlessdata/tableschema-rb/raw/main/spec/fixtures/simple_data.csv'
 
 table = TableSchema::Table.new(source, schema: schema)
 
@@ -99,7 +99,7 @@ Both `iter` and `read` take the optional parameters:
 If you don't have a schema for a CSV, and want to generate one, you can infer a schema like so:
 
 ```ruby
-source = 'https://github.com/frictionlessdata/tableschema-rb/raw/master/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
+source = 'https://github.com/frictionlessdata/tableschema-rb/raw/main/spec/fixtures/simple_data.csv' # Can also be a url or array of arrays
 
 table = TableSchema::Table.new(source)
 table.infer()
