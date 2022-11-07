@@ -11,7 +11,7 @@ list:
 	@grep '^\.PHONY' Makefile | cut -d' ' -f2- | tr ' ' '\n'
 
 release:
-	git checkout master && git pull origin && git fetch -p && git diff
+	git checkout main && git pull origin && git fetch -p && git diff
 	@echo "\nContinuing in 10 seconds. Press <CTRL+C> to abort\n" && sleep 10
 	@git log --pretty=format:"%C(yellow)%h%Creset %s%Cgreen%d" --reverse -20
 	@echo "\nReleasing v$(VERSION) in 10 seconds. Press <CTRL+C> to abort\n" && sleep 10
