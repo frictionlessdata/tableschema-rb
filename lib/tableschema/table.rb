@@ -1,6 +1,6 @@
 module TableSchema
   class Table
-
+    include TableSchema::Helpers
     # Public
 
     attr_reader :headers, :schema
@@ -67,8 +67,8 @@ module TableSchema
     private
 
     def parse_csv(csv)
-      csv = csv.is_a?(Array) ? StringIO.new(array_to_csv csv) : open(csv)
-      CSV.new(csv, @csv_options)
+      csv = csv.is_a?(Array) ? StringIO.new(array_to_csv csv) : read_file(csv)
+      CSV.new(csv, **@csv_options)
     end
 
     def array_to_csv(array)

@@ -145,7 +145,7 @@ module TableSchema
         descriptor
       elsif descriptor.class == String
         begin
-          JSON.parse(open(descriptor).read, symbolize_names: true)
+          JSON.parse(read_file(descriptor), symbolize_names: true)
         rescue Errno::ENOENT
           raise SchemaException.new("File not found at `#{descriptor}`")
         rescue OpenURI::HTTPError => e

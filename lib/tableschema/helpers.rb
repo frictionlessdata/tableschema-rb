@@ -41,5 +41,13 @@ module TableSchema
       }
     end
 
+    def read_file(descriptor)
+      if (descriptor =~ /http/) != 0
+	File.open(descriptor).read
+      else
+        URI.parse(descriptor).open.read
+      end
+    end
+
   end
 end
